@@ -7,7 +7,8 @@ public class Cliente {
 	private Veiculo[] veiculos;
 
 	public Cliente(String nome, String id) {
-		
+		this.nome = nome; 
+		this.id = id;
 	}
 
 	public void addVeiculo(Veiculo veiculo) {
