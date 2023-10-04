@@ -14,24 +14,38 @@ public class UsoDeVaga {
 
     public UsoDeVaga(Vaga vaga) {
         this.vaga = vaga;
-        this.entrada = LocalDateTime.now();
+        this.entrada = null;
         this.saida = null;
         this.valorPago = 0.0;
     }
 
-    public void sair() {
-        this.saida = LocalDateTime.now();
-        Duration duracao = Duration.between(entrada, saida);
-        long minutosEstacionados = duracao.toMinutes();
-        
-        // Calcula o valor a ser pago com base no tempo de estacionamento
-        if (minutosEstacionados <= 15) {
-            this.valorPago = 0.0;
-        } else if (minutosEstacionados <= 60) {
-            this.valorPago = VALOR_FRACAO;
+    public void usarVaga() {
+        if (entrada == null) {
+            entrada = LocalDateTime.now();
+            vaga.setOcupada(true); // Marcar a vaga como ocupada
         } else {
-            double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * VALOR_FRACAO;
-            this.valorPago = Math.min(valorExcedente, VALOR_MAXIMO);
+            System.out.println("A vaga já está em uso.");
+        }
+    }
+
+    public void sair() {
+        if (entrada != null) {
+            this.saida = LocalDateTime.now();
+            Duration duracao = Duration.between(entrada, saida);
+            long minutosEstacionados = duracao.toMinutes();
+
+            // Calcula o valor a ser pago com base no tempo de estacionamento
+            if (minutosEstacionados <= 15) {
+                this.valorPago = 0.0;
+            } else if (minutosEstacionados <= 60) {
+                this.valorPago = VALOR_FRACAO;
+            } else {
+                double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * VALOR_FRACAO;
+                this.valorPago = Math.min(valorExcedente, VALOR_MAXIMO);
+            }
+            vaga.setOcupada(false); // Marcar a vaga como desocupada
+        } else {
+            System.out.println("Você não usou a vaga.");
         }
     }
 
