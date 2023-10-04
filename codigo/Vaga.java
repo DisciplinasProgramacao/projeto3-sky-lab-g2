@@ -6,7 +6,8 @@ public class Vaga {
 	private boolean disponivel;
 
 	public Vaga(int fila, int numero) {
-		
+		this.fila = fila;
+		this.numero = numero;
 	}
 
 	public boolean estacionar() {
