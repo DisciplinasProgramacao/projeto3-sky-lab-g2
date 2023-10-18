@@ -31,7 +31,7 @@ public class ClienteTest {
 
         cliente.addVeiculo(veiculo);
 
-        veiculo.registrarUso(10);  // Supondo que o uso gerou uma arrecadação de 10 unidades monetárias.
+        veiculo.registrarUso(10);  
 
         assertEquals(10.0, cliente.arrecadadoPorVeiculo("DEF456"));
         assertEquals(0.0, cliente.arrecadadoPorVeiculo("PLACA_NAO_EXISTENTE"));
@@ -46,8 +46,8 @@ public class ClienteTest {
         cliente.addVeiculo(veiculo1);
         cliente.addVeiculo(veiculo2);
 
-        veiculo1.registrarUso(15);  // Supondo que o uso gerou uma arrecadação de 15 unidades monetárias.
-        veiculo2.registrarUso(20);  // Supondo que o uso gerou uma arrecadação de 20 unidades monetárias.
+        veiculo1.registrarUso(15);  
+        veiculo2.registrarUso(20);  
 
         assertEquals(35.0, cliente.arrecadadoTotal());
     }
@@ -59,7 +59,7 @@ public class ClienteTest {
 
         cliente.addVeiculo(veiculo);
 
-        veiculo.registrarUso(10);  // Supondo que o uso gerou uma arrecadação de 10 unidades monetárias no mês 1.
+        veiculo.registrarUso(10);  
 
         assertEquals(10.0, cliente.arrecadadoNoMes(1));
         assertEquals(0.0, cliente.arrecadadoNoMes(2));
