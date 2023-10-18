@@ -4,12 +4,20 @@ public class Cliente {
     private String id;
     private Veiculo[] veiculos;
     private int numVeiculos;
+    private static Cliente[] clientesCadastrados = new Cliente[100]; 
+    private static int numClientes = 0;
+    
+    public Cliente(String nome, String id) throws Exception { //alterando o construtor para que respeite o requisito de exceção
+        for (int i = 0; i < numClientes; i++) {
+            if (clientesCadastrados[i].getId().equals(id)) {
+                throws new Exception("Cliente com o ID " + id + " já cadastrado.");
+            }
+        }
 
-    public Cliente(String nome, String id) {
         this.nome = nome;
         this.id = id;
-        this.veiculos = new Veiculo[10];
-        this.numVeiculos = 0;
+        clientesCadastrados[numClientes] = this;
+        numClientes++;
     }
 
     public void addVeiculo(Veiculo veiculo) {
