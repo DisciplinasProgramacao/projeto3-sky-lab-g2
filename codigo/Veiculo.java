@@ -8,7 +8,7 @@ public class Veiculo {
 
     public Veiculo(String placa) {
         this.placa = placa;
-        this.usos = new UsoDeVaga[100];
+        this.usos = new UsoDeVaga[100]; // Usando um array de tamanho fixo
         this.numUsos = 0;
     }
 
@@ -20,10 +20,10 @@ public class Veiculo {
         this.placa = placa;
     }
 
-    public void estacionar(Vaga vaga) {
+    public void estacionar(Vaga vaga, LocalDateTime entrada) {
         if (numUsos < usos.length) {
             UsoDeVaga uso = new UsoDeVaga(vaga);
-            uso.usarVaga(vaga);
+            uso.usarVaga(vaga, entrada);
             usos[numUsos] = uso;
             numUsos++;
         } else {
@@ -31,24 +31,18 @@ public class Veiculo {
         }
     }
 
-    public double sair(String placa) {
-        UsoDeVaga uso = null;
-        Vaga vaga = new Vaga(placa);
+    public double sair(Vaga vaga, LocalDateTime saida) {
 
         for (int i = 0; i < numUsos; i++) {
-            if (usos[i] != null && usos[i].getVaga() == vaga) {
-                uso = usos[i];
-                break;
+            if (usos[i] != null && usos[i].getVaga().equals(vaga)) {
+                UsoDeVaga uso = usos[i];
+                uso.sair(saida);
+                return uso.valorPago();
             }
         }
 
-        if (uso != null) {
-            uso.sair();
-            return uso.valorPago();
-        } else {
-            System.out.println("Você não usou a vaga.");
-            return 0.0;
-        }
+        System.out.println("Você não usou a vaga.");
+        return 0.0;
     }
 
     public double totalArrecadado() {
