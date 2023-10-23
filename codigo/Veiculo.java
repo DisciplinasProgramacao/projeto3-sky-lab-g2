@@ -16,6 +16,10 @@ public class Veiculo {
         return placa;
     }
 
+    public String vaga(Vaga vaga) {
+        return vaga.getId(); 
+    }
+
     public void setPlaca(String placa) {
         this.placa = placa;
     }

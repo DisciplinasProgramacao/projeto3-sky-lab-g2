@@ -1,23 +1,21 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class Estacionamento {
+
     private String nome;
-    private Cliente[] clientes;
-    private Vaga[] vagas;
+    private List<Cliente> clientes;
+    private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
-    private double totalArrecadado;
-    private List<RegistroEstacionamento> registros;
 
     public Estacionamento(String nome, int fileiras, int vagasPorFila) {
         this.nome = nome;
         this.quantFileiras = fileiras;
         this.vagasPorFileira = vagasPorFila;
-        this.vagas = new Vaga[fileiras * vagasPorFila];
-        this.clientes = new Cliente[100]; // Defina um limite máximo de clientes
-        this.registros = new ArrayList<>();
-        this.totalArrecadado = 0.0;
+        this.clientes = new ArrayList<>();
+        this.vagas = new ArrayList<>();
         gerarVagas();
     }
 
@@ -25,128 +23,117 @@ public class Estacionamento {
         Cliente cliente = encontrarCliente(idCli);
         if (cliente != null) {
             cliente.addVeiculo(veiculo);
+        } else {
+            System.out.println("Cliente não encontrado.");
         }
     }
 
     public void addCliente(Cliente cliente) {
-        for (int i = 0; i < clientes.length; i++) {
-            if (clientes[i] == null) {
-                clientes[i] = cliente;
-                return;
-            }
-        }
+        clientes.add(cliente);
     }
 
     private void gerarVagas() {
-        char fila = 'A';
         int numeroVaga = 1;
-
-        for (int i = 0; i < vagas.length; i++) {
-            vagas[i] = new Vaga(String.valueOf(fila) + numeroVaga);
-            numeroVaga++;
-            if (numeroVaga > vagasPorFileira) {
-                numeroVaga = 1;
-                fila++;
+        for (int fileira = 1; fileira <= quantFileiras; fileira++) {
+            for (int vaga = 1; vaga <= vagasPorFileira; vaga++) {
+                Vaga novaVaga = new Vaga("V" + numeroVaga);
+                vagas.add(novaVaga);
+                numeroVaga++;
             }
         }
     }
 
-    public void estacionar(String placa) {
-        Cliente cliente = encontrarClientePorPlaca(placa);
-
-        if (cliente == null) {
-            System.out.println("Cliente não encontrado para a placa " + placa);
-            return;
-        }
-
-        Vaga vagaDisponivel = encontrarVagaDisponivel();
-
-        if (vagaDisponivel == null) {
+    public void estacionar(String placa, LocalDateTime entrada) {
+        Veiculo veiculo = encontrarVeiculo(placa);
+        if (veiculo != null) {
+            for (Vaga vaga : vagas) {
+                if (vaga.estacionar()) {
+                    veiculo.estacionar(vaga, entrada);
+                    System.out.println("Veículo " + placa + " estacionado na vaga " + vaga.getId());
+                    return;
+                }
+            }
             System.out.println("Não há vagas disponíveis.");
-            return;
+        } else {
+            System.out.println("Veículo não encontrado.");
         }
-
-        RegistroEstacionamento registro = new RegistroEstacionamento(cliente, vagaDisponivel, placa);
-        registros.add(registro);
-        totalArrecadado += registro.getValor();
-        vagaDisponivel.estacionar();
     }
 
-    public double sair(String placa) {
-        RegistroEstacionamento registro = encontrarRegistroPorPlaca(placa);
-
-        if (registro == null) {
-            System.out.println("Registro não encontrado para a placa " + placa);
-            return 0.0;
+    public double sair(String placa, LocalDateTime saida) {
+        Veiculo veiculo = encontrarVeiculo(placa);
+        if (veiculo != null) {
+            for (Vaga vaga : vagas) {
+                if (veiculo.sair(vaga, saida) > 0) {
+                    System.out.println("Veículo " + placa + " saiu da vaga " + vaga.getId());
+                    return veiculo.sair(vaga, LocalDateTime.now());
+                }
+            }
+            System.out.println("Veículo não encontrado nas vagas.");
+        } else {
+            System.out.println("Veículo não encontrado.");
         }
-
-        registro.getVaga().sair();
-        registros.remove(registro);
-        return registro.getValor();
+        return 0.0;
     }
 
     public double totalArrecadado() {
-        return totalArrecadado;
+        double total = 0;
+        for (Cliente cliente : clientes) {
+            total += cliente.arrecadadoTotal();
+        }
+        return total;
     }
 
     public double arrecadacaoNoMes(int mes) {
-        double arrecadacao = 0.0;
-        for (RegistroEstacionamento registro : registros) {
-            if (registro.getData().getMonthValue() == mes) {
-                arrecadacao += registro.getValor();
-            }
+        double total = 0;
+        for (Cliente cliente : clientes) {
+            total += cliente.arrecadadoNoMes(mes);
         }
-        return arrecadacao;
+        return total;
     }
 
     public double valorMedioPorUso() {
-        if (registros.isEmpty()) {
-            return 0.0;
+        double media = 0;
+        double soma = 0;
+        int numClientes = 0;
+        for (Cliente cliente : clientes) {
+            soma += cliente.arrecadadoTotal();
+            numClientes++;
         }
-
-        double totalValor = 0.0;
-        for (RegistroEstacionamento registro : registros) {
-            totalValor += registro.getValor();
-        }
-
-        return totalValor / registros.size();
+        media = soma/numClientes;
+        return media;
     }
 
     public String top5Clientes(int mes) {
-        // Implemente a lógica para encontrar os 5 principais clientes com base na arrecadação do mês especificado.
+        List<Cliente> topClientes = new ArrayList<>(clientes);
+        topClientes.sort((c1, c2) -> Double.compare(c2.arrecadadoNoMes(mes), c1.arrecadadoNoMes(mes)));
+
+        StringBuilder result = new StringBuilder("Top 5 Clientes no mês " + mes + ":\n");
+        int count = 0;
+        for (Cliente cliente : topClientes) {
+            if (count < 5) {
+                result.append(cliente.getNome()).append(": R$ ").append(cliente.arrecadadoNoMes(mes)).append("\n");
+                count++;
+            } else {
+                break;
+            }
+        }
+        return result.toString();
     }
 
     private Cliente encontrarCliente(String idCli) {
         for (Cliente cliente : clientes) {
-            if (cliente != null && cliente.getId().equals(idCli)) {
+            if (cliente.getId().equals(idCli)) {
                 return cliente;
             }
         }
         return null;
     }
 
-    private Vaga encontrarVagaDisponivel() {
-        for (Vaga vaga : vagas) {
-            if (vaga.isDisponivel()) {
-                return vaga;
-            }
-        }
-        return null;
-    }
-
-    private RegistroEstacionamento encontrarRegistroPorPlaca(String placa) {
-        for (RegistroEstacionamento registro : registros) {
-            if (registro.getPlaca().equals(placa)) {
-                return registro;
-            }
-        }
-        return null;
-    }
-
-    private Cliente encontrarClientePorPlaca(String placa) {
-        for (RegistroEstacionamento registro : registros) {
-            if (registro.getPlaca().equals(placa)) {
-                return registro.getCliente();
+    private Veiculo encontrarVeiculo(String placa) {
+        for (Cliente cliente : clientes) {
+            Veiculo veiculo = cliente.possuiVeiculo(placa);
+            if (veiculo != null) {
+                return veiculo;
             }
         }
         return null;

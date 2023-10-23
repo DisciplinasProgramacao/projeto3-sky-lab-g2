@@ -51,6 +51,8 @@ public class UsoDeVaga {
         servicosContratados.add(servico);
     }
 
+    //FALTA ASSOCIAR SERVIÇO À VAGA - TESTES - SERIALIZAÇÃO
+
     public double valorPago() {
         if (entrada != null && saida != null) {
             Duration duracao = Duration.between(entrada, saida);
