@@ -28,8 +28,12 @@ public class Vaga {
         }
     }
 
-    public boolean isDisponivel() {
-        return disponivel;
+    public boolean disponivel(boolean estado) {
+        if(estado) {
+            return disponivel = true; 
+        } else {
+            return disponivel = false;
+        }
     }
 
     public String getId() {
