@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+
 public class Veiculo {
 
     private String placa;
@@ -6,32 +8,44 @@ public class Veiculo {
 
     public Veiculo(String placa) {
         this.placa = placa;
-        this.usos = new UsoDeVaga[100];
+        this.usos = new UsoDeVaga[100]; // Usando um array de tamanho fixo
         this.numUsos = 0;
     }
 
-    public void estacionar(Vaga vaga) {
+    public String getPlaca() {
+        return placa;
+    }
+
+    public String vaga(Vaga vaga) {
+        return vaga.getId(); 
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public void estacionar(Vaga vaga, LocalDateTime entrada) {
         if (numUsos < usos.length) {
-            usos[numUsos] = new UsoDeVaga(vaga.getId());
-            vaga.estacionar();
+            UsoDeVaga uso = new UsoDeVaga(vaga);
+            uso.usarVaga(vaga, entrada);
+            usos[numUsos] = uso;
             numUsos++;
         } else {
-            System.out.println("Limite de usos excedido para este veículo.");
+            
         }
     }
 
-    public double sair() {
-        double tarifaPorHora = 2.0;
-        double valorASerPago = 0.0;
+    public double sair(Vaga vaga, LocalDateTime saida) {
 
         for (int i = 0; i < numUsos; i++) {
-            if (usos[i] != null) {
-                valorASerPago += usos[i].calcularValorASerPago(tarifaPorHora);
-                usos[i] = null; 
+            if (usos[i] != null && usos[i].getVaga().equals(vaga)) {
+                UsoDeVaga uso = usos[i];
+                uso.sair(saida);
+                return uso.valorPago();
             }
         }
 
-        return valorASerPago;
+        return 0.0;
     }
 
     public double totalArrecadado() {
@@ -39,7 +53,7 @@ public class Veiculo {
 
         for (int i = 0; i < numUsos; i++) {
             if (usos[i] != null) {
-                totalArrecadado += usos[i].getValorPago();
+                totalArrecadado += usos[i].valorPago();
             }
         }
 
@@ -51,9 +65,9 @@ public class Veiculo {
 
         for (int i = 0; i < numUsos; i++) {
             if (usos[i] != null) {
-                LocalDate dataUso = usos[i].getDataEntrada();
+                LocalDateTime dataUso = usos[i].getEntrada();
                 if (dataUso.getMonthValue() == mes) {
-                    arrecadadoNoMes += usos[i].getValorPago();
+                    arrecadadoNoMes += usos[i].valorPago();
                 }
             }
         }

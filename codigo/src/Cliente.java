@@ -1,19 +1,34 @@
+import java.util.List;
+
 public class Cliente {
 
     private String nome;
     private String id;
     private Veiculo[] veiculos;
     private int numVeiculos;
+    private List<UsoDeVaga> usosDeVaga;
 
     public Cliente(String nome, String id) {
         this.nome = nome;
         this.id = id;
-        this.veiculos = new Veiculo[10];  // Initialize with a maximum capacity of 10 vehicles
+        this.veiculos = new Veiculo[10];
         this.numVeiculos = 0;
     }
-
+ 
     public String getNome() {
         return nome;
+    }
+
+    public void adicionarUsoDeVaga(UsoDeVaga usoDeVaga) {
+        usosDeVaga.add(usoDeVaga);
+    }
+
+    public List<UsoDeVaga> getUsosDeVaga() {
+        return usosDeVaga;
+    }
+
+    public Veiculo[] getVeiculos() {
+        return veiculos;
     }
 
     public void setNome(String nome) {

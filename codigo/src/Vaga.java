@@ -10,25 +10,24 @@ public class Vaga {
 
     public boolean estacionar() {
         if (disponivel) {
-            disponivel = false;
-            return true; 
+            this.disponivel = false;
+            return true;
         } else {
-            System.out.println("Vaga " + id + " já está ocupada.");
-            return false; 
+            return false;
         }
     }
-
+    
     public boolean sair() {
         if (!disponivel) {
-            disponivel = true; 
-            return true; 
+            this.disponivel = true;
+            return true;
         } else {
-            System.out.println("Vaga " + id + " já está disponível.");
-            return false; 
+            return false;
         }
     }
+    
 
-    public boolean isDisponivel() {
+    public boolean disponivel() {
         return disponivel;
     }
 
