@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.time.LocalDateTime;
 
+/**
+ * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
+ */
 public class Estacionamento implements IDataToText {
 
     private String nome;
@@ -13,6 +16,13 @@ public class Estacionamento implements IDataToText {
     private int vagasPorFileira;
     private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
+    /**
+     * Construtor que cria uma instância de estacionamento com o nome e configurações especificados.
+     *
+     * @param nome            O nome do estacionamento.
+     * @param fileiras        A quantidade de fileiras de vagas no estacionamento.
+     * @param vagasPorFila    O número de vagas por fileira.
+     */
     public Estacionamento(String nome, int fileiras, int vagasPorFila) {
         this.nome = nome;
         this.quantFileiras = fileiras;
@@ -23,6 +33,12 @@ public class Estacionamento implements IDataToText {
         gerarVagas();
     }
 
+    /**
+     * Adiciona um veículo a um cliente existente no estacionamento.
+     *
+     * @param veiculo O veículo a ser adicionado.
+     * @param idCli   O identificador do cliente ao qual o veículo será associado.
+     */
     public void addVeiculo(Veiculo veiculo, String idCli) {
         Cliente cliente = encontrarCliente(idCli);
         if (cliente != null) {
@@ -32,6 +48,11 @@ public class Estacionamento implements IDataToText {
         }
     }
 
+    /**
+     * Adiciona um cliente ao estacionamento.
+     *
+     * @param cliente O cliente a ser adicionado.
+     */
     public void addCliente(Cliente cliente) {
         clientes.add(cliente);
     }
@@ -47,6 +68,12 @@ public class Estacionamento implements IDataToText {
         }
     }    
 
+    /**
+     * Estaciona um veículo em uma vaga disponível no estacionamento.
+     *
+     * @param placa   A placa do veículo a ser estacionado.
+     * @param entrada A data e hora de entrada do veículo na vaga.
+     */
     public void estacionar(String placa, LocalDateTime entrada) {
         Veiculo veiculo = encontrarVeiculo(placa);
         if (veiculo != null) {
@@ -65,6 +92,13 @@ public class Estacionamento implements IDataToText {
         }
     }
 
+    /**
+     * Registra a saída de um veículo do estacionamento e calcula o valor a ser pago.
+     *
+     * @param placa A placa do veículo que está saindo.
+     * @param saida A data e hora de saída do veículo.
+     * @return O valor a ser pago pelo uso da vaga.
+     */
     public double sair(String placa, LocalDateTime saida) {
         Veiculo veiculo = encontrarVeiculo(placa);
         if (veiculo != null) {
@@ -83,6 +117,11 @@ public class Estacionamento implements IDataToText {
         return 0.0;
     }
 
+    /**
+     * Calcula o valor total arrecadado pelo estacionamento.
+     *
+     * @return O valor total arrecadado.
+     */
     public double totalArrecadado() {
         double total = 0;
         for (Cliente cliente : clientes) {
@@ -91,6 +130,12 @@ public class Estacionamento implements IDataToText {
         return total;
     }
 
+    /**
+     * Calcula a arrecadação total do estacionamento em um mês específico.
+     *
+     * @param mes O mês para o qual a arrecadação será calculada.
+     * @return A arrecadação total no mês especificado.
+     */
     public double arrecadacaoNoMes(int mes) {
         double total = 0;
         for (Cliente cliente : clientes) {
@@ -99,6 +144,11 @@ public class Estacionamento implements IDataToText {
         return total;
     }
 
+    /**
+     * Calcula o valor médio arrecadado por uso de vaga no estacionamento.
+     *
+     * @return O valor médio por uso de vaga.
+     */
     public double valorMedioPorUso() {
         double media = 0;
         double soma = 0;
@@ -107,10 +157,16 @@ public class Estacionamento implements IDataToText {
             soma += cliente.arrecadadoTotal();
             numClientes++;
         }
-        media = soma/numClientes;
+        media = soma / numClientes;
         return media;
     }
 
+    /**
+     * Obtém uma lista dos cinco melhores clientes em termos de arrecadação em um mês específico.
+     *
+     * @param mes O mês para o qual o ranking dos clientes será calculado.
+     * @return Uma string que lista os cinco melhores clientes no mês especificado.
+     */
     public String top5Clientes(int mes) {
         List<Cliente> topClientes = new ArrayList<>(clientes);
         topClientes.sort((c1, c2) -> Double.compare(c2.arrecadadoNoMes(mes), c1.arrecadadoNoMes(mes)));
@@ -147,6 +203,13 @@ public class Estacionamento implements IDataToText {
         return null;
     }
 
+    /**
+     * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
+     *
+     * @param placa   A placa do veículo.
+     * @param servico O serviço a ser contratado.
+     * @return `true` se o serviço foi contratado com sucesso, `false` caso contrário.
+     */
     public boolean contratarServico(String placa, Servico servico) {
         Veiculo veiculo = encontrarVeiculo(placa);
         if (veiculo != null) {
@@ -165,12 +228,12 @@ public class Estacionamento implements IDataToText {
         data.append("Nome do Estacionamento: ").append(nome).append("\n");
         data.append("Quantidade de Fileiras: ").append(quantFileiras).append("\n");
         data.append("Vagas por Fileira: ").append(vagasPorFileira).append("\n\n");
-    
+
         // Informações sobre os clientes
         data.append("Clientes:\n");
         for (Cliente cliente : clientes) {
             data.append("Nome: ").append(cliente.getNome()).append(", ID: ").append(cliente.getId()).append("\n");
-    
+
             // Informações sobre os veículos do cliente
             data.append("Veículos do Cliente:\n");
             Veiculo[] veiculos = cliente.getVeiculos();
@@ -182,29 +245,49 @@ public class Estacionamento implements IDataToText {
 
             data.append("\n");
         }
-    
+
         data.append("Vagas:\n");
         for (Vaga vaga : vagas) {
             data.append("ID da Vaga: ").append(vaga.getId()).append(", Disponível: ").append(vaga.disponivel() ? "Desocupada" : "Ocupada").append("\n");
         }
-    
+
         return data.toString();
     }
 
+    /**
+     * Obtém o nome do estacionamento.
+     *
+     * @return O nome do estacionamento.
+     */
     public String getNome() {
         return nome;
     }
 
+    /**
+     * Obtém a quantidade de fileiras de vagas no estacionamento.
+     *
+     * @return A quantidade de fileiras.
+     */
     public int getQuantFileiras() {
         return quantFileiras;
     }
 
+    /**
+     * Obtém o número de vagas por fileira no estacionamento.
+     *
+     * @return O número de vagas por fileira.
+     */
     public int getVagasPorFileira() {
         return vagasPorFileira;
     }
 
+    /**
+     * Obtém a lista de clientes do estacionamento.
+     *
+     * @return A lista de clientes.
+     */
     public List<Cliente> getClientes() {
         return clientes;
     }
-    
+
 }
