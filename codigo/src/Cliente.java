@@ -1,9 +1,12 @@
+import java.util.List;
+
 public class Cliente {
 
     private String nome;
     private String id;
     private Veiculo[] veiculos;
-    private int numVeiculos; //add opção anonimo
+    private int numVeiculos;
+    private List<UsoDeVaga> usosDeVaga;
 
     public Cliente(String nome, String id) {
         this.nome = nome;
@@ -14,6 +17,14 @@ public class Cliente {
  
     public String getNome() {
         return nome;
+    }
+
+    public void adicionarUsoDeVaga(UsoDeVaga usoDeVaga) {
+        usosDeVaga.add(usoDeVaga);
+    }
+
+    public List<UsoDeVaga> getUsosDeVaga() {
+        return usosDeVaga;
     }
 
     public Veiculo[] getVeiculos() {

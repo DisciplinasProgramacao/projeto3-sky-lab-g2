@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.time.LocalDateTime;
 
 public class Estacionamento implements IDataToText {
@@ -9,6 +11,7 @@ public class Estacionamento implements IDataToText {
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
+    private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
     public Estacionamento(String nome, int fileiras, int vagasPorFila) {
         this.nome = nome;
@@ -16,6 +19,7 @@ public class Estacionamento implements IDataToText {
         this.vagasPorFileira = vagasPorFila;
         this.clientes = new ArrayList<>();
         this.vagas = new ArrayList<>();
+        this.veiculoUsoMap = new HashMap<>();
         gerarVagas();
     }
 
@@ -41,7 +45,7 @@ public class Estacionamento implements IDataToText {
                 numeroVaga++;
             }
         }
-    }
+    }    
 
     public void estacionar(String placa, LocalDateTime entrada) {
         Veiculo veiculo = encontrarVeiculo(placa);
@@ -49,8 +53,9 @@ public class Estacionamento implements IDataToText {
             for (Vaga vaga : vagas) {
                 if (vaga.estacionar()) {
                     veiculo.estacionar(vaga, entrada);
+                    veiculoUsoMap.put(veiculo, new UsoDeVaga(vaga));
                     System.out.println("Veículo " + placa + " estacionado na vaga " + vaga.getId());
-                    vaga.disponivel(false);
+                    vaga.disponivel();
                     return;
                 }
             }
@@ -63,10 +68,12 @@ public class Estacionamento implements IDataToText {
     public double sair(String placa, LocalDateTime saida) {
         Veiculo veiculo = encontrarVeiculo(placa);
         if (veiculo != null) {
+            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
             for (Vaga vaga : vagas) {
                 if (veiculo.sair(vaga, saida) > 0) {
                     System.out.println("Veículo " + placa + " saiu da vaga " + vaga.getId());
-                    return veiculo.sair(vaga, LocalDateTime.now());
+                    veiculoUsoMap.remove(veiculo); // Remove o uso de vaga após sair.
+                    return uso.valorPago();
                 }
             }
             System.out.println("Veículo não encontrado nas vagas.");
@@ -140,6 +147,18 @@ public class Estacionamento implements IDataToText {
         return null;
     }
 
+    public boolean contratarServico(String placa, Servico servico) {
+        Veiculo veiculo = encontrarVeiculo(placa);
+        if (veiculo != null) {
+            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
+            if (uso != null) {
+                uso.contratarServico(servico);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String dataToText() {
         StringBuilder data = new StringBuilder();
@@ -157,31 +176,35 @@ public class Estacionamento implements IDataToText {
             Veiculo[] veiculos = cliente.getVeiculos();
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
-                    data.append("Placa: ").append(veiculo.getPlaca()).append("\n");
+                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n");
                 }
             }
+
             data.append("\n");
         }
     
-        // Informações sobre as vagas
         data.append("Vagas:\n");
         for (Vaga vaga : vagas) {
-            data.append("ID da Vaga: ").append(vaga.getId()).append(", Disponível: ").append(vaga.disponivel(true)).append("\n");
+            data.append("ID da Vaga: ").append(vaga.getId()).append(", Disponível: ").append(vaga.disponivel() ? "Desocupada" : "Ocupada").append("\n");
         }
     
         return data.toString();
     }
 
     public String getNome() {
-        return null;
+        return nome;
     }
 
-    public String getQuantFileiras() {
-        return null;
+    public int getQuantFileiras() {
+        return quantFileiras;
     }
 
-    public String getVagasPorFileira() {
-        return null;
+    public int getVagasPorFileira() {
+        return vagasPorFileira;
+    }
+
+    public List<Cliente> getClientes() {
+        return clientes;
     }
     
 }

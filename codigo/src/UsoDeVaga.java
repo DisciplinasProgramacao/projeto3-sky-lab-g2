@@ -19,9 +19,9 @@ public class UsoDeVaga {
     }
 
     public Vaga getVaga() {
-        return vaga;
+        return this.vaga;
     }
-
+    
     public UsoDeVaga(Vaga vaga) {
         this.vaga = vaga;
         this.valorPago = 0.0;
@@ -31,9 +31,9 @@ public class UsoDeVaga {
     public void usarVaga(Vaga vaga, LocalDateTime entrada) {
         if (this.entrada == null) {
             this.entrada = entrada;
-            vaga.disponivel(false);
+            vaga.disponivel();
         } else {
-            System.out.println("A vaga já está em uso.");
+
         }
     }
 
@@ -41,17 +41,15 @@ public class UsoDeVaga {
         if (entrada != null) {
             this.saida = saida;
             valorPago();
-            vaga.disponivel(true);
+            vaga.disponivel();
         } else {
-            System.out.println("Você não usou a vaga.");
+            //garantir fim da condição
         }
     }
 
     public void contratarServico(Servico servico) {
         servicosContratados.add(servico);
     }
-
-    //FALTA ASSOCIAR SERVIÇO À VAGA - TESTES - SERIALIZAÇÃO
 
     public double valorPago() {
         if (entrada != null && saida != null) {
@@ -78,8 +76,8 @@ public class UsoDeVaga {
 
             return valorPago;
         } else {
-            System.out.println("Entrada ou saída nula. Não é possível calcular o valor.");
-            return 0.0;
+            
+            return 4.0; //TAXA MÍNIMA
         }
     }
 }

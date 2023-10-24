@@ -31,7 +31,7 @@ public class Veiculo {
             usos[numUsos] = uso;
             numUsos++;
         } else {
-            System.out.println("Limite de usos excedido para este veículo.");
+            
         }
     }
 
@@ -45,7 +45,6 @@ public class Veiculo {
             }
         }
 
-        System.out.println("Você não usou a vaga.");
         return 0.0;
     }
 
