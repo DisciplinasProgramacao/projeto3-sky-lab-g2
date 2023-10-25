@@ -1,3 +1,4 @@
+//teste realizado adicionando a pasta test aoa classpath, por isso não está importando src;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
