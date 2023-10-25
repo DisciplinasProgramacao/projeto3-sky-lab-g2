@@ -1,9 +1,4 @@
-
 import static org.junit.Assert.*;
-
-
-
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +32,7 @@ public class ClienteTest {
         cliente.addVeiculo(veiculo2);
         assertEquals(veiculo1, cliente.possuiVeiculo("ABC123"));
         assertEquals(veiculo2, cliente.possuiVeiculo("XYZ789"));
-        assertNull(cliente.possuiVeiculo("123XYZ")); // Non-existent plate
+        assertNull(cliente.possuiVeiculo("123XYZ"));
     }
 
     @Test

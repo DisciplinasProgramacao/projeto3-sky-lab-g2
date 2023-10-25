@@ -33,8 +33,6 @@ public class TesteUsoDeVaga {
         assertNotNull(usoDeVaga.valorPago());
     }
 
-    //fazer teste de serviços contratados
-
     @Test
     public void testValorPago() {
         LocalDateTime entrada = LocalDateTime.of(2023, 10, 20, 12, 0);

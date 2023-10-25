@@ -11,7 +11,7 @@ public class VeiculoTest {
     @Before
     public void setUp() {
         veiculo = new Veiculo("ABC123");
-        vaga = new Vaga("V1"); // Suponha que a classe Vaga tenha um construtor que recebe um número de vaga.
+        vaga = new Vaga("V1");
     }
 
     @Test
@@ -25,9 +25,9 @@ public class VeiculoTest {
     public void testSair() {
         LocalDateTime entrada = LocalDateTime.now();
         veiculo.estacionar(vaga, entrada);
-        LocalDateTime saida = entrada.plusHours(1); // Suponha que o veículo ficou uma hora na vaga.
+        LocalDateTime saida = entrada.plusHours(1);
         double valorPago = veiculo.sair(vaga, saida);
-        assertEquals(4.0, valorPago, 0.01); // 1 hora de uso com um valor de 1.0 por hora.
+        assertEquals(4.0, valorPago, 0.01);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class VeiculoTest {
         LocalDateTime saida2 = entrada2.plusHours(2);
         veiculo.sair(vaga, saida2);
 
-        assertEquals(14.0, veiculo.totalArrecadado(), 0.01); // 1.0 + 2.0 = 3.0
+        assertEquals(14.0, veiculo.totalArrecadado(), 0.01);
     }
 
     @Test
