@@ -4,6 +4,7 @@ public class Veiculo {
     private UsoDeVaga[] usos;
     private int numUsos;
 
+
     public Veiculo(String placa) {
         this.placa = placa;
         this.usos = new UsoDeVaga[100];
