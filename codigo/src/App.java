@@ -13,7 +13,6 @@ public class App {
 
         Estacionamento estacionamento = new Estacionamento("Estacionamento 4", 4, 4);
 
-        // Leitor de entrada do teclado
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
