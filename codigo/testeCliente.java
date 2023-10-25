@@ -1,67 +1,84 @@
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+
+
+import org.junit.Before;
+import org.junit.Test;
+
+
+import java.time.LocalDateTime;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ClienteTest {
+    
+    private Cliente cliente;
+    private Veiculo veiculo1;
+    private Veiculo veiculo2;
+
+    @Before
+    public void setUp() {
+        cliente = new Cliente("John Doe", "12345");
+        veiculo1 = new Veiculo("ABC123");
+        veiculo2 = new Veiculo("XYZ789");
+    }
 
     @Test
-    public void testAdicionarVeiculo() {
-        Cliente cliente = new Cliente("João", "12345");
-        Veiculo veiculo = new Veiculo("ABC123", "Carro", 2020);
-
-        cliente.addVeiculo(veiculo);
-        assertEquals(1, cliente.numVeiculos);
+    public void testAddVeiculo() {
+        cliente.addVeiculo(veiculo1);
+        assertEquals(veiculo1, cliente.possuiVeiculo("ABC123"));
     }
 
     @Test
     public void testPossuiVeiculo() {
-        Cliente cliente = new Cliente("Maria", "54321");
-        Veiculo veiculo = new Veiculo("XYZ987", "Moto", 2019);
+        cliente.addVeiculo(veiculo1);
+        cliente.addVeiculo(veiculo2);
+        assertEquals(veiculo1, cliente.possuiVeiculo("ABC123"));
+        assertEquals(veiculo2, cliente.possuiVeiculo("XYZ789"));
+        assertNull(cliente.possuiVeiculo("123XYZ")); // Non-existent plate
+    }
 
-        cliente.addVeiculo(veiculo);
-
-        assertTrue(cliente.possuiVeiculo("XYZ987") != null);
-        assertNull(cliente.possuiVeiculo("PLACA_NAO_EXISTENTE"));
+    @Test
+    public void testTotalDeUsos() {
+        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
+        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
+        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
+        veiculo2.sair(null, LocalDateTime.now().plusHours(2));
+        cliente.addVeiculo(veiculo1);
+        cliente.addVeiculo(veiculo2);
+        assertEquals(2, cliente.totalDeUsos());
     }
 
     @Test
     public void testArrecadadoPorVeiculo() {
-        Cliente cliente = new Cliente("Pedro", "67890");
-        Veiculo veiculo = new Veiculo("DEF456", "Caminhão", 2018);
-
-        cliente.addVeiculo(veiculo);
-
-        veiculo.registrarUso(10);  
-
-        assertEquals(10.0, cliente.arrecadadoPorVeiculo("DEF456"));
-        assertEquals(0.0, cliente.arrecadadoPorVeiculo("PLACA_NAO_EXISTENTE"));
+        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
+        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
+        cliente.addVeiculo(veiculo1);
+        assertEquals(4.0, cliente.arrecadadoPorVeiculo("ABC123"), 0.001);
+        assertEquals(0.0, cliente.arrecadadoPorVeiculo("XYZ789"), 0.001);
     }
 
     @Test
     public void testArrecadadoTotal() {
-        Cliente cliente = new Cliente("Ana", "13579");
-        Veiculo veiculo1 = new Veiculo("JKL111", "Carro", 2022);
-        Veiculo veiculo2 = new Veiculo("MNO222", "Moto", 2021);
-
+        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
+        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
+        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
+        veiculo2.sair(null,LocalDateTime.now().plusHours(2));
         cliente.addVeiculo(veiculo1);
         cliente.addVeiculo(veiculo2);
-
-        veiculo1.registrarUso(15);  
-        veiculo2.registrarUso(20);  
-
-        assertEquals(35.0, cliente.arrecadadoTotal());
+        assertEquals(8.0, cliente.arrecadadoTotal(), 0.001);
     }
 
     @Test
     public void testArrecadadoNoMes() {
-        Cliente cliente = new Cliente("Luísa", "24680");
-        Veiculo veiculo = new Veiculo("GHI333", "Caminhão", 2020);
-
-        cliente.addVeiculo(veiculo);
-
-        veiculo.registrarUso(10);  
-
-        assertEquals(10.0, cliente.arrecadadoNoMes(1));
-        assertEquals(0.0, cliente.arrecadadoNoMes(2));
+        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
+        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
+        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
+        veiculo2.sair(null,LocalDateTime.now().plusHours(2));
+        cliente.addVeiculo(veiculo1);
+        cliente.addVeiculo(veiculo2);
+        assertEquals(8.0, cliente.arrecadadoNoMes(10), 0.001);
+        assertEquals(0.0, cliente.arrecadadoNoMes(11), 0.001);
     }
 }
