@@ -27,7 +27,7 @@ public class EstacionamentoTest {
         double totalArrecadado = estacionamento.totalArrecadado();
         System.out.println("Total arrecadado: " + totalArrecadado);
 
-        double arrecadacaoNoMes = estacionamento.arrecadacaoNoMes(10); // Substitua o mês pelo mês desejado
+        double arrecadacaoNoMes = estacionamento.arrecadacaoNoMes(10);
         System.out.println("Arrecadação no mês 10: " + arrecadacaoNoMes);
 
         double valorMedio = estacionamento.valorMedioPorUso();
