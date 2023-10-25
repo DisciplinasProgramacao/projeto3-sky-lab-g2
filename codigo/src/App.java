@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 
 public class App {
-
+//professor, para usar o App, adicione as outras pastas ao classpath do JavaProject
     public static void main(String[] args) {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
