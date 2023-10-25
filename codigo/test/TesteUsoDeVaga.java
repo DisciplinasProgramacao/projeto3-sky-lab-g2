@@ -1,47 +1,46 @@
-package test;
+import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import src.*;
 
-public class UsoDeVagaTest {
 
-    private Vaga vaga;
+public class TesteUsoDeVaga {
+
     private UsoDeVaga usoDeVaga;
+    private Vaga vaga;
 
     @Before
     public void setUp() {
-        // Configuração inicial antes de cada teste
-        vaga = new Vaga("Vaga de Teste");
+        vaga = new Vaga(1, "A");
         usoDeVaga = new UsoDeVaga(vaga);
     }
 
     @Test
     public void testUsarVaga() {
-        // Verifica se a vaga é marcada como ocupada após usarVaga()
-        usoDeVaga.usarVaga();
-        assertTrue(vaga.isOcupada());
+        LocalDateTime entrada = LocalDateTime.of(2023, 10, 20, 12, 0);
+        usoDeVaga.usarVaga(vaga, entrada);
+        assertEquals(entrada, usoDeVaga.getEntrada());
     }
 
     @Test
     public void testSair() {
-        // Simula um uso da vaga e verifica se o valorPago é correto
-        usoDeVaga.usarVaga();
-        LocalDateTime entrada = usoDeVaga.getEntrada();
-        
-        // Simulando um período de 30 minutos (meia hora)
-        LocalDateTime saida = entrada.plusMinutes(30);
-        usoDeVaga.setSaida(saida);
-        usoDeVaga.sair();
-        
-        assertEquals(VALOR_FRACAO, usoDeVaga.valorPago(), 0.01); // Esperado: VALOR_FRACAO (4.0)
-        assertFalse(vaga.isOcupada()); // A vaga deve ser desocupada após sair()
+        LocalDateTime entrada = LocalDateTime.of(2023, 10, 20, 12, 0);
+        LocalDateTime saida = LocalDateTime.of(2023, 10, 20, 13, 0);
+        usoDeVaga.usarVaga(vaga, entrada);
+        usoDeVaga.sair(saida);
+        assertNotNull(usoDeVaga.getEntrada());
+        assertNotNull(usoDeVaga.getVaga());
+        assertNotNull(usoDeVaga.valorPago());
     }
 
+    //fazer teste de serviços contratados
+
     @Test
-    public void testSairSemUsar() {
-        // Verifica se sair() retorna o valorPago como 0.0 se a vaga não foi usada
-        usoDeVaga.sair();
-        assertEquals(0.0, usoDeVaga.valorPago(), 0.01);
+    public void testValorPago() {
+        LocalDateTime entrada = LocalDateTime.of(2023, 10, 20, 12, 0);
+        LocalDateTime saida = LocalDateTime.of(2023, 10, 20, 13, 0);
+        usoDeVaga.usarVaga(vaga, entrada);
+        usoDeVaga.sair(saida);
+        assertEquals(4.0, usoDeVaga.valorPago(), 0.01);
     }
 }

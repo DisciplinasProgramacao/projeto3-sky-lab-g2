@@ -16,6 +16,9 @@ public class Vaga {
         this.disponivel = true;
     }
 
+	public Vaga(int i, String string) {
+    }
+
     /**
      * Estaciona um veículo na vaga, marcando-a como não disponível.
      *

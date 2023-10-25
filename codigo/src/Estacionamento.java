@@ -66,7 +66,7 @@ public class Estacionamento implements IDataToText {
                 numeroVaga++;
             }
         }
-    }    
+    }
 
     /**
      * Estaciona um veículo em uma vaga disponível no estacionamento.
