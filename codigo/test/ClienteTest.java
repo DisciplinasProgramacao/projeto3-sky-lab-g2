@@ -51,7 +51,7 @@ public class ClienteTest {
         veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
         veiculo1.sair(null,LocalDateTime.now().plusHours(1));
         cliente.addVeiculo(veiculo1);
-        assertEquals(4.0, cliente.arrecadadoPorVeiculo("ABC123"), 0.001);
+        assertEquals(4.0, cliente.arrecadadoPorVeiculo("ABC321"), 0.001);
         assertEquals(0.0, cliente.arrecadadoPorVeiculo("XYZ789"), 0.001);
     }
 
