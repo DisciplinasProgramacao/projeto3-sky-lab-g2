@@ -12,7 +12,7 @@ dos imóveis necessários estão em andamento.
 * João Vitor Pedersoli Rajão
 * Paula de Freitas Camargos
 * Wanessa Dias Costa
-* Chat GPT | GPTO
+
 
 
 ## Professores responsáveis
