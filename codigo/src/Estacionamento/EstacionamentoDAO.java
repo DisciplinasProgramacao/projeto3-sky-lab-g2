@@ -1,14 +1,11 @@
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class EstacionamentoDAO implements DAO<Estacionamento> {
-
     private final String nomeArq;
     private Scanner arqLeitura;
     private FileWriter arqEscrita;
-
     private static final int TAM_MAX = 10000;
 
     public EstacionamentoDAO(String nomeArq) {
@@ -17,21 +14,25 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         this.arqLeitura = null;
     }
 
+    // Abre o arquivo para leitura
     public void abrirLeitura() throws IOException {
         fecharEscrita();
         arqLeitura = new Scanner(new File(nomeArq), Charset.forName("UTF-8"));
     }
 
+    // Abre o arquivo para escrita
     public void abrirEscrita() throws IOException {
         fecharLeitura();
         arqEscrita = new FileWriter(nomeArq, Charset.forName("UTF-8"), true);
     }
 
+    // Fecha o arquivo, tanto para leitura quanto para escrita
     public void fechar() {
         fecharLeitura();
         fecharEscrita();
     }
 
+    // Fecha o arquivo de leitura
     private void fecharLeitura() {
         if (arqLeitura != null) {
             arqLeitura.close();
@@ -39,6 +40,7 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         }
     }
 
+    // Fecha o arquivo de escrita
     private void fecharEscrita() {
         if (arqEscrita != null) {
             try {
@@ -50,6 +52,7 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         }
     }
 
+    // Obtém o próximo objeto Estacionamento do arquivo
     public Estacionamento getNext() {
         if (arqLeitura != null && arqLeitura.hasNext()) {
             String nome = arqLeitura.nextLine();
@@ -60,12 +63,14 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         return null;
     }
 
+    // Adiciona um objeto Estacionamento ao arquivo
     public void add(Estacionamento estacionamento) throws IOException {
         if (arqEscrita != null) {
             arqEscrita.append(estacionamento.dataToText() + "\n");
         }
     }
 
+    // Obtém todos os objetos Estacionamento do arquivo
     public Estacionamento[] getAll() {
         int cont = 0;
         Estacionamento[] dados = new Estacionamento[TAM_MAX];
@@ -84,6 +89,7 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         return dados;
     }
 
+    // Adiciona um array de objetos Estacionamento ao arquivo
     public void addAll(Estacionamento[] dados) {
         try {
             abrirEscrita();
