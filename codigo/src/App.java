@@ -1,9 +1,11 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.Random;
 
 public class App {
-
+//professor, para usar o App, adicione as outras pastas ao classpath do JavaProject
     public static void main(String[] args) {
         long seed = System.currentTimeMillis();
         Random random = new Random(seed);
@@ -11,11 +13,28 @@ public class App {
 
         Estacionamento estacionamento = new Estacionamento("Estacionamento 4", 4, 4);
 
-        for (int j = 0; j < 16; j++) {
-            Cliente cliente = new Cliente("Cliente " + (j + 1), "ID" + (j + 1));
-            Veiculo veiculo = new Veiculo("TES-" + (7700 + j));
-            cliente.addVeiculo(veiculo);
-            estacionamento.addCliente(cliente);
+        // Leitor de entrada do teclado
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+        try {
+            for (int j = 0; j < 16; j++) {
+                System.out.println("Digite o nome do cliente " + (j + 1) + ": ");
+                String nomeCliente = reader.readLine();
+
+                System.out.println("Digite o ID do cliente " + (j + 1) + ": ");
+                String idCliente = reader.readLine();
+
+                Cliente cliente = new Cliente(nomeCliente, idCliente);
+                Veiculo veiculo = new Veiculo("TES-" + (7700 + j));
+                cliente.addVeiculo(veiculo);
+                try {
+                    estacionamento.addCliente(cliente);
+                } catch (ClienteJaExistenteException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         for (int k = 0; k < 16; k++) {
@@ -24,7 +43,11 @@ public class App {
             Veiculo veiculo = cliente.getVeiculos()[0];
 
             LocalDateTime entrada = now.minusDays(random.nextInt(30)).plusHours(random.nextInt(24));
-            estacionamento.estacionar(veiculo.getPlaca(), entrada);
+            try {
+                estacionamento.estacionar(veiculo.getPlaca(), entrada);
+            } catch (VagaOcupadaException e) {
+                e.printStackTrace();
+            }
 
             if (random.nextDouble() > 0.3) {
                 int servicoIndex = random.nextInt(Servico.values().length);
@@ -33,36 +56,39 @@ public class App {
             }
 
             LocalDateTime saida = entrada.plusHours(random.nextInt(12) + 3);
-            estacionamento.sair(veiculo.getPlaca(), saida);
-        }
-
-            EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO("estacionamento.txt");
-
             try {
-                estacionamentoDAO.abrirEscrita();
-                estacionamentoDAO.add(estacionamento);
-                estacionamentoDAO.fechar();
-            } catch (IOException e) {
+                estacionamento.sair(veiculo.getPlaca(), saida);
+            } catch (UsoDeVagaFinalizadoException e) {
                 e.printStackTrace();
             }
-
-            Estacionamento[] estacionamentos;
-
-            try {
-                estacionamentoDAO.abrirLeitura();
-                estacionamentos = estacionamentoDAO.getAll();
-                estacionamentoDAO.fechar();
-            } catch (IOException e) {
-                e.printStackTrace();
-                estacionamentos = new Estacionamento[0];
-            }
-
-            for (Estacionamento e : estacionamentos) {
-                System.out.println("Nome: " + e.getNome());
-                System.out.println("Quantidade de Fileiras: " + e.getQuantFileiras());
-                System.out.println("Vagas por Fileira: " + e.getVagasPorFileira());
-                System.out.println();
-            }
         }
-    
+
+        EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO("estacionamento.txt");
+
+        try {
+            estacionamentoDAO.abrirEscrita();
+            estacionamentoDAO.add(estacionamento);
+            estacionamentoDAO.fechar();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Estacionamento[] estacionamentos;
+
+        try {
+            estacionamentoDAO.abrirLeitura();
+            estacionamentos = estacionamentoDAO.getAll();
+            estacionamentoDAO.fechar();
+        } catch (IOException e) {
+            e.printStackTrace();
+            estacionamentos = new Estacionamento[0];
+        }
+
+        for (Estacionamento e : estacionamentos) {
+            System.out.println("Nome: " + e.getNome());
+            System.out.println("Quantidade de Fileiras: " + e.getQuantFileiras());
+            System.out.println("Vagas por Fileira: " + e.getVagasPorFileira());
+            System.out.println();
+        }
+    }
 }
