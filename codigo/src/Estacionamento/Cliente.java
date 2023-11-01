@@ -2,6 +2,7 @@ import java.util.List;
 
 /**
  * Classe que representa um cliente do estacionamento.
+ @author Davi
  */
 public class Cliente {
 
