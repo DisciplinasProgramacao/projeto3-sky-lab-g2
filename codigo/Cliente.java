@@ -1,36 +1,70 @@
-
+/**
+ * Classe que representa um cliente do serviço de estacionamento.
+ *
+ * @author José Carlos Macoratti
+ * @version 1.0
+ */
 public class Cliente {
 
-	private String nome;
-	private String id;
-	private Veiculo[] veiculos;
+    /** Nome do cliente */
+    private String nome;
 
-	public Cliente(String nome, String id) {
-		
-	}
+    /** ID do cliente */
+    private String id;
 
-	public void addVeiculo(Veiculo veiculo) {
-		
-	}
+    /** Array de veículos pertencentes ao cliente */
+    private Veiculo[] veiculos;
 
-	public Veiculo possuiVeiculo(String placa) {
-		
-	}
+    /**
+     * Construtor da classe Cliente
+     *
+     * @param nome Nome do cliente
+     * @param id ID do cliente
+     */
+    public Cliente(String nome, String id) {
+        
+    }
 
-	public int totalDeUsos() {
-		
-	}
+    /**
+     * Adiciona um veículo ao cliente
+     *
+     * @param veiculo Veículo a ser adicionado
+     */
+    public void addVeiculo(Veiculo veiculo) {
+        
+    }
 
-	public double arrecadadoPorVeiculo(String placa) {
-		
-	}
+    /**
+     * Verifica se o cliente possui um veículo com a placa informada
+     *
+     * @param placa Placa do veículo
+     * @return Veículo, se encontrado. Caso contrário, nulo.
+     */
+    public Veiculo possuiVeiculo(String placa) {
+        
+    }
 
-	public double arrecadadoTotal() {
-		
-	}
+    /**
+     * Retorna a quantidade total de vezes que os veículos do cliente foram usados
+     *
+     * @return Total de vezes que os veículos do cliente foram usados
+     */
+    public int totalDeUsos() {
+        
+    }
 
-	public double arrecadadoNoMes(int mes) {
-		
-	}
+    /**
+     * Retorna o valor arrecadado com a utilização do veículo de placa informada
+     *
+     * @param placa Placa do veículo
+     * @return Valor arrecadado
+     */
+    public double arrecadadoPorVeiculo(String placa) {
+        
+    }
 
-}
+    /**
+     * Retorna o valor total arrecadado com a utilização dos veículos do cliente
+     *
+     * @return Valor total arrecadado
+     */
