@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * Classe que representa um cliente do estacionamento.
+ * Classe que representa um cliente do estacionamento..
  */
 public class Cliente {
 
