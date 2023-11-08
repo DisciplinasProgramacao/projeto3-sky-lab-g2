@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 /**
  * Classe que representa um veículo que pode ser estacionado em uma vaga.
  */
-public class Veiculo {
+public class Veiculo implements IEstacionamento {
 
     private String placa;
     private UsoDeVaga[] usos;
@@ -44,6 +44,7 @@ public class Veiculo {
      * @param vaga    A vaga onde o veículo será estacionado.
      * @param entrada A data de entrada do veículo na vaga.
      */
+    @Override
     public void estacionar(Vaga vaga, LocalDateTime entrada) {
         if (numUsos < usos.length) {
             UsoDeVaga uso = new UsoDeVaga(vaga);
@@ -60,6 +61,7 @@ public class Veiculo {
      * @param saida A data de saída do veículo da vaga.
      * @return O valor a ser pago pelo uso da vaga.
      */
+    @Override
     public double sair(Vaga vaga, LocalDateTime saida) {
         for (int i = 0; i < numUsos; i++) {
             if (usos[i] != null && usos[i].getVaga().equals(vaga)) {
