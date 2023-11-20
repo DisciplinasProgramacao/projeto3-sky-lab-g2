@@ -112,4 +112,5 @@ public class UsoDeVaga {
             return VALOR_FRACAO; // Taxa mínima
         }
     }
+
 }

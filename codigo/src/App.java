@@ -1,5 +1,6 @@
 import java.io.*;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class App {
@@ -139,6 +140,65 @@ public class App {
         }
     }
 
+    public static void retirarVeiculo(Estacionamento estacionamento) throws VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException {
+        if (estacionamento == null) {
+            System.out.println("Adicione um veículo primeiro.");
+        } else {
+            String placaVeiculo = leitura("Digite a placa do veículo que você deseja retirar da vaga");
+            Veiculo veiculo = estacionamento.encontrarVeiculo(placaVeiculo);
+    
+            if (veiculo == null) {
+                throw new VeiculoNaoExisteException();
+            } else {
+                // Agora você precisa obter a vaga associada ao veículo
+                Vaga vagaDoVeiculo = obterVagaDoVeiculo(estacionamento, veiculo);
+    
+                if (vagaDoVeiculo != null) {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    LocalDateTime horarioEntrada = LocalDateTime.parse(leitura("Digite o horário de entrada deste veículo"), formatter);
+
+                    estacionamento.sair(veiculo, vagaDoVeiculo, horarioEntrada);
+                } else {
+                    System.out.println("Erro: Veículo encontrado, mas não foi possível determinar a vaga associada.");
+                }
+            }
+        }
+    }
+    
+    // Um método auxiliar para obter a vaga associada a um veículo no estacionamento
+    private static Vaga obterVagaDoVeiculo(Estacionamento estacionamento, Veiculo veiculo) {
+        for (Cliente cliente : estacionamento.getClientes()) {
+            Veiculo veiculoCliente = cliente.possuiVeiculo(veiculo.getPlaca());
+            if (veiculoCliente != null) {
+                UsoDeVaga ultimoUso = veiculoCliente.getUltimoUso();
+                if (ultimoUso != null) {
+                    return ultimoUso.getVaga();
+                }
+            }
+        }
+        return null;
+    }
+    
+    public static void estacionarVeiculo(Estacionamento estacionamento)
+            throws VeiculoNaoExisteException, VagaOcupadaException {
+        if (estacionamento == null) {
+            System.out.println("Adicione um veículo primeiro.");
+        } else {
+            Veiculo veiculo = new Veiculo(leitura("Digite a placa do veículo que você deseja estacionar"));
+            Vaga vaga = new Vaga(leitura("Agora, a vaga em que deseja estacioná-lo"));
+
+            if (estacionamento.encontrarVeiculo(veiculo.getPlaca()) == null) {
+                throw new VeiculoNaoExisteException();
+            } else {
+                try {
+                    estacionamento.estacionar(veiculo, vaga, LocalDateTime.parse(leitura("Digite o horário de entrada deste veículo")));
+                } catch (VagaOcupadaException e) {
+                    System.out.println("Vaga ocupada. Escolha outra vaga.");
+                }
+            }
+        }
+    }
+
     /**
      * Submenu para inclusão de comidas: ações de incluir pizza ou sanduíche, mostrar relatório do veiculo, fechar veiculo e sair (cancelar).
      * @param veiculo veiculo já criado, vazio, para inclusão de comidas.
@@ -147,8 +207,11 @@ public class App {
      * @throws ClienteJaExistenteException
      * @throws VeiculoJaExistenteException
      * @throws ClienteNaoExisteException
+     * @throws UsoDeVagaFinalizadoException
+     * @throws VagaOcupadaException
+     * @throws VeiculoNaoExisteException
      */
-    public static Veiculo menuEstacionamento(Estacionamento estacionamento) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException{
+    public static Estacionamento menuEstacionamento(Estacionamento estacionamento) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException{
         if (estacionamento==null)
             return null;
 
@@ -161,20 +224,25 @@ public class App {
             opcao = menu(nomeArq);
             switch(opcao){
                 case 1 -> {                                                           
-                    System.out.println("\nAdicionar clientes ao estacionamento:");
+                    System.out.println("\nAdicionar clientes ao estacionamento");
                     acrescentarClientes(estacionamento);
                 } 
                 case 2-> {
-                    System.out.println("\nConsultar um cliente:");
+                    System.out.println("\nConsultar um cliente");
                     acrescentarVeiculo(estacionamento);
                 } 
 
                 case 3-> {
-                    System.out.println("\nAcrescentando um veículo a um cliente:");
+                    System.out.println("\nAcrescentando um veículo a um cliente");
                     acrescentarVeiculo(estacionamento);
                 } 
 
-                case 4 ->{
+                case 4-> {
+                    System.out.println("\nEstacionar ou retirar veículo da vaga");
+                    menuVeiculo(estacionamento);
+                } 
+
+                case 5 ->{
                     System.out.println(estacionamento.dataToText());
                 }
                 case 0 ->{
@@ -183,12 +251,38 @@ public class App {
             }
             pausa();
         }
-        return veiculo;
+        return estacionamento;
     }
 
+    public static Estacionamento menuVeiculo(Estacionamento estacionamento) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException{
+        if (estacionamento==null)
+            return null;
 
+        String nomeArq = "menuVeiculo.txt";
+        int opcao = -1;
 
-    public static void main(String[] args) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException {
+        while(opcao!=0){
+            limparTela();
+            opcao = menu(nomeArq);
+            switch(opcao){
+                case 1 -> {                                                           
+                    System.out.println("\nEstacionar veiculo em uma vaga");
+                    estacionarVeiculo(estacionamento);
+                } 
+                case 2-> {
+                    System.out.println("\nRetirar veículo da vaga");
+                    retirarVeiculo(estacionamento);
+                } 
+                case 0 ->{
+                    break;
+                }
+            }
+            pausa();
+        }
+        return estacionamento;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException {
         
             teclado = new Scanner(System.in);
             String nomeArq = "menuPrincipal.txt";
@@ -201,7 +295,7 @@ public class App {
                     Estacionamento estacionamento = new Estacionamento(leitura("Digite o nome do estacionamento"), Integer.parseInt(leitura("Número de fileiras")), Integer.parseInt(leitura("Vagas por fila")));
                     menuEstacionamento(estacionamento);
                     }
-                    
+                
                 }
             }
 

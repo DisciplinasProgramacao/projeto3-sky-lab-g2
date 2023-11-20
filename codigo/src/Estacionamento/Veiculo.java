@@ -116,4 +116,18 @@ public class Veiculo {
     public int totalDeUsos() {
         return numUsos;
     }
+
+    /**
+     * Obtém o último uso de vaga associado a este veículo.
+     *
+     * @return O último uso de vaga do veículo ou null se não houver usos.
+     */
+    public UsoDeVaga getUltimoUso() {
+        if (numUsos > 0) {
+            return usos[numUsos - 1];
+        } else {
+            return null;
+        }
+    }
+
 }

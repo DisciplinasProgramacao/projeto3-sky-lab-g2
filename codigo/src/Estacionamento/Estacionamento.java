@@ -11,7 +11,6 @@ public class Estacionamento implements IDataToText {
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
-    private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
     /**
      * Construtor que cria uma instância de estacionamento com o nome e configurações especificados.
@@ -26,7 +25,6 @@ public class Estacionamento implements IDataToText {
         this.vagasPorFileira = vagasPorFila;
         this.clientes = new ArrayList<>();
         this.vagas = new ArrayList<>();
-        this.veiculoUsoMap = new HashMap<>();
         gerarVagas();
     }
 
@@ -80,22 +78,10 @@ public class Estacionamento implements IDataToText {
      * @param entrada A data e hora de entrada do veículo na vaga.
      * @throws VeiculoNaoExisteException
      */
-    public void estacionar(String placa, LocalDateTime entrada) throws VagaOcupadaException, VeiculoNaoExisteException {
-        Veiculo veiculo = encontrarVeiculo(placa);
-        if (veiculo != null) {
-            for (Vaga vaga : vagas) {
-                if (vaga.estacionar()) {
-                    veiculo.estacionar(vaga, entrada);
-                    veiculoUsoMap.put(veiculo, new UsoDeVaga(vaga));
-                    System.out.println("Veículo " + placa + " estacionado na vaga " + vaga.getId());
-                    vaga.disponivel();
-                }
-            }
-            throw new VagaOcupadaException();
-        } else {
-            throw new VeiculoNaoExisteException();
-        }
-    }    
+    public void estacionar(Veiculo veiculo, Vaga vaga, LocalDateTime entrada)
+            throws VagaOcupadaException, VeiculoNaoExisteException {
+        veiculo.estacionar(vaga, entrada);
+    }
 
     /**
      * Registra a saída de um veículo do estacionamento e calcula o valor a ser pago.
@@ -104,27 +90,9 @@ public class Estacionamento implements IDataToText {
      * @param saida A data e hora de saída do veículo.
      * @return O valor a ser pago pelo uso da vaga.
      */
-    public double sair(String placa, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
-        Veiculo veiculo = encontrarVeiculo(placa);
-        UsoDeVaga uso = veiculoUsoMap.get(veiculo);
-        if (veiculo != null) {
-            if (uso != null) {
-                for (Vaga vaga : vagas) {
-                    if (veiculo.sair(vaga, saida) > 0) {
-                        System.out.println("Veículo " + placa + " saiu da vaga " + vaga.getId());
-                        veiculoUsoMap.remove(veiculo); // Remove o uso de vaga após sair.
-                        return uso.valorPago();
-                    }
-                }
-                throw new VeiculoNaoExisteException();
-            } else {
-                throw new UsoDeVagaFinalizadoException();
-            }
-        } else {
-            throw new VeiculoNaoExisteException();
-        }
+    public void sair(Veiculo veiculo, Vaga vaga, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
+        veiculo.sair(vaga, saida);
     }
-    
 
     /**
      * Calcula o valor total arrecadado pelo estacionamento.
@@ -214,7 +182,7 @@ public class Estacionamento implements IDataToText {
         //duvida
     }
 
-    private Veiculo encontrarVeiculo(String placa) {
+    public Veiculo encontrarVeiculo(String placa) {
         for (Cliente cliente : clientes) {
             Veiculo veiculo = cliente.possuiVeiculo(placa);
             if (veiculo != null) {
@@ -229,19 +197,23 @@ public class Estacionamento implements IDataToText {
     /**
      * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
      *
-     * @param placa   A placa do veículo.
+     * @param placa   A placa do veículo ao qual o serviço será adicionado.
      * @param servico O serviço a ser contratado.
-     * @return `true` se o serviço foi contratado com sucesso, `false` caso contrário.
+     * @return true se o serviço foi contratado com sucesso, false caso contrário.
      */
     public boolean contratarServico(String placa, Servico servico) {
         Veiculo veiculo = encontrarVeiculo(placa);
+
         if (veiculo != null) {
-            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
-            if (uso != null) {
-                uso.contratarServico(servico);
+            UsoDeVaga ultimoUso = veiculo.getUltimoUso();
+
+            if (ultimoUso != null && ultimoUso.getVaga().disponivel()) {
+                // A vaga precisa estar ocupada para contratar um serviço adicional
+                ultimoUso.contratarServico(servico);
                 return true;
             }
         }
+
         return false;
     }
 
