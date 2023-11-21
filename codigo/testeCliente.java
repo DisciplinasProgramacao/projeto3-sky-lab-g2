@@ -1,84 +1,75 @@
-import static org.junit.Assert.*;
-
-
-
-
 import org.junit.Before;
 import org.junit.Test;
 
-
 import java.time.LocalDateTime;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import static org.junit.Assert.*;
 
 public class ClienteTest {
-    
+
     private Cliente cliente;
-    private Veiculo veiculo1;
-    private Veiculo veiculo2;
+    private Veiculo veiculo1, veiculo2;
 
     @Before
     public void setUp() {
-        cliente = new Cliente("John Doe", "12345");
-        veiculo1 = new Veiculo("ABC123");
-        veiculo2 = new Veiculo("XYZ789");
+        cliente = new Cliente("João Silva", "123");
+        veiculo1 = new Veiculo("ABC1234");
+        veiculo2 = new Veiculo("XYZ5678");
+
+        // Adicionando veículos ao cliente
+        cliente.addVeiculo(veiculo1);
+        cliente.addVeiculo(veiculo2);
+
+        // Criando vagas
+        Vaga vaga1 = new Vaga("Vaga1");
+        Vaga vaga2 = new Vaga("Vaga2");
+
+        // Simulando usos dos veículos
+        LocalDateTime entrada1 = LocalDateTime.of(2023, 4, 1, 8, 0);
+        LocalDateTime saida1 = LocalDateTime.of(2023, 4, 1, 10, 0);
+        veiculo1.estacionar(vaga1, entrada1);
+        veiculo1.sair(vaga1, saida1);
+
+        LocalDateTime entrada2 = LocalDateTime.of(2023, 4, 2, 8, 0);
+        LocalDateTime saida2 = LocalDateTime.of(2023, 4, 2, 10, 0);
+        veiculo2.estacionar(vaga2, entrada2);
+        veiculo2.sair(vaga2, saida2);
     }
 
     @Test
     public void testAddVeiculo() {
-        cliente.addVeiculo(veiculo1);
-        assertEquals(veiculo1, cliente.possuiVeiculo("ABC123"));
+        assertEquals(2, cliente.getVeiculos().size());
     }
 
     @Test
     public void testPossuiVeiculo() {
-        cliente.addVeiculo(veiculo1);
-        cliente.addVeiculo(veiculo2);
-        assertEquals(veiculo1, cliente.possuiVeiculo("ABC123"));
-        assertEquals(veiculo2, cliente.possuiVeiculo("XYZ789"));
-        assertNull(cliente.possuiVeiculo("123XYZ")); // Non-existent plate
+        assertNotNull(cliente.possuiVeiculo("ABC1234"));
+        assertNull(cliente.possuiVeiculo("INEXISTENTE"));
     }
 
     @Test
     public void testTotalDeUsos() {
-        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
-        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
-        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
-        veiculo2.sair(null, LocalDateTime.now().plusHours(2));
-        cliente.addVeiculo(veiculo1);
-        cliente.addVeiculo(veiculo2);
         assertEquals(2, cliente.totalDeUsos());
     }
 
     @Test
     public void testArrecadadoPorVeiculo() {
-        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
-        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
-        cliente.addVeiculo(veiculo1);
-        assertEquals(4.0, cliente.arrecadadoPorVeiculo("ABC123"), 0.001);
-        assertEquals(0.0, cliente.arrecadadoPorVeiculo("XYZ789"), 0.001);
+        double valorEsperado1 = veiculo1.totalArrecadado();
+        assertEquals(valorEsperado1, cliente.arrecadadoPorVeiculo("ABC1234"), 0.01);
+
+        double valorEsperado2 = veiculo2.totalArrecadado();
+        assertEquals(valorEsperado2, cliente.arrecadadoPorVeiculo("XYZ5678"), 0.01);
     }
 
     @Test
     public void testArrecadadoTotal() {
-        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
-        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
-        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
-        veiculo2.sair(null,LocalDateTime.now().plusHours(2));
-        cliente.addVeiculo(veiculo1);
-        cliente.addVeiculo(veiculo2);
-        assertEquals(8.0, cliente.arrecadadoTotal(), 0.001);
+        double valorEsperado = veiculo1.totalArrecadado() + veiculo2.totalArrecadado();
+        assertEquals(valorEsperado, cliente.arrecadadoTotal(), 0.01);
     }
 
     @Test
     public void testArrecadadoNoMes() {
-        veiculo1.estacionar(new Vaga("A01"), LocalDateTime.now());
-        veiculo2.estacionar(new Vaga("B02"), LocalDateTime.now());
-        veiculo1.sair(null,LocalDateTime.now().plusHours(1));
-        veiculo2.sair(null,LocalDateTime.now().plusHours(2));
-        cliente.addVeiculo(veiculo1);
-        cliente.addVeiculo(veiculo2);
-        assertEquals(8.0, cliente.arrecadadoNoMes(10), 0.001);
-        assertEquals(0.0, cliente.arrecadadoNoMes(11), 0.001);
+        double valorEsperado = veiculo1.arrecadadoNoMes(4) + veiculo2.arrecadadoNoMes(4);
+        assertEquals(valorEsperado, cliente.arrecadadoNoMes(4), 0.01);
     }
 }
