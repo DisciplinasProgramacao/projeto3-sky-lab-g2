@@ -81,15 +81,33 @@ public class App {
         if (estacionamento==null) {
             System.out.println("Crie um estacionamento primeiro.");
         } else {
-            int quantos = Integer.parseInt(leitura("Quantidade de clientes para cadastrar:"));
+            int quantos = Integer.parseInt(leitura("Quantidade de clientes para cadastrar"));
             Cliente[] clientes = new Cliente[quantos]; 
 
             for(int i=0; i<quantos; i++) {
-                clientes[i] = new Cliente(leitura("Digite o nome do seu cliente"), leitura("Digite o ID do seu cliente:"));
+                clientes[i] = new Cliente(leitura("Digite o nome do seu cliente"), leitura("Digite o ID do seu cliente"));
                 String modalidadeInput = leitura("Digite a modalidade do seu cliente: \nT para Turno\nM para mensalista\nH para horista"); 
 
                 if (modalidadeInput.equalsIgnoreCase("T")) {
                     clientes[i].setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+                
+                    // Adicione aqui a configuração do turno
+                    String turnoInput = leitura("Digite o turno desejado (M - Manhã, T - Tarde, N - Noite): ");
+                    switch (turnoInput.toUpperCase()) {
+                        case "M":
+                            clientes[i].setTurnoEscolhido(Cliente.Turno.MANHA);
+                            break;
+                        case "T":
+                            clientes[i].setTurnoEscolhido(Cliente.Turno.TARDE);
+                            break;
+                        case "N":
+                            clientes[i].setTurnoEscolhido(Cliente.Turno.NOITE);
+                            break;
+                        default:
+                            System.out.println("Opção inválida para turno. Será definido como Manhã por padrão.");
+                            clientes[i].setTurnoEscolhido(Cliente.Turno.MANHA);
+                            break;
+                    }
                 } else if (modalidadeInput.equalsIgnoreCase("M")) {
                     clientes[i].setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
                 } else if (modalidadeInput.equalsIgnoreCase("H")) {
@@ -98,6 +116,7 @@ public class App {
                     System.out.println("Opção inválida. A modalidade será definida como HORISTA por padrão.");
                     clientes[i].setModalidade(Cliente.ModalidadeCliente.HORISTA);
                 }
+                
                 
                 try {
                     estacionamento.addCliente(clientes[i]);
@@ -127,10 +146,10 @@ public class App {
         if(estacionamento==null){
             System.out.println("Crie um estacionamento primeiro.");
         } else {
-            Cliente cliente = estacionamento.encontrarCliente(leitura("Digite o id do cliente dono do(s) veículo(s) a ser cadastrado: "));
+            Cliente cliente = estacionamento.encontrarCliente(leitura("Digite o id do cliente dono do(s) veículo(s) a ser cadastrado"));
 
             if (cliente != null) {
-                int quantos = Integer.parseInt(leitura("Quantidade de veículos para cadastrar:"));
+                int quantos = Integer.parseInt(leitura("Quantidade de veículos para cadastrar"));
                 Veiculo[] veiculos = new Veiculo[quantos]; 
 
                     for(int i=0; i<quantos; i++) {
@@ -223,8 +242,38 @@ public class App {
     
                     // Associa a vaga ao veículo
                     veiculo.setVaga(vagaDisponivel);
-                } catch (VagaOcupadaException e) {
+                    UsoDeVaga uso = new UsoDeVaga(vagaDisponivel);
+                    uso.setCliente(veiculo.getCliente());
+                    servicoAdicional(estacionamento, veiculo);
+                    
+                } catch (VagaOcupadaException | FileNotFoundException e) {
                     System.out.println("Vaga ocupada. Escolha outra vaga.");
+                }
+            }
+        }
+    }
+
+    public static void servicoAdicional(Estacionamento estacionamento, Veiculo veiculo) throws FileNotFoundException {
+        String nomeArq = "menuServicos.txt";
+        int opcaoServico = -1;
+
+        while (opcaoServico != 0) {
+            limparTela();
+            opcaoServico = menu(nomeArq);
+            switch(opcaoServico) {
+                case 1 -> {
+                    estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA);
+                    break;            
+                }
+
+                case 2 -> {
+                    estacionamento.contratarServico(veiculo.getPlaca(),Servico.LAVAGEM);
+                    break;            
+                }
+
+                case 3 -> {
+                    estacionamento.contratarServico(veiculo.getPlaca(),Servico.POLIMENTO);
+                    break;      
                 }
             }
         }
@@ -278,10 +327,10 @@ public static Estacionamento menuEstacionamento(Estacionamento estacionamento) t
                 System.out.println(estacionamento.top5Clientes(mes));
             }
             case 6 -> {
-                estacionamento.encontrarCliente(leitura("Digite o ID do cliente que deseja buscar"));
+                System.out.println(estacionamento.formatarClienteEncontrado(leitura("Digite o ID do cliente que deseja buscar")));
             }
             case 7 -> {
-                estacionamento.encontrarVeiculo(leitura("Digite a placa do veículo que deseja buscar"));
+                System.out.println(estacionamento.formatarVeiculoEncontrado(leitura("Digite a placa do veículo que deseja buscar")));
             }
             case 8 -> {
                 System.out.println(estacionamento.valorMedioPorUso());
@@ -291,7 +340,15 @@ public static Estacionamento menuEstacionamento(Estacionamento estacionamento) t
                 System.out.println(estacionamento.arrecadacaoNoMes(mes));
             }
             case 10 -> {
-                System.out.println(estacionamento.totalArrecadado());
+                System.out.println(estacionamento.relatorioArrecadacaoCliente(leitura("Digite o ID do cliente no qual você deseja saber a arrecadação total")));
+            }
+
+            case 11 -> {
+                System.out.println();
+            }
+
+            case 12 -> {
+                System.out.println();
             }
 
             case 0 -> {
@@ -332,25 +389,63 @@ public static Estacionamento menuEstacionamento(Estacionamento estacionamento) t
         return estacionamento;
     }
 
-    public static void main(String[] args) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException {
-        
-            teclado = new Scanner(System.in);
-            String nomeArq = "menuPrincipal.txt";
-            int opcao = -1;
-            while(opcao!=0){
-                limparTela();
-                opcao = menu(nomeArq);
-                switch(opcao){
-                    case 1-> {
-                    Estacionamento estacionamento = new Estacionamento(leitura("Digite o nome do estacionamento"), Integer.parseInt(leitura("Número de fileiras")), Integer.parseInt(leitura("Vagas por fila")));
-                    menuEstacionamento(estacionamento);
+    public static void main(String[] args) throws ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException, IOException {
+
+        teclado = new Scanner(System.in);
+        String nomeArq = "menuPrincipal.txt";
+        int opcao = -1;
+    
+        EstacionamentoDAO estacionamentoDAO = new EstacionamentoDAO("estacionamento.txt");
+        Estacionamento estacionamentoAtual = null;
+    
+        while(opcao != 0){
+            limparTela();
+            opcao = menu(nomeArq);
+            switch(opcao){
+                case 1 -> {
+                    estacionamentoAtual = new Estacionamento(leitura("Digite o nome do estacionamento"), Integer.parseInt(leitura("Número de fileiras")), Integer.parseInt(leitura("Vagas por fila")));
+                    // Salvar estacionamento no arquivo
+                    try {
+                        
+                        estacionamentoDAO.abrirEscrita();
+                        menuEstacionamento(estacionamentoAtual);
+                        estacionamentoDAO.add(estacionamentoAtual);
+                        estacionamentoDAO.fechar();
+                    } catch (IOException e) {
+                        //completar
+                       System.out.println("Erro ao abrir escrita.");
+                    }
+                }
+    
+                case 2 -> {
+                    // Consultar estacionamento existente
+                    String nomeEstacionamentoConsulta = leitura("Digite o nome do estacionamento que deseja consultar");
+                
+                    Estacionamento[] estacionamentos = estacionamentoDAO.getAll();
+                
+                    for (Estacionamento estacionamento : estacionamentos) {
+                        if (estacionamento.getNome().equalsIgnoreCase(nomeEstacionamentoConsulta)) {
+                            estacionamentoAtual = estacionamento;
+                            System.out.println("Estacionamento encontrado:");
+                            estacionamentoAtual.dataToText();
+                            
+                            // Menu de operações para o estacionamento atual
+                            menuEstacionamento(estacionamentoAtual);
+                
+                            break;
+                        }
                     }
                 
+                    if (estacionamentoAtual == null) {
+                        System.out.println("Estacionamento não encontrado.");
+                    }
                 }
+                
             }
-
-            teclado.close();
         }
     
+        teclado.close();
     }
+    
+}
 

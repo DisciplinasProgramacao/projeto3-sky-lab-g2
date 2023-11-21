@@ -1,5 +1,6 @@
 import java.util.*;
 import java.util.stream.Collectors;
+
 import java.time.LocalDateTime;
 /**
  * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
@@ -11,6 +12,7 @@ public class Estacionamento implements IDataToText {
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
+    
     private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
     /**
@@ -166,7 +168,40 @@ public class Estacionamento implements IDataToText {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
-    }    
+    }
+
+    /**
+     * Retorna uma string formatada com as informações do cliente encontrado pelo ID.
+     *
+     * @param idCli O ID do cliente a ser encontrado.
+     * @return Uma string com as informações do cliente ou uma mensagem indicando que o cliente não foi encontrado.
+     */
+    public String formatarClienteEncontrado(String idCli) {
+        Cliente clienteEncontrado = encontrarCliente(idCli);
+
+        if (clienteEncontrado != null) {
+            return String.format("Cliente encontrado:\nNome: %s\nID: %s", clienteEncontrado.getNome(), clienteEncontrado.getId());
+        } else {
+            return "Cliente não encontrado.";
+        }
+    }
+
+    /**
+     * Retorna uma string formatada com as informações do veículo encontrado pela placa.
+     *
+     * @param placa A placa do veículo a ser encontrado.
+     * @return Uma string com as informações do veículo ou uma mensagem indicando que o veículo não foi encontrado.
+     */
+    public String formatarVeiculoEncontrado(String placa) {
+        Veiculo veiculoEncontrado = encontrarVeiculo(placa);
+
+        if (veiculoEncontrado != null) {
+            return String.format("Veículo encontrado:\nPlaca: %s\nCliente: %s\nValor total arrecadado: R$ %.2f",
+                    veiculoEncontrado.getPlaca(), veiculoEncontrado.getCliente().getNome(), veiculoEncontrado.totalArrecadado());
+        } else {
+            return "Veículo não encontrado.";
+        }
+    }
 
     /**
      * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
@@ -218,6 +253,34 @@ public class Estacionamento implements IDataToText {
         return data.toString();
     }
 
+    /**
+     * Obtém um relatório consolidado do valor total arrecadado pelo cliente, incluindo detalhes
+     * para cada veículo registrado.
+     *
+     * @return Um relatório consolidado do valor total arrecadado pelo cliente.
+     */
+    public String relatorioArrecadacaoCliente(String idCli) {
+        Cliente cliente = encontrarCliente(idCli);
+        StringBuilder relatorio = new StringBuilder();
+
+        // Adiciona informações sobre o cliente
+        relatorio.append(String.format("Relatório de Arrecadação para o Cliente %s (ID: %s)\n", cliente.getNome(), cliente.getId()));
+
+        // Adiciona detalhes para cada veículo do cliente
+        for (Veiculo veiculo : cliente.getVeiculos()) {
+            if (veiculo != null) {
+                relatorio.append(String.format("Veículo com placa %s:\n", veiculo.getPlaca()));
+                relatorio.append(String.format("- Valor total arrecadado: R$ %.2f\n", veiculo.totalArrecadado()));
+            }
+        }
+
+        // Adiciona o valor total arrecadado pelo cliente
+        double valorTotalArrecadado = cliente.arrecadadoTotal();
+        relatorio.append(String.format("\nValor total arrecadado pelo cliente: R$ %.2f\n", valorTotalArrecadado));
+
+        return relatorio.toString();
+    }
+    
     /**
      * Obtém o nome do estacionamento.
      *

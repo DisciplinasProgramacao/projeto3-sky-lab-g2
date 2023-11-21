@@ -102,7 +102,7 @@ public class Cliente {
         if (veiculos.size() < 10) {
             veiculos.add(veiculo);
         } else {
-            System.out.println("Limite de veículos atingido para este cliente."); // EXCEÇÃO
+            System.out.println("Limite de veículos atingido para este cliente."); // EXCECAO
         }
     }
 
@@ -141,16 +141,29 @@ public class Cliente {
         return (veiculo != null) ? veiculo.totalArrecadado() : 0.0;
     }
 
-    /**
-     * Obtém o valor total arrecadado pelo cliente por todos os veículos.
-     *
-     * @return O valor total arrecadado pelo cliente.
-     */
-    public double arrecadadoTotal() {
-        return veiculos.stream()
-                .mapToDouble(Veiculo::totalArrecadado)
-                .sum();
+/**
+ * Obtém o valor total arrecadado pelo cliente por todos os veículos.
+ *
+ * @return O valor total arrecadado pelo cliente.
+ */
+public double arrecadadoTotal() {
+    double totalArrecadado = veiculos.stream()
+            .mapToDouble(Veiculo::totalArrecadado)
+            .sum();
+
+    switch (modalidade) {
+        case DE_TURNO:
+            totalArrecadado += 200.0;
+            break;
+        case MENSALISTA:
+            totalArrecadado += 500.0;
+            break;
+        default:
+            break;
     }
+
+    return totalArrecadado;
+}
 
     /**
      * Obtém o valor arrecadado pelo cliente no mês especificado, considerando a modalidade.
@@ -165,16 +178,41 @@ public class Cliente {
 
         switch (modalidade) {
             case HORISTA:
-                // Adicione aqui a lógica de arrecadação para clientes horistas
-                break;
+                return arrecadadoMes;
             case DE_TURNO:
-                arrecadadoMes = 200.0;
-                break;
+                return arrecadadoMes + 200.0;
             case MENSALISTA:
                 arrecadadoMes = 500.0;
                 break;
         }
 
         return arrecadadoMes;
+    }
+
+    /**
+     * Calcula a arrecadação média dos clientes horistas neste mês usando Stream.
+     *
+     * @param mes O mês para o qual se deseja calcular a arrecadação média.
+     * @return A arrecadação média dos clientes horistas neste mês.
+     */
+    public double calcularArrecadacaoMediaHoristas(int mes) {
+        return veiculos.stream()
+                .filter(veiculo -> veiculo.getCliente().getModalidade() == ModalidadeCliente.HORISTA)
+                .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * Calcula a média de usos mensais para clientes mensalistas.
+     *
+     * @return A média de usos mensais para clientes mensalistas.
+     */
+    public double calcularMediaUsosMensalistas() {
+        return veiculos.stream()
+                .filter(veiculo -> veiculo.getCliente().getModalidade() == ModalidadeCliente.MENSALISTA)
+                .mapToInt(Veiculo::totalDeUsos)
+                .average()
+                .orElse(0.0);
     }
 }

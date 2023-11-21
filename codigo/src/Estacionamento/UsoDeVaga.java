@@ -18,6 +18,7 @@ public class UsoDeVaga {
     private LocalDateTime saida;
     private double valorPago;
     private EnumSet<Servico> servicosContratados;
+    private Cliente cliente;
 
     private static final Map<Veiculo, Vaga> veiculoVagaMap = new HashMap<>();
 
@@ -60,6 +61,15 @@ public class UsoDeVaga {
     }
 
     /**
+     * Obtém a vaga associada ao uso.
+     *
+     * @return A vaga associada.
+     */
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    /**
      * Registra o uso da vaga com a data e hora de entrada especificadas.
      *
      * @param veiculo O veículo utilizando a vaga.
@@ -98,7 +108,7 @@ public class UsoDeVaga {
                 vagaDoUso.disponivel();
             }
             double valorPago = calcularCusto(veiculoDoUso, this.entrada, this.saida);
-            return valorPago;
+            return valorPago + calcularCustoServicos();
         }
 
         return valorPago;
@@ -117,19 +127,28 @@ public class UsoDeVaga {
 
     public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
         Cliente cliente = veiculo.getCliente();
-
-        // Verifique se o cliente é horista, de turno ou mensalista
+    
         switch (cliente.getModalidade()) {
             case HORISTA:
                 return calcularCustoHorista(entrada, saida);
             case DE_TURNO:
                 return calcularCustoDeTurno(entrada, saida, cliente);
             case MENSALISTA:
-                return 500.0;
+                return calcularCustoServicos();
         }
-
+    
         return VALOR_FRACAO;
     }
+    
+    private double calcularCustoServicos() {
+        double custoServicos = 0.0;
+    
+        for (Servico servico : servicosContratados) {
+            custoServicos += servico.getValor();
+        }
+    
+        return custoServicos;
+    }    
 
     private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
         if (entrada == null || saida == null) {
@@ -166,7 +185,7 @@ public class UsoDeVaga {
 
         switch (cliente.getModalidade()) {
             case DE_TURNO:
-                // Cliente de turno escolheu manhã, tarde ou noite
+                
                 switch (cliente.getTurnoEscolhido()) {
                     case MANHA:
                         return hora >= 8 && hora <= 12;
@@ -181,5 +200,9 @@ public class UsoDeVaga {
         }
 
         return false;
+    }
+
+    public Cliente getCliente() {
+        return this.cliente;
     }
 }
