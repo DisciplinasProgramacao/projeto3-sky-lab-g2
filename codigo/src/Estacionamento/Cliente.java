@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Classe que representa um cliente do estacionamento.
  */
@@ -13,8 +16,7 @@ public class Cliente {
 
     private String nome;
     private String id;
-    private Veiculo[] veiculos;
-    private int numVeiculos;
+    private List<Veiculo> veiculos;
     private ModalidadeCliente modalidade;
     private Turno turnoEscolhido;
 
@@ -27,16 +29,14 @@ public class Cliente {
     public Cliente(String nome, String id) {
         this.nome = nome;
         this.id = id;
-        this.veiculos = new Veiculo[10];
-        this.numVeiculos = 0;
-
+        this.veiculos = new ArrayList<>();
     }
 
     public ModalidadeCliente getModalidade() {
         return modalidade;
     }
 
-    public void setModalidade(Cliente.ModalidadeCliente horista) {
+    public void setModalidade(ModalidadeCliente modalidade) {
         this.modalidade = modalidade;
     }
 
@@ -62,7 +62,7 @@ public class Cliente {
      *
      * @return A lista de veículos do cliente.
      */
-    public Veiculo[] getVeiculos() {
+    public List<Veiculo> getVeiculos() {
         return veiculos;
     }
 
@@ -99,11 +99,10 @@ public class Cliente {
      * @param veiculo O veículo a ser adicionado.
      */
     public void addVeiculo(Veiculo veiculo) {
-        if (numVeiculos < veiculos.length) {
-            veiculos[numVeiculos] = veiculo;
-            numVeiculos++;
+        if (veiculos.size() < 10) {
+            veiculos.add(veiculo);
         } else {
-            System.out.println("Limite de veículos atingido para este cliente."); //ADD EXCEÇÃO.
+            System.out.println("Limite de veículos atingido para este cliente."); // Lançar exceção seria mais apropriado.
         }
     }
 
@@ -114,15 +113,10 @@ public class Cliente {
      * @return O veículo com a placa especificada, ou null se o cliente não o possuir.
      */
     public Veiculo possuiVeiculo(String placa) {
-        Veiculo veiculo = new Veiculo(placa); 
-        for (int i = 0; i < numVeiculos; i++) {
-            if (veiculos[i].getPlaca().equals(placa)) {
-                veiculo = veiculos[i];
-                return veiculo;
-            }
-        }
-
-        return veiculo;
+        return veiculos.stream()
+                .filter(veiculo -> veiculo.getPlaca().equals(placa))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -131,11 +125,9 @@ public class Cliente {
      * @return O total de usos de vaga do cliente.
      */
     public int totalDeUsos() {
-        int totalUsos = 0;
-        for (int i = 0; i < numVeiculos; i++) {
-            totalUsos += veiculos[i].totalDeUsos();
-        }
-        return totalUsos;
+        return veiculos.stream()
+                .mapToInt(Veiculo::totalDeUsos)
+                .sum();
     }
 
     /**
@@ -144,15 +136,10 @@ public class Cliente {
      * @param placa A placa do veículo.
      * @return O valor total arrecadado pelo veículo com a placa especificada.
      */
-	public double arrecadadoPorVeiculo(String placa) {
-		Veiculo veiculo = possuiVeiculo(placa);
-
-		if(veiculo != null){
-			return veiculo.totalArrecadado();
-		}
-
-		return 0.0;
-	}
+    public double arrecadadoPorVeiculo(String placa) {
+        Veiculo veiculo = possuiVeiculo(placa);
+        return (veiculo != null) ? veiculo.totalArrecadado() : 0.0;
+    }
 
     /**
      * Obtém o valor total arrecadado pelo cliente por todos os veículos.
@@ -160,24 +147,34 @@ public class Cliente {
      * @return O valor total arrecadado pelo cliente.
      */
     public double arrecadadoTotal() {
-        double totalArrecadado = 0.0;
-        for (int i = 0; i < numVeiculos; i++) {
-            totalArrecadado += veiculos[i].totalArrecadado();
-        }
-        return totalArrecadado;
+        return veiculos.stream()
+                .mapToDouble(Veiculo::totalArrecadado)
+                .sum();
     }
 
     /**
-     * Obtém o valor arrecadado pelo cliente no mês especificado.
+     * Obtém o valor arrecadado pelo cliente no mês especificado, considerando a modalidade.
      *
      * @param mes O mês para o qual se deseja calcular a arrecadação.
      * @return O valor arrecadado pelo cliente no mês especificado.
      */
     public double arrecadadoNoMes(int mes) {
-        double arrecadadoMes = 0.0;
-        for (int i = 0; i < numVeiculos; i++) {
-            arrecadadoMes += veiculos[i].arrecadadoNoMes(mes);
+        double arrecadadoMes = veiculos.stream()
+                .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
+                .sum();
+
+        switch (modalidade) {
+            case HORISTA:
+                // Adicione aqui a lógica de arrecadação para clientes horistas
+                break;
+            case DE_TURNO:
+                arrecadadoMes = 200.0;
+                break;
+            case MENSALISTA:
+                arrecadadoMes = 500.0;
+                break;
         }
+
         return arrecadadoMes;
     }
 }

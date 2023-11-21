@@ -1,14 +1,10 @@
 import java.util.*;
+import java.util.stream.Collectors;
 import java.time.LocalDateTime;
-import java.time.Duration;
-
 /**
  * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
  */
 public class Estacionamento implements IDataToText {
-    private static final double VALOR_FRACAO = 4.0;
-    private static final double FRACAO_USO = 1.0 / 4.0; // 15 minutos
-    private static final double MENSALIDADE_TURNO = 200.0;
 
     private String nome;
     private List<Cliente> clientes;
@@ -110,12 +106,10 @@ public class Estacionamento implements IDataToText {
      * @return O valor total arrecadado.
      */
     public double totalArrecadado() {
-        double total = 0;
-        for (Cliente cliente : clientes) {
-            total += cliente.arrecadadoTotal();
-        }
-        return total;
-    }
+        return clientes.stream()
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .sum();
+    }    
 
     /**
      * Calcula a arrecadação total do estacionamento em um mês específico.
@@ -124,12 +118,10 @@ public class Estacionamento implements IDataToText {
      * @return A arrecadação total no mês especificado.
      */
     public double arrecadacaoNoMes(int mes) {
-        double total = 0;
-        for (Cliente cliente : clientes) {
-            total += cliente.arrecadadoNoMes(mes);
-        }
-        return total;
-    }
+        return clientes.stream()
+                .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
+                .sum();
+    }    
 
     /**
      * Calcula o valor médio arrecadado por uso de vaga no estacionamento.
@@ -137,15 +129,10 @@ public class Estacionamento implements IDataToText {
      * @return O valor médio por uso de vaga.
      */
     public double valorMedioPorUso() {
-        double media = 0;
-        double soma = 0;
-        int numClientes = 0;
-        for (Cliente cliente : clientes) {
-            soma += cliente.arrecadadoTotal();
-            numClientes++;
-        }
-        media = soma / numClientes;
-        return media;
+        return clientes.stream()
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .average()
+                .orElse(0.0);
     }
 
     /**
@@ -155,54 +142,31 @@ public class Estacionamento implements IDataToText {
      * @return Uma string que lista os cinco melhores clientes no mês especificado.
      */
     public String top5Clientes(int mes) {
-        List<Cliente> topClientes = new ArrayList<>(clientes);
-        topClientes.sort((c1, c2) -> {
-            double arrecadacao1 = c1.arrecadadoNoMes(mes);
-            double arrecadacao2 = c2.arrecadadoNoMes(mes);
-            if (arrecadacao1 > arrecadacao2) {
-                return -1;
-            } else if (arrecadacao1 < arrecadacao2) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-    
+        List<Cliente> topClientes = clientes.stream()
+                .sorted(Comparator.comparingDouble(c -> -c.arrecadadoNoMes(mes)))
+                .limit(5)
+                .collect(Collectors.toList());
+
         StringBuilder result = new StringBuilder("Top 5 Clientes no mês " + mes + ":\n");
-        int count = 0;
-        for (Cliente cliente : topClientes) {
-            if (count < 5) {
-                result.append(cliente.getNome()).append(": R$ ").append(cliente.arrecadadoNoMes(mes)).append("\n");
-                count++;
-            } else {
-                break;
-            }
-        }
+        topClientes.forEach(cliente -> result.append(cliente.getNome()).append(": R$ ").append(cliente.arrecadadoNoMes(mes)).append("\n"));
         return result.toString();
     }
 
-        public Cliente encontrarCliente(String idCli) {
-        for (Cliente cliente : clientes) {
-            if (cliente.getId().equals(idCli)) {
-                return cliente;
-            }
-        }
 
-        return null;
-        //duvida
+    public Cliente encontrarCliente(String idCli) {
+        return clientes.stream()
+                .filter(cliente -> cliente.getId().equals(idCli))
+                .findFirst()
+                .orElse(null);
     }
-
+    
     public Veiculo encontrarVeiculo(String placa) {
-        for (Cliente cliente : clientes) {
-            Veiculo veiculo = cliente.possuiVeiculo(placa);
-            if (veiculo != null) {
-                return veiculo;
-            }
-        }
-
-        //duvida
-        return null;
-    }
+        return clientes.stream()
+                .map(cliente -> cliente.possuiVeiculo(placa))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }    
 
     /**
      * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
@@ -229,29 +193,29 @@ public class Estacionamento implements IDataToText {
         data.append("Nome do Estacionamento: ").append(nome).append("\n");
         data.append("Quantidade de Fileiras: ").append(quantFileiras).append("\n");
         data.append("Vagas por Fileira: ").append(vagasPorFileira).append("\n\n");
-
+    
         // Informações sobre os clientes
         data.append("Clientes:\n");
         for (Cliente cliente : clientes) {
             data.append("Nome: ").append(cliente.getNome()).append(", ID: ").append(cliente.getId()).append("\n");
-
+    
             // Informações sobre os veículos do cliente
             data.append("Veículos do Cliente:\n");
-            Veiculo[] veiculos = cliente.getVeiculos();
+            List<Veiculo> veiculos = cliente.getVeiculos();
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
                     data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n");
                 }
             }
-
+    
             data.append("\n");
         }
-
+    
         data.append("Vagas:\n");
         for (Vaga vaga : vagas) {
             data.append("ID da Vaga: ").append(vaga.getId()).append(", Disponível: ").append(vaga.disponivel() ? "Desocupada" : "Ocupada").append("\n");
         }
-
+    
         return data.toString();
     }
 
@@ -289,70 +253,6 @@ public class Estacionamento implements IDataToText {
      */
     public List<Cliente> getClientes() {
         return clientes;
-    }
-
-    public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
-        Cliente cliente = veiculo.getCliente();
-
-        // Verifique se o cliente é horista, de turno ou mensalista
-        switch (cliente.getModalidade()) {
-            case HORISTA:
-                return calcularCustoHorista(entrada, saida);
-            case DE_TURNO:
-                return calcularCustoDeTurno(entrada, saida, cliente);
-            case MENSALISTA:
-                return 500.0;
-        }
-
-        return 0.0;
-    }
-
-    private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
-        Duration duracao = Duration.between(entrada, saida);
-
-        // Adiciona fração mínima de 15 minutos
-        duracao = duracao.plusMinutes(15 - (duracao.toMinutes() % 15));
-
-        long minutosEstacionados = duracao.toMinutes();
-
-        if (minutosEstacionados <= 60) {
-            return Math.min(VALOR_FRACAO, 50.0); // Taxa mínima ou valor máximo de R$50
-        } else {
-            double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * FRACAO_USO * VALOR_FRACAO;
-            return Math.min(valorExcedente, 50.0); // Valor excedente ou valor máximo de R$50
-        }
-    }
-
-    private double calcularCustoDeTurno(LocalDateTime entrada, LocalDateTime saida, Cliente cliente) {
-        // Verifica se a utilização está dentro do horário do turno escolhido
-        if (estaDentroDoTurno(entrada, cliente)) {
-            return 0.0; // Cliente de turno não paga durante o seu turno
-        } else {
-            // Caso contrário, calcula como cliente horista
-            return calcularCustoHorista(entrada, saida);
-        }
-    }
-
-    private boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
-        int hora = horario.getHour();
-
-        switch (cliente.getModalidade()) {
-            case DE_TURNO:
-                // Cliente de turno escolheu manhã, tarde ou noite
-                switch (cliente.getTurnoEscolhido()) {
-                    case MANHA:
-                        return hora >= 8 && hora <= 12;
-                    case TARDE:
-                        return hora > 12 && hora <= 18;
-                    case NOITE:
-                        return hora > 18 && hora <= 23;
-                }
-                break;
-            default:
-                break;
-        }
-
-        return false;
     }
 
 }

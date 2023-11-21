@@ -153,68 +153,63 @@ public class App {
     }
 
     public static void retirarVeiculo(Estacionamento estacionamento) {
-    
         if (estacionamento == null) {
-            System.out.println("Adicione um estacionamento primeiro.");
-            return;
-        }
-    
-        String placaVeiculo = leitura("Digite a placa do veículo que você deseja retirar da vaga");
-        Veiculo veiculo = estacionamento.encontrarVeiculo(placaVeiculo);
-    
-        if (veiculo == null) {
-            System.out.println("Veículo não encontrado no estacionamento.");
-            return;
-        }
-    
-        Vaga vagaDoVeiculo = veiculo.getVaga();
-    
-        if (vagaDoVeiculo != null) {
-            LocalDateTime saida = LocalDateTime.parse(leitura("Digite o horário de saída."));
-    
-            try {
-                double valorPago = estacionamento.calcularCusto(veiculo, vagaDoVeiculo.getEntrada(), saida);
-                System.out.println("Valor a ser pago: R$ " + valorPago);
-    
-                vagaDoVeiculo.sair();
-            } catch (UsoDeVagaFinalizadoException e) {
-                System.out.println("Erro ao tentar sair: " + e.getMessage());
-            } 
+            System.out.println("Adicione um veículo primeiro.");
         } else {
-            System.out.println("Erro: O veículo não está atualmente estacionado em nenhuma vaga.");
+            String placaVeiculo = leitura("Digite a placa do veículo que você deseja retirar");
+
+            // Encontrar a vaga ocupada pelo veículo
+            Vaga vagaOcupada = null;
+            for (UsoDeVaga uso : estacionamento.getUsos()) {
+                if (uso.getVeiculo().getPlaca().equals(placaVeiculo)) {
+                    vagaOcupada = uso.getVaga();
+                    break;
+                }
+            }
+
+            if (vagaOcupada == null) {
+                System.out.println("Veículo não encontrado no estacionamento.");
+            } else {
+                LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída deste veículo"));
+                double valorPago = estacionamento.retirarVeiculo(vagaOcupada, horaSaida);
+
+                System.out.println("Veículo retirado da vaga " + vagaOcupada.getId());
+                System.out.println("Valor a pagar: R$" + valorPago);
+
+                // Marcar a vaga como disponível
+                vagaOcupada.disponivel();
+            }
         }
     }
     
 
     public static void estacionarVeiculo(Estacionamento estacionamento) throws VeiculoNaoExisteException, VagaOcupadaException {
-    if (estacionamento == null) {
-        System.out.println("Adicione um veículo primeiro.");
-    } else {
-        Veiculo veiculo = new Veiculo(leitura("Digite a placa do veículo que você deseja estacionar"));
-        List<Vaga> vagasGeradas = estacionamento.getVagas();
-
-        Vaga vagaDisponivel = null;
-        for (Vaga vaga : vagasGeradas) {
-            if (vaga.disponivel()) {
-                vagaDisponivel = vaga;
-                break; // Encontrou uma vaga disponível, interrompe o loop
-            }
-        }
-
-        if (vagaDisponivel == null) {
-            System.out.println("Não há vagas disponíveis. Estacionamento lotado.");
+        if (estacionamento == null) {
+            System.out.println("Adicione um veículo primeiro.");
         } else {
-            try {
-                estacionamento.estacionar(veiculo, vagaDisponivel, LocalDateTime.parse(leitura("Digite o horário de entrada deste veículo")));
-                vagaDisponivel.estacionar(); // Marca a vaga como indisponível
-            } catch (VagaOcupadaException e) {
-                System.out.println("Vaga ocupada. Escolha outra vaga.");
+            Veiculo veiculo = new Veiculo(leitura("Digite a placa do veículo que você deseja estacionar"));
+            List<Vaga> vagasGeradas = estacionamento.getVagas();
+
+            Vaga vagaDisponivel = null;
+            for (Vaga vaga : vagasGeradas) {
+                if (vaga.disponivel()) {
+                    vagaDisponivel = vaga;
+                    break; // Encontrou uma vaga disponível, interrompe o loop
+                }
+            }
+
+            if (vagaDisponivel == null) {
+                System.out.println("Não há vagas disponíveis. Estacionamento lotado.");
+            } else {
+                try {
+                    estacionamento.estacionar(veiculo, vagaDisponivel, LocalDateTime.parse(leitura("Digite o horário de entrada deste veículo")));
+                    vagaDisponivel.estacionar(); // Marca a vaga como indisponível
+                } catch (VagaOcupadaException e) {
+                    System.out.println("Vaga ocupada. Escolha outra vaga.");
+                }
             }
         }
     }
-}
-
-
 
     /**
      * Submenu para inclusão de comidas: ações de incluir pizza ou sanduíche, mostrar relatório do veiculo, fechar veiculo e sair (cancelar).
@@ -242,23 +237,18 @@ public class App {
                 case 1 -> {                                                           
                     System.out.println("\nAdicionar clientes ao estacionamento");
                     acrescentarClientes(estacionamento);
-                } 
+                }
                 case 2-> {
-                    System.out.println("\nConsultar um cliente");
-                    acrescentarVeiculo(estacionamento); //adicionar método de consulta a um cliente;
-                } 
-
-                case 3-> {
                     System.out.println("\nAcrescentando um veículo a um cliente");
                     acrescentarVeiculo(estacionamento);
                 } 
 
-                case 4-> {
+                case 3-> {
                     System.out.println("\nEstacionar ou retirar veículo da vaga");
                     menuVeiculo(estacionamento);
                 } 
 
-                case 5 ->{
+                case 4 ->{
                     System.out.println(estacionamento.dataToText());
                 }
                 case 0 ->{

@@ -1,4 +1,6 @@
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe que representa um veículo que pode ser estacionado em uma vaga.
@@ -6,8 +8,7 @@ import java.time.LocalDateTime;
 public class Veiculo {
 
     private String placa;
-    private UsoDeVaga[] usos;
-    private int numUsos;
+    private List<UsoDeVaga> usos;
     private Vaga vaga;
     private Cliente cliente;
 
@@ -18,8 +19,7 @@ public class Veiculo {
      */
     public Veiculo(String placa) {
         this.placa = placa;
-        this.usos = new UsoDeVaga[100];
-        this.numUsos = 0;
+        this.usos = new ArrayList<>();
     }
 
     public Cliente getCliente() {
@@ -55,14 +55,10 @@ public class Veiculo {
      * @param entrada A data de entrada do veículo na vaga.
      */
     public void estacionar(Vaga vaga, LocalDateTime entrada) {
-        if (numUsos < usos.length) {
-            UsoDeVaga uso = new UsoDeVaga(vaga);
-            uso.usarVaga(vaga, entrada);
-            usos[numUsos] = uso;
-            numUsos++;
-
-            this.vaga = vaga;
-        }
+        UsoDeVaga uso = new UsoDeVaga(vaga);
+        uso.usarVaga(this, entrada);
+        usos.add(uso);
+        this.vaga = vaga;
     }
 
     public Vaga getVaga() {
@@ -75,8 +71,8 @@ public class Veiculo {
      * @return O último uso da vaga.
      */
     public UsoDeVaga getUltimoUso() {
-        if (numUsos > 0) {
-            return usos[numUsos - 1];
+        if (!usos.isEmpty()) {
+            return usos.get(usos.size() - 1);
         } else {
             return null;
         }
@@ -90,14 +86,13 @@ public class Veiculo {
      */
     public double sair(LocalDateTime saida) {
         double vPagar = 0.0;
-        for (int i = 0; i < numUsos; i++) {
-            if (usos[i] != null && usos[i].getVaga().equals(vaga)) {
-                UsoDeVaga uso = usos[i];
-                uso.sair(saida);
-                vPagar = uso.valorPago();
-                return vPagar;
-            }
+        UsoDeVaga ultimoUso = getUltimoUso();
+
+        if (ultimoUso != null && ultimoUso.getVaga().equals(vaga)) {
+            vPagar = ultimoUso.sair(saida);
+            vaga = null; // Define a vaga como nula após a saída
         }
+
         return vPagar;
     }
 
@@ -107,13 +102,7 @@ public class Veiculo {
      * @return O valor total arrecadado.
      */
     public double totalArrecadado() {
-        double totalArrecadado = 0.0;
-        for (int i = 0; i < numUsos; i++) {
-            if (usos[i] != null) {
-                totalArrecadado += usos[i].valorPago();
-            }
-        }
-        return totalArrecadado;
+        return usos.stream().mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida())).sum();
     }
 
     /**
@@ -123,16 +112,10 @@ public class Veiculo {
      * @return O valor arrecadado no mês especificado.
      */
     public double arrecadadoNoMes(int mes) {
-        double arrecadadoNoMes = 0.0;
-        for (int i = 0; i < numUsos; i++) {
-            if (usos[i] != null) {
-                LocalDateTime dataUso = usos[i].getEntrada();
-                if (dataUso.getMonthValue() == mes) {
-                    arrecadadoNoMes += usos[i].valorPago();
-                }
-            }
-        }
-        return arrecadadoNoMes;
+        return usos.stream()
+                .filter(u -> u.getEntrada().getMonthValue() == mes)
+                .mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida()))
+                .sum();
     }
 
     /**
@@ -141,7 +124,7 @@ public class Veiculo {
      * @return O número total de usos da vaga.
      */
     public int totalDeUsos() {
-        return numUsos;
+        return usos.size();
     }
 
 }

@@ -1,6 +1,8 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Classe que representa o uso de uma vaga de estacionamento por um cliente.
@@ -16,6 +18,8 @@ public class UsoDeVaga {
     private LocalDateTime saida;
     private double valorPago;
     private EnumSet<Servico> servicosContratados;
+
+    private static final Map<Veiculo, Vaga> veiculoVagaMap = new HashMap<>();
 
     /**
      * Construtor que cria uma instância de UsoDeVaga associada a uma vaga.
@@ -38,6 +42,15 @@ public class UsoDeVaga {
     }
 
     /**
+     * Obtém a data e hora de entrada na vaga.
+     *
+     * @return A data e hora de entrada.
+     */
+    public LocalDateTime getSaida() {
+        return saida;
+    }
+
+    /**
      * Obtém a vaga associada ao uso.
      *
      * @return A vaga associada.
@@ -49,13 +62,13 @@ public class UsoDeVaga {
     /**
      * Registra o uso da vaga com a data e hora de entrada especificadas.
      *
-     * @param vaga    A vaga utilizada.
+     * @param veiculo O veículo utilizando a vaga.
      * @param entrada A data e hora de entrada na vaga.
      */
-    public void usarVaga(Vaga vaga, LocalDateTime entrada) {
+    public void usarVaga(Veiculo veiculo, LocalDateTime entrada) {
         if (this.entrada == null) {
             this.entrada = entrada;
-            vaga.disponivel();
+            veiculoVagaMap.put(veiculo, vaga);
         }
     }
 
@@ -63,11 +76,35 @@ public class UsoDeVaga {
      * Registra a saída do veículo da vaga com a data e hora de saída especificadas.
      *
      * @param saida A data e hora de saída da vaga.
+     * @return O valor a ser pago pelo uso da vaga.
      */
     public double sair(LocalDateTime saida) {
-        double valorPago = valorPago();
+        this.saida = saida;
+
+        Vaga vagaDoUso = this.vaga;
+
+        if (vagaDoUso != null) {
+            // Verifica se a vaga ainda está mapeada no veiculoVagaMap
+            Veiculo veiculoDoUso = veiculoVagaMap.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().equals(vagaDoUso))
+                    .map(Map.Entry::getKey)
+                    .findFirst()
+                    .orElse(null);
+
+            if (veiculoDoUso != null) {
+
+                veiculoVagaMap.remove(veiculoDoUso);
+                vagaDoUso.disponivel();
+            }
+            double valorPago = calcularCusto(veiculoDoUso, this.entrada, this.saida);
+            return valorPago;
+        }
+
         return valorPago;
     }
+
+
 
     /**
      * Contrata um serviço adicional para o uso da vaga.
@@ -78,35 +115,67 @@ public class UsoDeVaga {
         servicosContratados.add(servico);
     }
 
-    /**
-     * Calcula o valor a ser pago pelo uso da vaga.
-     *
-     * @return O valor a ser pago.
-     */
-    public double valorPago() {
-        if (entrada != null && saida != null) {
-            Duration duracao = Duration.between(entrada, saida);
-    
-            for (Servico servico : servicosContratados) {
-                duracao = duracao.plus(servico.getTempoMinimo());
-            }
-    
-            long minutosEstacionados = duracao.toMinutes();
-    
-            if (minutosEstacionados <= 60) {
-                this.valorPago = VALOR_FRACAO;
-            } else {
-                double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * FRACAO_USO * VALOR_FRACAO;
-                this.valorPago = Math.min(valorExcedente, VALOR_MAXIMO);
-            }
-    
-            for (Servico servico : servicosContratados) {
-                this.valorPago += servico.getValor();
-            }
-    
-            return valorPago;
-        } else {
-            return VALOR_FRACAO; // Taxa mínima
+    public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
+        Cliente cliente = veiculo.getCliente();
+
+        // Verifique se o cliente é horista, de turno ou mensalista
+        switch (cliente.getModalidade()) {
+            case HORISTA:
+                return calcularCustoHorista(entrada, saida);
+            case DE_TURNO:
+                return calcularCustoDeTurno(entrada, saida, cliente);
+            case MENSALISTA:
+                return 500.0;
         }
+
+        return 0.0;
+    }
+
+    private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
+        Duration duracao = Duration.between(entrada, saida);
+
+        // Adiciona fração mínima de 15 minutos
+        duracao = duracao.plusMinutes(15 - (duracao.toMinutes() % 15));
+
+        long minutosEstacionados = duracao.toMinutes();
+
+        if (minutosEstacionados <= 60) {
+            return Math.min(VALOR_FRACAO, VALOR_MAXIMO);
+        } else {
+            double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * FRACAO_USO * VALOR_FRACAO;
+            return Math.min(valorExcedente, VALOR_MAXIMO);
+        }
+    }
+
+    private double calcularCustoDeTurno(LocalDateTime entrada, LocalDateTime saida, Cliente cliente) {
+        // Verifica se a utilização está dentro do horário do turno escolhido
+        if (estaDentroDoTurno(entrada, cliente)) {
+            double turno = 0.0;
+            return turno; 
+        } else {
+            return calcularCustoHorista(entrada, saida);
+        }
+    }
+
+    private boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
+        int hora = horario.getHour();
+
+        switch (cliente.getModalidade()) {
+            case DE_TURNO:
+                // Cliente de turno escolheu manhã, tarde ou noite
+                switch (cliente.getTurnoEscolhido()) {
+                    case MANHA:
+                        return hora >= 8 && hora <= 12;
+                    case TARDE:
+                        return hora > 12 && hora <= 18;
+                    case NOITE:
+                        return hora > 18 && hora <= 23;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return false;
     }
 }
