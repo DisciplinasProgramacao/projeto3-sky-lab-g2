@@ -39,7 +39,7 @@ public class Estacionamento implements IDataToText {
     public void addVeiculo(Veiculo veiculo, String idCli) throws VeiculoJaExistenteException, ClienteNaoExisteException {
         Cliente cliente = encontrarCliente(idCli);
         if (cliente != null) {
-            if (cliente.possuiVeiculo(veiculo.getPlaca()) == null) {
+            if (cliente.possuiVeiculo(veiculo.getPlaca()) != null) {
                 throw new VeiculoJaExistenteException();
             } else {
                 cliente.addVeiculo(veiculo);
@@ -199,12 +199,11 @@ public class Estacionamento implements IDataToText {
         for (Cliente cliente : clientes) {
             data.append("Nome: ").append(cliente.getNome()).append(", ID: ").append(cliente.getId()).append("\n");
     
-            // Informações sobre os veículos do cliente
             data.append("Veículos do Cliente:\n");
             List<Veiculo> veiculos = cliente.getVeiculos();
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
-                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n");
+                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n").append("0");
                 }
             }
     

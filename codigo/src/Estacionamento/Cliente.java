@@ -102,7 +102,7 @@ public class Cliente {
         if (veiculos.size() < 10) {
             veiculos.add(veiculo);
         } else {
-            System.out.println("Limite de veículos atingido para este cliente."); // Lançar exceção seria mais apropriado.
+            System.out.println("Limite de veículos atingido para este cliente."); // EXCEÇÃO
         }
     }
 

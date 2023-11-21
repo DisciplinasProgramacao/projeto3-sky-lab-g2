@@ -127,4 +127,8 @@ public class Veiculo {
         return usos.size();
     }
 
+    public void setVaga(Vaga vagaDisponivel) {
+        this.vaga = vagaDisponivel;
+    }
+
 }

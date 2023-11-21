@@ -128,10 +128,14 @@ public class UsoDeVaga {
                 return 500.0;
         }
 
-        return 0.0;
+        return VALOR_FRACAO;
     }
 
     private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
+        if (entrada == null || saida == null) {
+            return VALOR_FRACAO;
+        }
+
         Duration duracao = Duration.between(entrada, saida);
 
         // Adiciona fração mínima de 15 minutos
@@ -148,7 +152,7 @@ public class UsoDeVaga {
     }
 
     private double calcularCustoDeTurno(LocalDateTime entrada, LocalDateTime saida, Cliente cliente) {
-        // Verifica se a utilização está dentro do horário do turno escolhido
+        
         if (estaDentroDoTurno(entrada, cliente)) {
             double turno = 0.0;
             return turno; 
