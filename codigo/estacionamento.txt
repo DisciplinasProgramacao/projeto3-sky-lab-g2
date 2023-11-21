@@ -1,6 +1,6 @@
-Nome do Estacionamento: Estacionamento 1
-Quantidade de Fileiras: 2
-Vagas por Fileira: 10
+Nome do Estacionamento:Estacionamento 1
+Quantidade de Fileiras:2
+Vagas por Fileira:10
 
 Clientes:
 Nome: Cliente 1, ID: ID1
@@ -214,4 +214,5 @@ ID da Vaga: V13, Disponível: Desocupada
 ID da Vaga: V14, Disponível: Desocupada
 ID da Vaga: V15, Disponível: Desocupada
 ID da Vaga: V16, Disponível: Ocupada
+
 
