@@ -3,10 +3,20 @@
  */
 public class Cliente {
 
+    public enum ModalidadeCliente {
+        HORISTA, DE_TURNO, MENSALISTA
+    }
+
+    public enum Turno {
+        MANHA, TARDE, NOITE
+    }
+
     private String nome;
     private String id;
     private Veiculo[] veiculos;
     private int numVeiculos;
+    private ModalidadeCliente modalidade;
+    private Turno turnoEscolhido;
 
     /**
      * Construtor da classe Cliente.
@@ -19,6 +29,23 @@ public class Cliente {
         this.id = id;
         this.veiculos = new Veiculo[10];
         this.numVeiculos = 0;
+
+    }
+
+    public ModalidadeCliente getModalidade() {
+        return modalidade;
+    }
+
+    public void setModalidade(Cliente.ModalidadeCliente horista) {
+        this.modalidade = modalidade;
+    }
+
+    public Turno getTurnoEscolhido() {
+        return turnoEscolhido;
+    }
+
+    public void setTurnoEscolhido(Turno turnoEscolhido) {
+        this.turnoEscolhido = turnoEscolhido;
     }
 
     /**
@@ -117,14 +144,15 @@ public class Cliente {
      * @param placa A placa do veículo.
      * @return O valor total arrecadado pelo veículo com a placa especificada.
      */
-    public double arrecadadoPorVeiculo(String placa) {
-        Veiculo veiculo = possuiVeiculo(placa);
-        if (veiculo != null) {
-            return veiculo.totalArrecadado();
-        } else {
-            return veiculo.totalArrecadado();
-        }
-    }
+	public double arrecadadoPorVeiculo(String placa) {
+		Veiculo veiculo = possuiVeiculo(placa);
+
+		if(veiculo != null){
+			return veiculo.totalArrecadado();
+		}
+
+		return 0.0;
+	}
 
     /**
      * Obtém o valor total arrecadado pelo cliente por todos os veículos.

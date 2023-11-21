@@ -8,6 +8,8 @@ public class Veiculo {
     private String placa;
     private UsoDeVaga[] usos;
     private int numUsos;
+    private Vaga vaga;
+    private Cliente cliente;
 
     /**
      * Construtor que cria um novo veículo com a placa especificada.
@@ -18,6 +20,14 @@ public class Veiculo {
         this.placa = placa;
         this.usos = new UsoDeVaga[100];
         this.numUsos = 0;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
     /**
@@ -50,28 +60,45 @@ public class Veiculo {
             uso.usarVaga(vaga, entrada);
             usos[numUsos] = uso;
             numUsos++;
+
+            this.vaga = vaga;
+        }
+    }
+
+    public Vaga getVaga() {
+        return this.vaga;
+    }
+
+    /**
+     * Obtém o último uso da vaga feito por este veículo.
+     *
+     * @return O último uso da vaga.
+     */
+    public UsoDeVaga getUltimoUso() {
+        if (numUsos > 0) {
+            return usos[numUsos - 1];
+        } else {
+            return null;
         }
     }
 
     /**
      * Registra a saída do veículo de uma vaga na data de saída especificada e calcula o valor a ser pago.
      *
-     * @param vaga  A vaga da qual o veículo está saindo.
      * @param saida A data de saída do veículo da vaga.
      * @return O valor a ser pago pelo uso da vaga.
      */
-    public double sair(Vaga vaga, LocalDateTime saida) {
-        double valorPago = 0.0;
+    public double sair(LocalDateTime saida) {
+        double vPagar = 0.0;
         for (int i = 0; i < numUsos; i++) {
             if (usos[i] != null && usos[i].getVaga().equals(vaga)) {
                 UsoDeVaga uso = usos[i];
                 uso.sair(saida);
-                valorPago = uso.valorPago();
-                return valorPago;
+                vPagar = uso.valorPago();
+                return vPagar;
             }
         }
-
-        return valorPago;
+        return vPagar;
     }
 
     /**
@@ -115,19 +142,6 @@ public class Veiculo {
      */
     public int totalDeUsos() {
         return numUsos;
-    }
-
-    /**
-     * Obtém o último uso de vaga associado a este veículo.
-     *
-     * @return O último uso de vaga do veículo ou null se não houver usos.
-     */
-    public UsoDeVaga getUltimoUso() {
-        if (numUsos > 0) {
-            return usos[numUsos - 1];
-        } else {
-            return null;
-        }
     }
 
 }

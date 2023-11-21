@@ -1,16 +1,21 @@
 import java.util.*;
 import java.time.LocalDateTime;
+import java.time.Duration;
 
 /**
  * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
  */
 public class Estacionamento implements IDataToText {
+    private static final double VALOR_FRACAO = 4.0;
+    private static final double FRACAO_USO = 1.0 / 4.0; // 15 minutos
+    private static final double MENSALIDADE_TURNO = 200.0;
 
     private String nome;
     private List<Cliente> clientes;
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
+    private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
     /**
      * Construtor que cria uma instância de estacionamento com o nome e configurações especificados.
@@ -25,6 +30,7 @@ public class Estacionamento implements IDataToText {
         this.vagasPorFileira = vagasPorFila;
         this.clientes = new ArrayList<>();
         this.vagas = new ArrayList<>();
+        this.veiculoUsoMap = new HashMap<>();
         gerarVagas();
     }
 
@@ -71,6 +77,10 @@ public class Estacionamento implements IDataToText {
         }
     }
 
+    public List<Vaga> getVagas() {
+        return vagas;
+    }
+
     /**
      * Estaciona um veículo em uma vaga disponível no estacionamento.
      *
@@ -90,8 +100,8 @@ public class Estacionamento implements IDataToText {
      * @param saida A data e hora de saída do veículo.
      * @return O valor a ser pago pelo uso da vaga.
      */
-    public void sair(Veiculo veiculo, Vaga vaga, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
-        veiculo.sair(vaga, saida);
+    public double sair(Veiculo veiculo, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
+        return veiculo.sair(saida);
     }
 
     /**
@@ -197,23 +207,19 @@ public class Estacionamento implements IDataToText {
     /**
      * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
      *
-     * @param placa   A placa do veículo ao qual o serviço será adicionado.
+     * @param placa   A placa do veículo.
      * @param servico O serviço a ser contratado.
-     * @return true se o serviço foi contratado com sucesso, false caso contrário.
+     * @return `true` se o serviço foi contratado com sucesso, `false` caso contrário.
      */
     public boolean contratarServico(String placa, Servico servico) {
         Veiculo veiculo = encontrarVeiculo(placa);
-
         if (veiculo != null) {
-            UsoDeVaga ultimoUso = veiculo.getUltimoUso();
-
-            if (ultimoUso != null && ultimoUso.getVaga().disponivel()) {
-                // A vaga precisa estar ocupada para contratar um serviço adicional
-                ultimoUso.contratarServico(servico);
+            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
+            if (uso != null) {
+                uso.contratarServico(servico);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -283,6 +289,70 @@ public class Estacionamento implements IDataToText {
      */
     public List<Cliente> getClientes() {
         return clientes;
+    }
+
+    public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
+        Cliente cliente = veiculo.getCliente();
+
+        // Verifique se o cliente é horista, de turno ou mensalista
+        switch (cliente.getModalidade()) {
+            case HORISTA:
+                return calcularCustoHorista(entrada, saida);
+            case DE_TURNO:
+                return calcularCustoDeTurno(entrada, saida, cliente);
+            case MENSALISTA:
+                return 500.0;
+        }
+
+        return 0.0;
+    }
+
+    private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
+        Duration duracao = Duration.between(entrada, saida);
+
+        // Adiciona fração mínima de 15 minutos
+        duracao = duracao.plusMinutes(15 - (duracao.toMinutes() % 15));
+
+        long minutosEstacionados = duracao.toMinutes();
+
+        if (minutosEstacionados <= 60) {
+            return Math.min(VALOR_FRACAO, 50.0); // Taxa mínima ou valor máximo de R$50
+        } else {
+            double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * FRACAO_USO * VALOR_FRACAO;
+            return Math.min(valorExcedente, 50.0); // Valor excedente ou valor máximo de R$50
+        }
+    }
+
+    private double calcularCustoDeTurno(LocalDateTime entrada, LocalDateTime saida, Cliente cliente) {
+        // Verifica se a utilização está dentro do horário do turno escolhido
+        if (estaDentroDoTurno(entrada, cliente)) {
+            return 0.0; // Cliente de turno não paga durante o seu turno
+        } else {
+            // Caso contrário, calcula como cliente horista
+            return calcularCustoHorista(entrada, saida);
+        }
+    }
+
+    private boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
+        int hora = horario.getHour();
+
+        switch (cliente.getModalidade()) {
+            case DE_TURNO:
+                // Cliente de turno escolheu manhã, tarde ou noite
+                switch (cliente.getTurnoEscolhido()) {
+                    case MANHA:
+                        return hora >= 8 && hora <= 12;
+                    case TARDE:
+                        return hora > 12 && hora <= 18;
+                    case NOITE:
+                        return hora > 18 && hora <= 23;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return false;
     }
 
 }

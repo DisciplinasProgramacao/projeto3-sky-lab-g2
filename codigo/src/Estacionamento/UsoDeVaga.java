@@ -64,12 +64,9 @@ public class UsoDeVaga {
      *
      * @param saida A data e hora de saída da vaga.
      */
-    public void sair(LocalDateTime saida) {
-        if (entrada != null) {
-            this.saida = saida;
-            valorPago();
-            vaga.disponivel();
-        }
+    public double sair(LocalDateTime saida) {
+        double valorPago = valorPago();
+        return valorPago;
     }
 
     /**
@@ -89,28 +86,27 @@ public class UsoDeVaga {
     public double valorPago() {
         if (entrada != null && saida != null) {
             Duration duracao = Duration.between(entrada, saida);
-
+    
             for (Servico servico : servicosContratados) {
                 duracao = duracao.plus(servico.getTempoMinimo());
             }
-
+    
             long minutosEstacionados = duracao.toMinutes();
-
+    
             if (minutosEstacionados <= 60) {
                 this.valorPago = VALOR_FRACAO;
             } else {
-                double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * VALOR_FRACAO * FRACAO_USO;
+                double valorExcedente = Math.ceil((minutosEstacionados - 60) / 15.0) * FRACAO_USO * VALOR_FRACAO;
                 this.valorPago = Math.min(valorExcedente, VALOR_MAXIMO);
             }
-
+    
             for (Servico servico : servicosContratados) {
                 this.valorPago += servico.getValor();
             }
-
+    
             return valorPago;
         } else {
             return VALOR_FRACAO; // Taxa mínima
         }
     }
-
 }
