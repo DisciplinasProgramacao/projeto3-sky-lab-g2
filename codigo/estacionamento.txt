@@ -1,6 +1,6 @@
-Nome do Estacionamento: Estacionamento 1
-Quantidade de Fileiras: 2
-Vagas por Fileira: 10
+Nome do Estacionamento:Estacionamento 1
+Quantidade de Fileiras:2
+Vagas por Fileira:10
 
 Clientes:
 Nome: Cliente 1, ID: ID1
@@ -215,89 +215,4 @@ ID da Vaga: V14, Disponível: Desocupada
 ID da Vaga: V15, Disponível: Desocupada
 ID da Vaga: V16, Disponível: Ocupada
 
-Nome do Estacionamento: Estacionamento 4
-Quantidade de Fileiras: 4
-Vagas por Fileira: 4
 
-Clientes:
-Nome: Milho, ID: 1
-Veículos do Cliente:
-Placa: TES-7700, custando: R$0.0
-
-Nome: Joao, ID: 2
-Veículos do Cliente:
-Placa: TES-7701, custando: R$12.0
-
-Nome: Carlos, ID: 3
-Veículos do Cliente:
-Placa: TES-7702, custando: R$50.0
-
-Nome: Paula, ID: 4
-Veículos do Cliente:
-Placa: TES-7703, custando: R$0.0
-
-Nome: Fagner, ID: 5
-Veículos do Cliente:
-Placa: TES-7704, custando: R$16.0
-
-Nome: Cristiano, ID: 6
-Veículos do Cliente:
-Placa: TES-7705, custando: R$20.0
-
-Nome: Teste, ID: 7
-Veículos do Cliente:
-Placa: TES-7706, custando: R$12.0
-
-Nome: Carlos, ID: 8
-Veículos do Cliente:
-Placa: TES-7707, custando: R$40.0
-
-Nome: Fatima, ID: 9
-Veículos do Cliente:
-Placa: TES-7708, custando: R$0.0
-
-Nome: Vitor, ID: 10
-Veículos do Cliente:
-Placa: TES-7709, custando: R$28.0
-
-Nome: Pessoa, ID: 11
-Veículos do Cliente:
-Placa: TES-7710, custando: R$0.0
-
-Nome: Anonimo, ID: 12
-Veículos do Cliente:
-Placa: TES-7711, custando: R$0.0
-
-Nome: Teste2, ID: 13
-Veículos do Cliente:
-Placa: TES-7712, custando: R$12.0
-
-Nome: Karlos, ID: 14
-Veículos do Cliente:
-Placa: TES-7713, custando: R$0.0
-
-Nome: Gabriel, ID: 15
-Veículos do Cliente:
-Placa: TES-7714, custando: R$0.0
-
-Nome: Jorge, ID: 16
-Veículos do Cliente:
-Placa: TES-7715, custando: R$54.0
-
-Vagas:
-ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
-ID da Vaga: V3, Disponível: Ocupada
-ID da Vaga: V4, Disponível: Ocupada
-ID da Vaga: V5, Disponível: Ocupada
-ID da Vaga: V6, Disponível: Ocupada
-ID da Vaga: V7, Disponível: Ocupada
-ID da Vaga: V8, Disponível: Ocupada
-ID da Vaga: V9, Disponível: Ocupada
-ID da Vaga: V10, Disponível: Ocupada
-ID da Vaga: V11, Disponível: Ocupada
-ID da Vaga: V12, Disponível: Ocupada
-ID da Vaga: V13, Disponível: Ocupada
-ID da Vaga: V14, Disponível: Ocupada
-ID da Vaga: V15, Disponível: Ocupada
-ID da Vaga: V16, Disponível: Ocupada
