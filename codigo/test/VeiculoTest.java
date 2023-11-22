@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class VeiculoTest {
     
+}
+public class VeiculoTest {
     @Test
     public void testEstacionar() {
         Veiculo veiculo = new Veiculo("ABC-1234");
@@ -12,8 +14,7 @@ public class VeiculoTest {
         veiculo.estacionar(vaga, entrada);
         assertEquals(vaga, veiculo.getVaga());
     }
-
-public class VeiculoTest {
+    
     @Test
     public void testEstacionar() {
         Veiculo veiculo = new Veiculo("ABC-1234");
