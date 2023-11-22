@@ -89,6 +89,8 @@ public class Estacionamento implements IDataToText {
     public void estacionar(Veiculo veiculo, Vaga vaga, LocalDateTime entrada)
             throws VagaOcupadaException, VeiculoNaoExisteException {
         veiculo.estacionar(vaga, entrada);
+        UsoDeVaga uso = new UsoDeVaga(vaga);
+        veiculoUsoMap.put(veiculo, uso);
     }
 
     /**
@@ -221,7 +223,7 @@ public class Estacionamento implements IDataToText {
         }
         return false;
     }
-
+    
     @Override
     public String dataToText() {
         StringBuilder data = new StringBuilder();
@@ -238,7 +240,7 @@ public class Estacionamento implements IDataToText {
             List<Veiculo> veiculos = cliente.getVeiculos();
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
-                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n").append("0");
+                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("0").append("\n");
                 }
             }
     
@@ -280,7 +282,34 @@ public class Estacionamento implements IDataToText {
 
         return relatorio.toString();
     }
-    
+
+    /**
+     * Calcula a arrecadação média dos clientes horistas neste mês usando Stream.
+     *
+     * @param mes O mês para o qual se deseja calcular a arrecadação média.
+     * @return A arrecadação média dos clientes horistas neste mês.
+     */
+    public double calcularArrecadacaoMediaHoristas(int mes) {
+        return clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.HORISTA)
+                .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * Calcula a média de usos mensais para clientes mensalistas.
+     *
+     * @return A média de usos mensais para clientes mensalistas.
+     */
+    public double calcularMediaUsosMensalistas() {
+        return clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
+                .mapToInt(Cliente::totalDeUsos)
+                .average()
+                .orElse(0.0);
+    }
+
     /**
      * Obtém o nome do estacionamento.
      *
@@ -316,6 +345,5 @@ public class Estacionamento implements IDataToText {
     public List<Cliente> getClientes() {
         return clientes;
     }
-
 
 }

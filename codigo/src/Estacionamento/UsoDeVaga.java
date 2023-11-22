@@ -1,7 +1,8 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.EnumSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ public class UsoDeVaga {
     private LocalDateTime entrada;
     private LocalDateTime saida;
     private double valorPago;
-    private EnumSet<Servico> servicosContratados;
+    private List<Servico> servicosContratados;
     private Cliente cliente;
 
     private static final Map<Veiculo, Vaga> veiculoVagaMap = new HashMap<>();
@@ -30,7 +31,7 @@ public class UsoDeVaga {
     public UsoDeVaga(Vaga vaga) {
         this.vaga = vaga;
         this.valorPago = 0.0;
-        this.servicosContratados = EnumSet.noneOf(Servico.class);
+        this.servicosContratados = new ArrayList<>();
     }
 
     /**
@@ -94,7 +95,6 @@ public class UsoDeVaga {
         Vaga vagaDoUso = this.vaga;
 
         if (vagaDoUso != null) {
-            // Verifica se a vaga ainda está mapeada no veiculoVagaMap
             Veiculo veiculoDoUso = veiculoVagaMap.entrySet()
                     .stream()
                     .filter(entry -> entry.getValue().equals(vagaDoUso))
@@ -103,18 +103,22 @@ public class UsoDeVaga {
                     .orElse(null);
 
             if (veiculoDoUso != null) {
-
+                System.out.println("Cliente associado ao veículo: " + veiculoDoUso.getCliente().getId());
                 veiculoVagaMap.remove(veiculoDoUso);
                 vagaDoUso.disponivel();
+
+                double valorCusto = calcularCusto(veiculoDoUso, this.entrada, this.saida);
+                double valorServicos = calcularCustoServicos();
+
+                System.out.println("Valor Custo: " + valorCusto);
+                System.out.println("Valor Serviços: " + valorServicos);
+
+                return valorCusto + valorServicos;
             }
-            double valorPago = calcularCusto(veiculoDoUso, this.entrada, this.saida);
-            return valorPago + calcularCustoServicos();
         }
 
         return valorPago;
-    }
-
-
+    }   
 
     /**
      * Contrata um serviço adicional para o uso da vaga.
@@ -124,15 +128,15 @@ public class UsoDeVaga {
     public void contratarServico(Servico servico) {
         servicosContratados.add(servico);
     }
-
+    
     public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
         Cliente cliente = veiculo.getCliente();
     
         switch (cliente.getModalidade()) {
             case HORISTA:
-                return calcularCustoHorista(entrada, saida);
+                return calcularCustoHorista(entrada, saida) + calcularCustoServicos();
             case DE_TURNO:
-                return calcularCustoDeTurno(entrada, saida, cliente);
+                return calcularCustoDeTurno(entrada, saida, cliente) + calcularCustoServicos();
             case MENSALISTA:
                 return calcularCustoServicos();
         }
@@ -141,14 +145,14 @@ public class UsoDeVaga {
     }
     
     private double calcularCustoServicos() {
-        double custoServicos = 0.0;
-    
+        double valorServicos = 0.0;
+
         for (Servico servico : servicosContratados) {
-            custoServicos += servico.getValor();
+            valorServicos += servico.getValor();
         }
-    
-        return custoServicos;
-    }    
+
+        return valorServicos;
+    }  
 
     private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
         if (entrada == null || saida == null) {
@@ -157,7 +161,6 @@ public class UsoDeVaga {
 
         Duration duracao = Duration.between(entrada, saida);
 
-        // Adiciona fração mínima de 15 minutos
         duracao = duracao.plusMinutes(15 - (duracao.toMinutes() % 15));
 
         long minutosEstacionados = duracao.toMinutes();
