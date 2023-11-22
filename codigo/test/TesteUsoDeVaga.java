@@ -3,7 +3,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-// A classe de teste TesteUsoDeVaga testa os métodos da classe UsoDeVaga.
+// A classe de teste TesteUsoDeVaga testa os métodos da classe UsoDeVaga
 public class TesteUsoDeVaga {
 
     // Instância de UsoDeVaga a ser testada.
