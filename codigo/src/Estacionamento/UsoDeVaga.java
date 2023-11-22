@@ -132,17 +132,20 @@ public class UsoDeVaga {
     public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
         Cliente cliente = veiculo.getCliente();
     
-        switch (cliente.getModalidade()) {
-            case HORISTA:
-                return calcularCustoHorista(entrada, saida) + calcularCustoServicos();
-            case DE_TURNO:
-                return calcularCustoDeTurno(entrada, saida, cliente) + calcularCustoServicos();
-            case MENSALISTA:
-                return calcularCustoServicos();
+        if (cliente != null && cliente.getModalidade() != null) {
+            switch (cliente.getModalidade()) {
+                case HORISTA:
+                    return calcularCustoHorista(entrada, saida) + calcularCustoServicos();
+                case DE_TURNO:
+                    return calcularCustoDeTurno(entrada, saida, cliente) + calcularCustoServicos();
+                case MENSALISTA:
+                    return calcularCustoServicos();
+            }
         }
     
         return VALOR_FRACAO;
     }
+    
     
     private double calcularCustoServicos() {
         double valorServicos = 0.0;
@@ -207,5 +210,9 @@ public class UsoDeVaga {
 
     public Cliente getCliente() {
         return this.cliente;
+    }
+
+    public List<Servico> getServicosContratados() {
+        return servicosContratados;
     }
 }
