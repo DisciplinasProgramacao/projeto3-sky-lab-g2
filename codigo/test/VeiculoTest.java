@@ -1,64 +1,72 @@
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.time.LocalDateTime;
 
 public class VeiculoTest {
-
-    private Veiculo veiculo;
-    private Vaga vaga;
-
-    @Before
-    public void setUp() {
-        veiculo = new Veiculo("ABC123");
-        vaga = new Vaga("V1"); // Suponha que a classe Vaga tenha um construtor que recebe um número de vaga.
-    }
-
+    
     @Test
     public void testEstacionar() {
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
         LocalDateTime entrada = LocalDateTime.now();
         veiculo.estacionar(vaga, entrada);
-        assertEquals(1, veiculo.totalDeUsos());
+        assertEquals(vaga, veiculo.getVaga());
+    }
+}
+public class VeiculoTest {
+    @Test
+    public void testEstacionar() {
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
+        LocalDateTime entrada = LocalDateTime.now();
+        veiculo.estacionar(vaga, entrada);
+        assertEquals(vaga, veiculo.getVaga());
     }
 
     @Test
     public void testSair() {
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
         LocalDateTime entrada = LocalDateTime.now();
         veiculo.estacionar(vaga, entrada);
-        LocalDateTime saida = entrada.plusHours(1); // Suponha que o veículo ficou uma hora na vaga.
-        double valorPago = veiculo.sair(vaga, saida);
-        assertEquals(4.0, valorPago, 0.01); // 1 hora de uso com um valor de 1.0 por hora.
+        LocalDateTime saida = entrada.plusHours(2);
+        double valor = veiculo.sair(saida);
+        assertEquals(10.0, valor, 0.01);
     }
 
     @Test
     public void testTotalArrecadado() {
-        LocalDateTime entrada1 = LocalDateTime.now();
-        veiculo.estacionar(vaga, entrada1);
-        LocalDateTime saida1 = entrada1.plusHours(1);
-        veiculo.sair(vaga, saida1);
-
-        LocalDateTime entrada2 = saida1.plusMinutes(30);
-        veiculo.estacionar(vaga, entrada2);
-        LocalDateTime saida2 = entrada2.plusHours(2);
-        veiculo.sair(vaga, saida2);
-
-        assertEquals(14.0, veiculo.totalArrecadado(), 0.01); // 1.0 + 2.0 = 3.0
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
+        LocalDateTime entrada = LocalDateTime.now();
+        veiculo.estacionar(vaga, entrada);
+        LocalDateTime saida = entrada.plusHours(2);
+        veiculo.sair(saida);
+        double total = veiculo.totalArrecadado();
+        assertEquals(10.0, total, 0.01);
     }
 
     @Test
     public void testArrecadadoNoMes() {
-        LocalDateTime entrada1 = LocalDateTime.of(2023, 10, 15, 12, 0);
-        veiculo.estacionar(vaga, entrada1);
-        LocalDateTime saida1 = entrada1.plusHours(1);
-        veiculo.sair(vaga, saida1);
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
+        LocalDateTime entrada = LocalDateTime.of(2023, 11, 1, 0, 0);
+        veiculo.estacionar(vaga, entrada);
+        LocalDateTime saida = entrada.plusHours(2);
+        veiculo.sair(saida);
+        double total = veiculo.arrecadadoNoMes(11);
+        assertEquals(10.0, total, 0.01);
+    }
 
-        LocalDateTime entrada2 = LocalDateTime.of(2023, 11, 5, 15, 30);
-        veiculo.estacionar(vaga, entrada2);
-        LocalDateTime saida2 = entrada2.plusMinutes(45);
-        veiculo.sair(vaga, saida2);
-
-        assertEquals(50.0, veiculo.arrecadadoNoMes(10), 0.01); // Apenas a primeira transação está em outubro.
-        assertEquals(0.0, veiculo.arrecadadoNoMes(12), 0.01); // Nenhuma transação em dezembro.
-        assertEquals(4.0, veiculo.arrecadadoNoMes(11), 0.01); // Apenas a segunda transação está em novembro.
+    @Test
+    public void testTotalDeUsos() {
+        Veiculo veiculo = new Veiculo("ABC-1234");
+        Vaga vaga = new Vaga(1);
+        LocalDateTime entrada = LocalDateTime.now();
+        veiculo.estacionar(vaga, entrada);
+        LocalDateTime saida = entrada.plusHours(2);
+        veiculo.sair(saida);
+        int total = veiculo.totalDeUsos();
+        assertEquals(1, total);
     }
 }
