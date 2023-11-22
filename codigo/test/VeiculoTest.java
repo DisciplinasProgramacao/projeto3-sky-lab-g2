@@ -2,8 +2,14 @@ import org.junit.Test;
 import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
+/**
+ * Testes para a classe Veiculo.
+ */
 public class VeiculoTest {
 
+    /**
+     * Testa o construtor da classe Veiculo.
+     */
     @Test
     public void testConstrutor() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -12,6 +18,9 @@ public class VeiculoTest {
         assertNull(veiculo.getCliente());
     }
 
+    /**
+     * Testa o método estacionar da classe Veiculo.
+     */
     @Test
     public void testEstacionar() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -23,6 +32,9 @@ public class VeiculoTest {
         assertEquals(vaga, veiculo.getVaga());
     }
 
+    /**
+     * Testa o método sair da classe Veiculo.
+     */
     @Test
     public void testSair() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -39,6 +51,9 @@ public class VeiculoTest {
         assertNull(veiculo.getVaga());
     }
 
+    /**
+     * Testa o método totalArrecadado da classe Veiculo.
+     */
     @Test
     public void testTotalArrecadado() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -54,6 +69,9 @@ public class VeiculoTest {
         assertEquals(valorPago, veiculo.totalArrecadado(), 0.01);
     }
 
+    /**
+     * Testa o método totalDeUsos da classe Veiculo.
+     */
     @Test
     public void testTotalDeUsos() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -73,6 +91,9 @@ public class VeiculoTest {
         assertEquals(2, veiculo.totalDeUsos());
     }
 
+    /**
+     * Testa o método setCliente da classe Veiculo.
+     */
     @Test
     public void testSetCliente() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -83,6 +104,9 @@ public class VeiculoTest {
         assertEquals(cliente, veiculo.getCliente());
     }
 
+    /**
+     * Testa o método setPlaca da classe Veiculo.
+     */
     @Test
     public void testSetPlaca() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -91,6 +115,9 @@ public class VeiculoTest {
         assertEquals("XYZ789", veiculo.getPlaca());
     }
 
+    /**
+     * Testa o método setVaga da classe Veiculo.
+     */
     @Test
     public void testSetVaga() {
         Veiculo veiculo = new Veiculo("ABC123");
@@ -101,6 +128,9 @@ public class VeiculoTest {
         assertEquals(vaga, veiculo.getVaga());
     }
 
+    /**
+     * Testa o método getUltimoUso da classe Veiculo.
+     */
     @Test
     public void testGetUltimoUso() {
         Veiculo veiculo = new Veiculo("ABC123");
