@@ -20,7 +20,7 @@ public class ClienteTest {
         cliente.addVeiculo(veiculo1);
         cliente.addVeiculo(veiculo2);
 
-        // Criando vagas
+        // Criando vaga
         Vaga vaga1 = new Vaga("Vaga1");
         Vaga vaga2 = new Vaga("Vaga2");
 
