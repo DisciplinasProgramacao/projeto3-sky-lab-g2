@@ -12,7 +12,7 @@ public class VeiculoTest {
         veiculo.estacionar(vaga, entrada);
         assertEquals(vaga, veiculo.getVaga());
     }
-}
+
 public class VeiculoTest {
     @Test
     public void testEstacionar() {
