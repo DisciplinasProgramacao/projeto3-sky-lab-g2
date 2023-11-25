@@ -10,6 +10,52 @@ import java.util.Map;
  */
 public class UsoDeVaga {
 
+    /**
+     * Enumeração que define os serviços adicionais disponíveis para um uso de vaga.
+     */
+    public enum Servico {
+        MANOBRISTA("Manobrista", 5.0, Duration.ZERO),
+        LAVAGEM("Lavagem", 20.0, Duration.ofHours(1)),
+        POLIMENTO("Polimento (inclui lavagem)", 45.0, Duration.ofHours(2));
+
+        private final String descricao;
+        private final double valor;
+        private final Duration tempoMinimo;
+
+        Servico(String descricao, double valor, Duration tempoMinimo) {
+            this.descricao = descricao;
+            this.valor = valor;
+            this.tempoMinimo = tempoMinimo;
+        }
+
+        /**
+         * Obtém a descrição do serviço.
+         *
+         * @return A descrição do serviço.
+         */
+        public String getDescricao() {
+            return descricao;
+        }
+
+        /**
+         * Obtém o valor do serviço.
+         *
+         * @return O valor do serviço.
+         */
+        public double getValor() {
+            return this.valor;
+        }
+
+        /**
+         * Obtém o tempo mínimo necessário para o serviço.
+         *
+         * @return O tempo mínimo necessário para o serviço.
+         */
+        public Duration getTempoMinimo() {
+            return tempoMinimo;
+        }
+    }
+
     private static final double FRACAO_USO = 0.25;
     private static final double VALOR_FRACAO = 4.0;
     private static final double VALOR_MAXIMO = 50.0;
@@ -62,9 +108,9 @@ public class UsoDeVaga {
     }
 
     /**
-     * Obtém a vaga associada ao uso.
+     * Define o cliente associado ao uso.
      *
-     * @return A vaga associada.
+     * @param cliente O cliente associado ao uso.
      */
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
@@ -103,22 +149,18 @@ public class UsoDeVaga {
                     .orElse(null);
 
             if (veiculoDoUso != null) {
-                System.out.println("Cliente associado ao veículo: " + veiculoDoUso.getCliente().getId());
                 veiculoVagaMap.remove(veiculoDoUso);
                 vagaDoUso.disponivel();
 
                 double valorCusto = calcularCusto(veiculoDoUso, this.entrada, this.saida);
                 double valorServicos = calcularCustoServicos();
 
-                System.out.println("Valor Custo: " + valorCusto);
-                System.out.println("Valor Serviços: " + valorServicos);
-
                 return valorCusto + valorServicos;
             }
         }
 
         return valorPago;
-    }   
+    }
 
     /**
      * Contrata um serviço adicional para o uso da vaga.
@@ -126,12 +168,20 @@ public class UsoDeVaga {
      * @param servico O serviço a ser contratado.
      */
     public void contratarServico(Servico servico) {
-        servicosContratados.add(servico);
+        this.servicosContratados.add(servico);
     }
-    
+
+    /**
+     * Calcula o custo total do uso da vaga, incluindo custo de estacionamento e serviços adicionais.
+     *
+     * @param veiculo O veículo utilizando a vaga.
+     * @param entrada A data e hora de entrada na vaga.
+     * @param saida A data e hora de saída da vaga.
+     * @return O custo total do uso da vaga.
+     */
     public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
         Cliente cliente = veiculo.getCliente();
-    
+
         if (cliente != null && cliente.getModalidade() != null) {
             switch (cliente.getModalidade()) {
                 case HORISTA:
@@ -142,21 +192,34 @@ public class UsoDeVaga {
                     return calcularCustoServicos();
             }
         }
-    
+
         return VALOR_FRACAO;
     }
-    
-    
-    private double calcularCustoServicos() {
-        double valorServicos = 0.0;
 
-        for (Servico servico : servicosContratados) {
-            valorServicos += servico.getValor();
+    /**
+     * Calcula o custo total dos serviços adicionais contratados.
+     *
+     * @return O custo total dos serviços adicionais.
+     */
+    private double calcularCustoServicos() {
+        double valor = 0.0;
+
+        if (this.servicosContratados != null) {
+            for (Servico servico : this.servicosContratados) {
+                valor += servico.getValor();
+            }
         }
 
-        return valorServicos;
-    }  
+        return valor;
+    }
 
+    /**
+     * Calcula o custo para clientes horistas, levando em consideração o tempo de estacionamento.
+     *
+     * @param entrada A data e hora de entrada na vaga.
+     * @param saida A data e hora de saída da vaga.
+     * @return O custo para clientes horistas.
+     */
     private double calcularCustoHorista(LocalDateTime entrada, LocalDateTime saida) {
         if (entrada == null || saida == null) {
             return VALOR_FRACAO;
@@ -176,22 +239,36 @@ public class UsoDeVaga {
         }
     }
 
+    /**
+     * Calcula o custo para clientes de turno, levando em consideração o turno escolhido.
+     *
+     * @param entrada A data e hora de entrada na vaga.
+     * @param saida A data e hora de saída da vaga.
+     * @param cliente O cliente utilizando a vaga.
+     * @return O custo para clientes de turno.
+     */
     private double calcularCustoDeTurno(LocalDateTime entrada, LocalDateTime saida, Cliente cliente) {
-        
         if (estaDentroDoTurno(entrada, cliente)) {
-            double turno = 0.0;
-            return turno; 
+            // Custo é zero dentro do turno
+            return 0.0;
         } else {
+            // Fora do turno, calcula como cliente horista
             return calcularCustoHorista(entrada, saida);
         }
     }
 
+    /**
+     * Verifica se o horário está dentro do turno escolhido pelo cliente.
+     *
+     * @param horario O horário a ser verificado.
+     * @param cliente O cliente utilizando a vaga.
+     * @return true se estiver dentro do turno, false caso contrário.
+     */
     private boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
         int hora = horario.getHour();
 
         switch (cliente.getModalidade()) {
             case DE_TURNO:
-                
                 switch (cliente.getTurnoEscolhido()) {
                     case MANHA:
                         return hora >= 8 && hora <= 12;
@@ -208,10 +285,20 @@ public class UsoDeVaga {
         return false;
     }
 
+    /**
+     * Obtém o cliente associado ao uso da vaga.
+     *
+     * @return O cliente associado ao uso da vaga.
+     */
     public Cliente getCliente() {
         return this.cliente;
     }
 
+    /**
+     * Obtém a lista de serviços adicionais contratados.
+     *
+     * @return A lista de serviços adicionais contratados.
+     */
     public List<Servico> getServicosContratados() {
         return servicosContratados;
     }

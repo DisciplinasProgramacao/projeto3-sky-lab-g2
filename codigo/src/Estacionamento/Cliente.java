@@ -32,22 +32,50 @@ public class Cliente {
         this.veiculos = new ArrayList<>();
     }
 
+    /**
+     * Obtém a modalidade de cliente.
+     *
+     * @return A modalidade de cliente.
+     */
     public ModalidadeCliente getModalidade() {
         return modalidade;
     }
 
+    /**
+     * Define a modalidade de cliente.
+     *
+     * @param modalidade A nova modalidade de cliente.
+     */
     public void setModalidade(ModalidadeCliente modalidade) {
         this.modalidade = modalidade;
     }
 
+    /**
+     * Obtém o turno escolhido pelo cliente.
+     *
+     * @return O turno escolhido pelo cliente.
+     */
     public Turno getTurnoEscolhido() {
         return turnoEscolhido;
     }
 
+    /**
+     * Define o turno escolhido pelo cliente.
+     *
+     * @param turnoEscolhido O novo turno escolhido pelo cliente.
+     */
     public void setTurnoEscolhido(Turno turnoEscolhido) {
         this.turnoEscolhido = turnoEscolhido;
     }
 
+    /**
+     * Define a lista de veículos associados ao cliente.
+     *
+     * @param veiculos A nova lista de veículos do cliente.
+     */
+    public void setVeiculos(List<Veiculo> veiculos) {
+        this.veiculos = veiculos;
+    }
     /**
      * Obtém o nome do cliente.
      *

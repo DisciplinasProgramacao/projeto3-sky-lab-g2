@@ -11,6 +11,7 @@ public class Veiculo {
     private List<UsoDeVaga> usos;
     private Vaga vaga;
     private Cliente cliente;
+    private double custo;
 
     /**
      * Construtor que cria um novo veículo com a placa especificada.
@@ -20,12 +21,23 @@ public class Veiculo {
     public Veiculo(String placa) {
         this.placa = placa;
         this.usos = new ArrayList<>();
+        this.custo = 0.0;
     }
 
+    /**
+     * Obtém o cliente associado ao veículo.
+     *
+     * @return O cliente associado ao veículo.
+     */
     public Cliente getCliente() {
         return cliente;
     }
 
+    /**
+     * Define o cliente associado ao veículo.
+     *
+     * @param cliente O novo cliente associado ao veículo.
+     */
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
@@ -61,6 +73,11 @@ public class Veiculo {
         this.vaga = vaga;
     }
 
+    /**
+     * Obtém a vaga atualmente associada ao veículo.
+     *
+     * @return A vaga atualmente associada ao veículo.
+     */
     public Vaga getVaga() {
         return this.vaga;
     }
@@ -85,15 +102,16 @@ public class Veiculo {
      * @return O valor a ser pago pelo uso da vaga.
      */
     public double sair(LocalDateTime saida) {
-        double vPagar = 0.0;
+        double valorPagar = 0.0;
         UsoDeVaga ultimoUso = getUltimoUso();
 
         if (ultimoUso != null && ultimoUso.getVaga().equals(vaga)) {
-            vPagar = ultimoUso.sair(saida);
+            valorPagar = ultimoUso.sair(saida);
             vaga = null; // Define a vaga como nula após a saída
         }
 
-        return vPagar;
+        setCusto(valorPagar);
+        return valorPagar;
     }
 
     /**
@@ -102,7 +120,8 @@ public class Veiculo {
      * @return O valor total arrecadado.
      */
     public double totalArrecadado() {
-        return usos.stream().mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida())).sum();
+        this.custo = usos.stream().mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida())).sum();
+        return custo;
     }
 
     /**
@@ -127,8 +146,31 @@ public class Veiculo {
         return usos.size();
     }
 
+    /**
+     * Define a vaga associada ao veículo.
+     *
+     * @param vagaDisponivel A nova vaga associada ao veículo.
+     */
     public void setVaga(Vaga vagaDisponivel) {
         this.vaga = vagaDisponivel;
+    }
+
+    /**
+     * Define o custo total associado ao veículo.
+     *
+     * @param custo O novo custo total associado ao veículo.
+     */
+    public void setCusto(double custo) {
+        this.custo = custo;
+    }
+
+    /**
+     * Obtém o custo total associado ao veículo.
+     *
+     * @return O custo total associado ao veículo.
+     */
+    public double getCusto() {
+        return this.custo;
     }
 
 }

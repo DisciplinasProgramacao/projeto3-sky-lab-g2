@@ -189,14 +189,14 @@ public class App {
     
         if (veiculo == null) {
             System.out.println("Veículo não encontrado no estacionamento.");
-            return 0.0; // ou algum valor padrão, dependendo do contexto
+            return 0.0;
         }
     
         Vaga vaga = veiculo.getVaga();
     
         if (vaga == null) {
             System.out.println("Veículo não está atualmente em uso de uma vaga.");
-            return 0.0; // ou algum valor padrão, dependendo do contexto
+            return 0.0;
         }
     
         LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída."));
@@ -205,12 +205,19 @@ public class App {
         System.out.println("Veículo retirado da vaga " + vaga.getId());
         System.out.println("Valor a pagar: R$" + valorPago + "0");
     
-        // Marcar a vaga como disponível
         vaga.sair();
     
         return valorPago;
     }
 
+    /**
+     * Estaciona um veículo no estacionamento, associando-o a uma vaga disponível e registrando o uso da vaga.
+     * Também oferece serviços adicionais ao veículo, como manobrista, lavagem ou polimento.
+     *
+     * @param estacionamento O estacionamento onde o veículo será estacionado.
+     * @throws VeiculoNaoExisteException Se o veículo não for encontrado no estacionamento.
+     * @throws VagaOcupadaException      Se não houver vagas disponíveis ou se a vaga estiver ocupada.
+    */
     public static void estacionarVeiculo(Estacionamento estacionamento) throws VeiculoNaoExisteException, VagaOcupadaException {
         if (estacionamento == null) {
             System.out.println("Adicione um veículo primeiro.");
@@ -229,7 +236,7 @@ public class App {
             for (Vaga vaga : vagasGeradas) {
                 if (vaga.disponivel()) {
                     vagaDisponivel = vaga;
-                    break; // Encontrou uma vaga disponível, interrompe o loop
+                    break;
                 }
             }
     
@@ -238,9 +245,8 @@ public class App {
             } else {
                 try {
                     estacionamento.estacionar(veiculo, vagaDisponivel, LocalDateTime.parse(leitura("Digite o horário de entrada deste veículo")));
-                    vagaDisponivel.estacionar(); // Marca a vaga como indisponível
+                    vagaDisponivel.estacionar();
     
-                    // Associa a vaga ao veículo
                     veiculo.setVaga(vagaDisponivel);
                     UsoDeVaga uso = new UsoDeVaga(vagaDisponivel);
                     uso.setCliente(veiculo.getCliente());
@@ -253,6 +259,13 @@ public class App {
         }
     }
 
+    /**
+     * Oferece serviços adicionais a um veículo estacionado, como manobrista, lavagem ou polimento.
+     *
+     * @param estacionamento O estacionamento onde o veículo está estacionado.
+     * @param veiculo        O veículo ao qual os serviços adicionais serão aplicados.
+     * @throws FileNotFoundException Em caso de problema ao ler o arquivo de serviços adicionais.
+     */
     public static void servicoAdicional(Estacionamento estacionamento, Veiculo veiculo) throws FileNotFoundException {
         String nomeArq = "menuServicos.txt";
         int opcaoServico = -1;
@@ -261,9 +274,9 @@ public class App {
             limparTela();
             opcaoServico = menu(nomeArq);
             switch(opcaoServico) {
-                case 1 -> estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA);
-                case 2 -> estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM);
-                case 3 -> estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO);
+                case 1 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.MANOBRISTA);
+                case 2 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.LAVAGEM);
+                case 3 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.POLIMENTO);
             }
         }
     }
@@ -339,6 +352,10 @@ public class App {
                     System.out.println(estacionamento.calcularMediaUsosMensalistas());
                 }
 
+                case 13 -> {
+                    System.out.println(estacionamento.arrecadacaoTotalEstacionamento());
+                }
+
                 case 0 -> {
                     break;
                 }
@@ -391,7 +408,7 @@ public class App {
             switch(opcao){
                 case 1 -> {
                     estacionamentoAtual = new Estacionamento(leitura("Digite o nome do estacionamento"), Integer.parseInt(leitura("Número de fileiras")), Integer.parseInt(leitura("Vagas por fila")));
-                    // Salvar estacionamento no arquivo
+
                     try {
                         
                         estacionamentoDAO.abrirEscrita();
@@ -399,13 +416,12 @@ public class App {
                         estacionamentoDAO.add(estacionamentoAtual);
                         estacionamentoDAO.fechar();
                     } catch (IOException e) {
-                        //completar
+
                        System.out.println("Erro ao abrir escrita.");
                     }
                 }
     
                 case 2 -> {
-                    // Consultar estacionamento existente
                     String nomeEstacionamentoConsulta = leitura("Digite o nome do estacionamento que deseja consultar");
                 
                     Estacionamento[] estacionamentos = estacionamentoDAO.getAll();
@@ -416,7 +432,6 @@ public class App {
                             System.out.println("Estacionamento encontrado:");
                             estacionamentoAtual.dataToText();
                             
-                            // Menu de operações para o estacionamento atual
                             menuEstacionamento(estacionamentoAtual);
                 
                             break;
@@ -435,4 +450,3 @@ public class App {
     }
     
 }
-

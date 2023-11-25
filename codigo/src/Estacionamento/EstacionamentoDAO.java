@@ -1,9 +1,6 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class EstacionamentoDAO implements DAO<Estacionamento> {
 
@@ -53,17 +50,135 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
                 numFileiras = Integer.parseInt(linha.substring("Quantidade de Fileiras:".length()).trim());
             } else if (linha.startsWith("Vagas por Fileira")) {
                 vagasPorFileira = Integer.parseInt(linha.substring("Vagas por Fileira:".length()).trim());
-                break;  // Termina a leitura após encontrar as informações desejadas
+                break;
             }
         }
 
-        return new Estacionamento(nome, numFileiras, vagasPorFileira);
+        Estacionamento estacionamento = new Estacionamento(nome, numFileiras, vagasPorFileira);
+
+        lerClientes(estacionamento);
+        lerVagas();
+
+        return estacionamento;
     }
 
+    public void lerClientes(Estacionamento estacionamento) {
+        boolean leituraClientes = false;
+    
+        while (arqLeitura.hasNextLine()) {
+            String linha = arqLeitura.nextLine().trim();
+    
+            if (linha.equals("Clientes:")) {
+                leituraClientes = true;
+            } else if (linha.equals("Vagas:")) {
+                break;
+            }
+    
+            if (leituraClientes && linha.startsWith("Nome: ")) {
+                String nomeCliente = obterValorCampo(linha, "Nome:");
+                String idCliente = obterValorCampo(linha, "ID:");
+                String modalidade = obterValorCampo(linha, "Modalidade:");
+    
+                Cliente cliente = new Cliente(nomeCliente, idCliente);
+    
+                switch (modalidade) {
+                    case "HORISTA":
+                        cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+                        break;
+                    case "DE_TURNO":
+                        cliente.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+                        break;
+                    case "MENSALISTA":
+                        cliente.setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
+                        break;
+                    default:
+                        break;
+                }
+                
+                List<Veiculo> veiculos = lerVeiculos(cliente);
+                cliente.setVeiculos(veiculos);
+                try {
+                    estacionamento.addCliente(cliente);
+                } catch (ClienteJaExistenteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private List<Veiculo> lerVeiculos(Cliente cliente) {
+        List<Veiculo> veiculos = new ArrayList<>();
+    
+        while (arqLeitura.hasNextLine()) {
+            String linha = arqLeitura.nextLine().trim();
+    
+            if (linha.startsWith("Placa: ")) {
+                String placaVeiculo = obterValorCampo(linha, "Placa: ");
+                double custoVeiculo = Double.parseDouble(obterValorCampo(linha, "R$"));
+
+                Veiculo veiculo = new Veiculo(placaVeiculo);
+                veiculo.setCliente(cliente);
+                veiculo.setCusto(custoVeiculo);
+                veiculos.add(veiculo);
+            } else if (linha.isEmpty()) {
+                break;
+            }
+        }
+    
+        return veiculos;
+    }
+
+    private List<Vaga> lerVagas() {
+        List<Vaga> vagas = new ArrayList<>();
+    
+        while (arqLeitura.hasNextLine()) {
+            String linha = arqLeitura.nextLine().trim();
+    
+            if (linha.startsWith("ID da Vaga: ")) {
+                String idVaga = obterValorCampo(linha, "ID da Vaga: ");
+                String disponibilidade = obterValorCampo(linha, "Disponível: ");
+    
+                Vaga vaga = new Vaga(idVaga);
+    
+                if (disponibilidade.equalsIgnoreCase("Ocupada")) {
+                    vaga.estacionar();
+                } else {
+                    vaga.sair();
+                }
+    
+                vagas.add(vaga);
+            } else if (linha.isEmpty()) {
+                break;
+            }
+        }
+    
+        return vagas;
+    }
+    
+    
+     
+    
+    private String obterValorCampo(String linha, String nomeCampo) {
+        int posicaoCampo = linha.indexOf(nomeCampo);
+        if (posicaoCampo != -1) {
+            int posicaoVirgula = linha.indexOf(",", posicaoCampo); //ler até a vírgula para evitar info duplicada
+            if (posicaoVirgula != -1) {
+                return linha.substring(posicaoCampo + nomeCampo.length(), posicaoVirgula).trim();
+            } else {
+                return linha.substring(posicaoCampo + nomeCampo.length()).trim();
+            }
+        }
+        return "";
+    }    
+    
+    /**
+     * Adiciona um objeto Estacionamento ao arquivo.
+     *
+     * @param estacionamento O objeto Estacionamento a ser adicionado ao arquivo.
+     * @throws IOException Se ocorrer um erro de E/S durante a escrita no arquivo.
+     */
     public void add(Estacionamento estacionamento) throws IOException {
-        arqEscrita.append("Nome do Estacionamento: " + estacionamento.getNome() + "\n");
-        arqEscrita.append("Quantidade de Fileiras: " + estacionamento.getNumFileiras() + "\n");
-        arqEscrita.append("Vagas por Fileira: " + estacionamento.getVagasPorFileira() + "\n");
+        arqEscrita.append(estacionamento.dataToText() + "\n");
     }
 
     public Estacionamento[] getAll() {
