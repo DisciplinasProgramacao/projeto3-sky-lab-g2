@@ -346,4 +346,8 @@ public class Estacionamento implements IDataToText {
         return clientes;
     }
 
+    public int getNumFileiras() {
+        return this.quantFileiras;
+    }
+
 }
