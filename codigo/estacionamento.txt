@@ -1,218 +1,120 @@
-Nome do Estacionamento:Estacionamento 1
-Quantidade de Fileiras:2
-Vagas por Fileira:10
-
-Clientes:
-Nome: Cliente 1, ID: ID1
-Veículos do Cliente:
-Placa: DEF-1011, custando: 28.0
-
-Nome: Cliente 3, ID: ID3
-Veículos do Cliente:
-Placa: DEF-1013, custando: 54.0
-
-Nome: Cliente 4, ID: ID4
-Veículos do Cliente:
-Placa: DEF-1014, custando: 8.0
-
-Nome: Cliente 5, ID: ID5
-Veículos do Cliente:
-Placa: DEF-1015, custando: 16.0
-
-Nome: Cliente 6, ID: ID6
-Veículos do Cliente:
-Placa: DEF-1016, custando: 32.0
-
-Nome: Cliente 7, ID: ID7
-Veículos do Cliente:
-Placa: DEF-1017, custando: 54.0
-
-Nome: Cliente 8, ID: ID8
-Veículos do Cliente:
-Placa: DEF-1018, custando: 54.0
-
-Nome: Cliente 9, ID: ID9
-Veículos do Cliente:
-Placa: DEF-1019, custando: 50.0
-
-Nome: Cliente 10, ID: ID10
-Veículos do Cliente:
-Placa: DEF-1020, custando: 58.0
-
-Vagas:
-ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
-ID da Vaga: V3, Disponível: Ocupada
-ID da Vaga: V4, Disponível: Ocupada
-ID da Vaga: V5, Disponível: Ocupada
-ID da Vaga: V6, Disponível: Ocupada
-ID da Vaga: V7, Disponível: Ocupada
-ID da Vaga: V8, Disponível: Ocupada
-ID da Vaga: V9, Disponível: Ocupada
-ID da Vaga: V10, Disponível: Ocupada
-ID da Vaga: V11, Disponível: Ocupada
-ID da Vaga: V12, Disponível: Ocupada
-ID da Vaga: V13, Disponível: Ocupada
-ID da Vaga: V14, Disponível: Ocupada
-ID da Vaga: V15, Disponível: Ocupada
-ID da Vaga: V16, Disponível: Desocupada
-ID da Vaga: V17, Disponível: Desocupada
-ID da Vaga: V18, Disponível: Desocupada
-ID da Vaga: V19, Disponível: Desocupada
-ID da Vaga: V20, Disponível: Desocupada
-
-Nome do Estacionamento: Estacionamento 2
-Quantidade de Fileiras: 2
-Vagas por Fileira: 3
-
-Clientes:
-Nome: Cliente 1, ID: ID1
-Veículos do Cliente:
-Placa: DEF-1011, custando: 36.0
-
-Nome: Cliente 2, ID: ID2
-Veículos do Cliente:
-Placa: DEF-1012, custando: 16.0
-
-Nome: Cliente 3, ID: ID3
-Veículos do Cliente:
-Placa: DEF-1013, custando: 12.0
-
-Vagas:
-ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
-ID da Vaga: V3, Disponível: Ocupada
-ID da Vaga: V4, Disponível: Desocupada
-ID da Vaga: V5, Disponível: Desocupada
-ID da Vaga: V6, Disponível: Desocupada
-
-
-Nome do Estacionamento: Estacionamento 3
+Nome do Estacionamento: Estacionamento 1
 Quantidade de Fileiras: 4
-Vagas por Fileira: 3
-
-Clientes:
-Nome: Cliente 1, ID: ID1
-Veículos do Cliente:
-Placa: PRI-3030, custando: 54.0
-
-Nome: Cliente 2, ID: ID2
-Veículos do Cliente:
-Placa: PRI-3031, custando: 32.0
-
-Nome: Cliente 3, ID: ID3
-Veículos do Cliente:
-Placa: PRI-3032, custando: 8.0
-
-Nome: Cliente 4, ID: ID4
-Veículos do Cliente:
-Placa: PRI-3033, custando: 54.0
-
-Nome: Cliente 8, ID: ID8
-Veículos do Cliente:
-Placa: PRI-3037, custando: 24.0
-
-Nome: Cliente 10, ID: ID10
-Veículos do Cliente:
-Placa: PRI-3039, custando: 24.0
-
-
-Nome: Cliente 12, ID: ID12
-Veículos do Cliente:
-Placa: PRI-3041, custando: 48.0
-
-Vagas:
-ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
-ID da Vaga: V3, Disponível: Ocupada
-ID da Vaga: V4, Disponível: Ocupada
-ID da Vaga: V5, Disponível: Desocupada
-ID da Vaga: V6, Disponível: Desocupada
-ID da Vaga: V7, Disponível: Desocupada
-ID da Vaga: V8, Disponível: Ocupada
-ID da Vaga: V9, Disponível: Ocupada
-ID da Vaga: V10, Disponível: Ocupada
-ID da Vaga: V11, Disponível: Desocupada
-ID da Vaga: V12, Disponível: Ocupada
-
-Nome do Estacionamento: Estacionamento 4
-Quantidade de Fileiras: 2
 Vagas por Fileira: 2
 
 Clientes:
-Nome: Cliente 1, ID: ID1
+Nome: Paula, ID: ID1, Modalidade: HORISTA
 Veículos do Cliente:
-Placa: TES-7700, custando: R$40.0
-Placa: TES-7500, custando: R$16.0
+
+Nome: Hamilton, ID: ID2, Modalidade: DE_TURNO
+Veículos do Cliente:
+
+Nome: Alfredo, ID: ID3, Modalidade: MENSALISTA
+Veículos do Cliente:
+
+Nome: Fabricio, ID: ID4, Modalidade: HORISTA
+Veículos do Cliente:
+
+Nome: Camilo, ID: ID5, Modalidade: HORISTA
+Veículos do Cliente:
+
+Vagas:
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
+ID da Vaga: V7, Disponível: Desocupada
+ID da Vaga: V8, Disponível: Desocupada
+
+Nome do Estacionamento: Estacionamento 2
+Quantidade de Fileiras: 3
+Vagas por Fileira: 2
+
+Clientes:
+Nome: Teste, ID: ID8, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: DEF-9090, custando: R$4.00
+
+Nome: Teste Junior, ID: ID9, Modalidade: HORISTA
+Veículos do Cliente:
 
 Vagas:
 ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
+ID da Vaga: V2, Disponível: Desocupada
 ID da Vaga: V3, Disponível: Desocupada
 ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
+
+Nome do Estacionamento: Estacionamento 3
+Quantidade de Fileiras: 2
+Vagas por Fileira: 3
+
+Clientes:
+Nome: Maria, ID: ID10, Modalidade: MENSALISTA
+Veículos do Cliente:
+Placa: ABC-1234, custando: R$500.00
+
+Nome: João, ID: ID11, Modalidade: DE_TURNO
+Veículos do Cliente:
+Placa: XYZ-5678, custando: R$280.00
+
+Vagas:
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
 
 Nome do Estacionamento: Estacionamento 4
-Quantidade de Fileiras: 4
+Quantidade de Fileiras: 5
+Vagas por Fileira: 3
+
+Clientes:
+Nome: Ana, ID: ID12, Modalidade: MENSALISTA
+Veículos do Cliente:
+Placa: JKU-4321, custando: R$500.00
+
+Nome: Carlos, ID: ID13, Modalidade: DE_TURNO
+Veículos do Cliente:
+Placa: QWE-9876, custando: R$290.00
+
+Nome: Juliana, ID: ID14, Modalidade: HORISTA
+Veículos do Cliente:
+
+Vagas:
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
+ID da Vaga: V7, Disponível: Desocupada
+ID da Vaga: V8, Disponível: Desocupada
+ID da Vaga: V9, Disponível: Desocupada
+ID da Vaga: V10, Disponível: Desocupada
+
+Nome do Estacionamento: Estacionamento 5
+Quantidade de Fileiras: 2
 Vagas por Fileira: 4
 
 Clientes:
-Nome: Cliente 1, ID: ID1
+Nome: Roberto, ID: ID15, Modalidade: HORISTA
 Veículos do Cliente:
-Placa: TES-7700, custando: R$8.0
 
-Nome: Cliente 2, ID: ID2
+Nome: Fernanda, ID: ID16, Modalidade: MENSALISTA
 Veículos do Cliente:
-Placa: TES-7701, custando: R$36.0
-
-Nome: Cliente 3, ID: ID3
-Veículos do Cliente:
-Placa: TES-7702, custando: R$16.0
-
-Nome: Cliente 4, ID: ID4
-Veículos do Cliente:
-Placa: TES-7703, custando: R$20.0
-
-Nome: Cliente 5, ID: ID5
-Veículos do Cliente:
-Placa: TES-7704, custando: R$12.0
-
-Nome: Cliente 6, ID: ID6
-Veículos do Cliente:
-Placa: TES-7705, custando: R$40.0
-
-Nome: Cliente 8, ID: ID8
-Veículos do Cliente:
-Placa: TES-7707, custando: R$48.0
-
-Nome: Cliente 9, ID: ID9
-Veículos do Cliente:
-Placa: TES-7708, custando: R$54.0
-
-Nome: Cliente 11, ID: ID11
-Veículos do Cliente:
-Placa: TES-7710, custando: R$36.0
-
-
-Nome: Cliente 15, ID: ID15
-Veículos do Cliente:
-Placa: TES-7714, custando: R$40.0
+Placa: ASD-8765, custando: R$500.00
 
 Vagas:
-ID da Vaga: V1, Disponível: Ocupada
-ID da Vaga: V2, Disponível: Ocupada
-ID da Vaga: V3, Disponível: Ocupada
-ID da Vaga: V4, Disponível: Ocupada
-ID da Vaga: V5, Disponível: Ocupada
-ID da Vaga: V6, Disponível: Ocupada
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
 ID da Vaga: V7, Disponível: Desocupada
-ID da Vaga: V8, Disponível: Ocupada
-ID da Vaga: V9, Disponível: Ocupada
-ID da Vaga: V10, Disponível: Desocupada
-ID da Vaga: V11, Disponível: Ocupada
-ID da Vaga: V12, Disponível: Desocupada
-ID da Vaga: V13, Disponível: Desocupada
-ID da Vaga: V14, Disponível: Desocupada
-ID da Vaga: V15, Disponível: Desocupada
-ID da Vaga: V16, Disponível: Ocupada
-
-
+ID da Vaga: V8, Disponível: Desocupada
