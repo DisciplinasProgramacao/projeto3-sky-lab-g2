@@ -218,22 +218,27 @@ public class Estacionamento implements IDataToText {
     }
 
     /**
-     * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
+     * Contrata um serviço adicional para um veículo estacionado.
      *
      * @param placa   A placa do veículo.
      * @param servico O serviço a ser contratado.
-     * @return `true` se o serviço foi contratado com sucesso, `false` caso contrário.
+     * @return True se o serviço foi contratado com sucesso, false caso contrário.
      */
-    public boolean contratarServico(String placa, UsoDeVaga.Servico servico) {
+    public String contratarServico(String placa, Servico servico) {
         Veiculo veiculo = encontrarVeiculo(placa);
-        if (veiculo != null) {
-            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
-            if (uso != null) {
-                uso.contratarServico(servico);
-                return true;
-            }
+
+        if (veiculo == null) {
+            return "Veículo não encontrado.";
         }
-        return false;
+
+        UsoDeVaga uso = veiculoUsoMap.get(veiculo);
+
+        if (uso == null) {
+            return "Veículo não está atualmente em uso de uma vaga.";
+        }
+
+        uso.contratarServico(servico);
+        return servico +" contratado com sucesso para o veículo com placa " + placa + ".";
     }
     
     @Override

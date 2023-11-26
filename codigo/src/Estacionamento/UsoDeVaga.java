@@ -10,52 +10,6 @@ import java.util.Map;
  */
 public class UsoDeVaga {
 
-    /**
-     * Enumeração que define os serviços adicionais disponíveis para um uso de vaga.
-     */
-    public enum Servico {
-        MANOBRISTA("Manobrista", 5.0, Duration.ZERO),
-        LAVAGEM("Lavagem", 20.0, Duration.ofHours(1)),
-        POLIMENTO("Polimento (inclui lavagem)", 45.0, Duration.ofHours(2));
-
-        private final String descricao;
-        private final double valor;
-        private final Duration tempoMinimo;
-
-        Servico(String descricao, double valor, Duration tempoMinimo) {
-            this.descricao = descricao;
-            this.valor = valor;
-            this.tempoMinimo = tempoMinimo;
-        }
-
-        /**
-         * Obtém a descrição do serviço.
-         *
-         * @return A descrição do serviço.
-         */
-        public String getDescricao() {
-            return descricao;
-        }
-
-        /**
-         * Obtém o valor do serviço.
-         *
-         * @return O valor do serviço.
-         */
-        public double getValor() {
-            return this.valor;
-        }
-
-        /**
-         * Obtém o tempo mínimo necessário para o serviço.
-         *
-         * @return O tempo mínimo necessário para o serviço.
-         */
-        public Duration getTempoMinimo() {
-            return tempoMinimo;
-        }
-    }
-
     private static final double FRACAO_USO = 0.25;
     private static final double VALOR_FRACAO = 4.0;
     private static final double VALOR_MAXIMO = 50.0;
@@ -137,9 +91,9 @@ public class UsoDeVaga {
      */
     public double sair(LocalDateTime saida) {
         this.saida = saida;
-
+    
         Vaga vagaDoUso = this.vaga;
-
+    
         if (vagaDoUso != null) {
             Veiculo veiculoDoUso = veiculoVagaMap.entrySet()
                     .stream()
@@ -147,42 +101,65 @@ public class UsoDeVaga {
                     .map(Map.Entry::getKey)
                     .findFirst()
                     .orElse(null);
-
+    
             if (veiculoDoUso != null) {
                 veiculoVagaMap.remove(veiculoDoUso);
                 vagaDoUso.disponivel();
-
+    
                 double valorCusto = calcularCusto(veiculoDoUso, this.entrada, this.saida);
                 double valorServicos = calcularCustoServicos();
+    
+                this.valorPago = valorCusto + valorServicos;
+                return this.valorPago;
 
-                return valorCusto + valorServicos;
             }
         }
-
-        return valorPago;
+    
+        return this.valorPago;
     }
 
     /**
-     * Contrata um serviço adicional para o uso da vaga.
+     * Contrata um serviço adicional para o uso de uma vaga de estacionamento.
      *
      * @param servico O serviço a ser contratado.
      */
     public void contratarServico(Servico servico) {
-        this.servicosContratados.add(servico);
+        if (servicosContratados == null) {
+            servicosContratados = new ArrayList<>();
+        }
+
+        if (!servicosContratados.contains(servico)) {
+            servicosContratados.add(servico);
+            System.out.println("Serviço contratado com sucesso: " + servico.getDescricao());
+        } else {
+            System.out.println("Este serviço já foi contratado anteriormente.");
+        }
+    }
+
+    
+    /**
+     * Calcula o custo total dos serviços adicionais contratados.
+     *
+     * @return O custo total dos serviços adicionais.
+     */
+    private double calcularCustoServicos() {
+            return this.servicosContratados.stream()
+                    .mapToDouble(Servico::getValor)
+                    .sum();
     }
 
     /**
-     * Calcula o custo total do uso da vaga, incluindo custo de estacionamento e serviços adicionais.
+     * Calcula o custo total para o uso de uma vaga de estacionamento considerando o tipo de cliente.
      *
-     * @param veiculo O veículo utilizando a vaga.
-     * @param entrada A data e hora de entrada na vaga.
-     * @param saida A data e hora de saída da vaga.
+     * @param veiculo  O veículo utilizado.
+     * @param entrada  A data e hora de entrada.
+     * @param saida    A data e hora de saída.
      * @return O custo total do uso da vaga.
      */
     public double calcularCusto(Veiculo veiculo, LocalDateTime entrada, LocalDateTime saida) {
         Cliente cliente = veiculo.getCliente();
 
-        if (cliente != null && cliente.getModalidade() != null) {
+        if (cliente != null) {
             switch (cliente.getModalidade()) {
                 case HORISTA:
                     return calcularCustoHorista(entrada, saida) + calcularCustoServicos();
@@ -194,23 +171,6 @@ public class UsoDeVaga {
         }
 
         return VALOR_FRACAO;
-    }
-
-    /**
-     * Calcula o custo total dos serviços adicionais contratados.
-     *
-     * @return O custo total dos serviços adicionais.
-     */
-    private double calcularCustoServicos() {
-        double valor = 0.0;
-
-        if (this.servicosContratados != null) {
-            for (Servico servico : this.servicosContratados) {
-                valor += servico.getValor();
-            }
-        }
-
-        return valor;
     }
 
     /**
