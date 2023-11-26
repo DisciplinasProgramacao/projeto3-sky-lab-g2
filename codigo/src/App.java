@@ -270,15 +270,14 @@ public class App {
         String nomeArq = "menuServicos.txt";
         int opcaoServico = -1;
 
-        while (opcaoServico != 0) {
             limparTela();
             opcaoServico = menu(nomeArq);
             switch(opcaoServico) {
-                case 1 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.MANOBRISTA);
-                case 2 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.LAVAGEM);
-                case 3 -> estacionamento.contratarServico(veiculo.getPlaca(), UsoDeVaga.Servico.POLIMENTO);
+                case 1 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA)); 
+                case 2 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM)); 
+                case 3 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO)); 
             }
-        }
+
     }
 
     /**
