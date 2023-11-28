@@ -40,16 +40,25 @@ public class Estacionamento implements IDataToText {
      */
     public void addVeiculo(Veiculo veiculo, String idCli) throws VeiculoJaExistenteException, ClienteNaoExisteException {
         Cliente cliente = encontrarCliente(idCli);
-        if (cliente != null) {
-            if (cliente.possuiVeiculo(veiculo.getPlaca()) != null) {
-                throw new VeiculoJaExistenteException();
+        try {
+            if (cliente != null) {
+                if (cliente.possuiVeiculo(veiculo.getPlaca()) != null) {
+                    throw new VeiculoJaExistenteException();
+                } else {
+                    cliente.addVeiculo(veiculo);
+                }
             } else {
-                cliente.addVeiculo(veiculo);
+                throw new ClienteNaoExisteException();
             }
-        } else {
-            throw new ClienteNaoExisteException();
+        } catch (VeiculoJaExistenteException e) {
+           
+            System.out.println("Erro: veículo já existe");
+        } catch (ClienteNaoExisteException e) {
+            
+            System.out.println("Erro: cliente não existe");
         }
     }
+    
 
     /**
      * Adiciona um cliente ao estacionamento.
@@ -57,12 +66,17 @@ public class Estacionamento implements IDataToText {
      * @param cliente O cliente a ser adicionado.
      */
     public void addCliente(Cliente cliente) throws ClienteJaExistenteException {
-        if (clientes.contains(cliente)) {
-            throw new ClienteJaExistenteException();
-        } else {
-            clientes.add(cliente);
+        try {
+            if (clientes.contains(cliente)) {
+                throw new ClienteJaExistenteException();
+            } else {
+                clientes.add(cliente);
+            }
+        } catch (ClienteJaExistenteException e) {
+
+            System.out.println("Erro: este cliente já existe");
         }
-    }
+    }    
 
     private void gerarVagas() {
         int numeroVaga = 1;
@@ -87,10 +101,18 @@ public class Estacionamento implements IDataToText {
      * @throws VeiculoNaoExisteException
      */
     public void estacionar(Veiculo veiculo, Vaga vaga, LocalDateTime entrada)
-            throws VagaOcupadaException, VeiculoNaoExisteException {
-        veiculo.estacionar(vaga, entrada);
+            throws VagaOcupadaException {
+        try {
+                if (vaga.disponivel() == false) {
+                    throw new VagaOcupadaException();
+                } else {
+                    veiculo.estacionar(vaga, entrada);
+                }
         UsoDeVaga uso = new UsoDeVaga(vaga);
         veiculoUsoMap.put(veiculo, uso);
+        } catch (VagaOcupadaException e) {
+        System.out.println("Erro: vaga ocupada");
+        }
     }
 
     /**
@@ -100,8 +122,19 @@ public class Estacionamento implements IDataToText {
      * @param saida A data e hora de saída do veículo.
      * @return O valor a ser pago pelo uso da vaga.
      */
-    public double sair(Veiculo veiculo, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
-        return veiculo.sair(saida);
+    public double sair(Veiculo veiculo, LocalDateTime saida) throws VeiculoNaoExisteException {
+        try {
+            if (veiculo != null) {
+                return veiculo.sair(saida);
+            }
+
+            else {
+                throw new VeiculoNaoExisteException();
+            }
+        } catch (VeiculoNaoExisteException e) {
+            System.out.println("Este veículo não existe.");
+        }
+        return 0.0; 
     }
 
     /**
