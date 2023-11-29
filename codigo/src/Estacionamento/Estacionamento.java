@@ -1,6 +1,8 @@
 import java.util.*;
 import java.util.stream.Collectors;
 
+//obs do que fazer: adicionar strategy, alterar calculo do custo e adicionar novas excecoes
+
 import java.time.LocalDateTime;
 /**
  * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
@@ -125,7 +127,8 @@ public class Estacionamento implements IDataToText {
     public double sair(Veiculo veiculo, LocalDateTime saida) throws VeiculoNaoExisteException {
         try {
             if (veiculo != null) {
-                return veiculo.sair(saida);
+                veiculo.setCusto(veiculo.sair(saida));
+                return veiculo.getCusto();
             }
 
             else {
@@ -134,7 +137,7 @@ public class Estacionamento implements IDataToText {
         } catch (VeiculoNaoExisteException e) {
             System.out.println("Este veículo não existe.");
         }
-        return 0.0; 
+        return veiculo.getCusto(); 
     }
 
     /**
