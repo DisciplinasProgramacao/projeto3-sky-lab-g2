@@ -11,3 +11,4 @@ Relatório de arrecadação mensal.
 Relatório de arrecadação total.
 Relatório de arrecadação média dos clientes horistas.
 Relatório da média de usos mensais dos clientes mensalistas.
+Relatório de arrecadação total do estacionamento.

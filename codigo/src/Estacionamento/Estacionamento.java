@@ -62,7 +62,7 @@ public class Estacionamento implements IDataToText {
         } else {
             clientes.add(cliente);
         }
-    }    
+    }
 
     private void gerarVagas() {
         int numeroVaga = 1;
@@ -89,6 +89,8 @@ public class Estacionamento implements IDataToText {
     public void estacionar(Veiculo veiculo, Vaga vaga, LocalDateTime entrada)
             throws VagaOcupadaException, VeiculoNaoExisteException {
         veiculo.estacionar(vaga, entrada);
+        UsoDeVaga uso = new UsoDeVaga(vaga);
+        veiculoUsoMap.put(veiculo, uso);
     }
 
     /**
@@ -155,13 +157,25 @@ public class Estacionamento implements IDataToText {
     }
 
 
+    /**
+     * Busca e retorna um cliente com base no ID fornecido.
+     *
+     * @param idCli O ID do cliente a ser buscado.
+     * @return O cliente encontrado ou null se nenhum cliente corresponder ao ID fornecido.
+     */
     public Cliente encontrarCliente(String idCli) {
         return clientes.stream()
                 .filter(cliente -> cliente.getId().equals(idCli))
                 .findFirst()
                 .orElse(null);
     }
-    
+
+    /**
+     * Busca e retorna um veículo com base na placa fornecida.
+     *
+     * @param placa A placa do veículo a ser buscado.
+     * @return O veículo encontrado ou null se nenhum veículo corresponder à placa fornecida.
+     */
     public Veiculo encontrarVeiculo(String placa) {
         return clientes.stream()
                 .map(cliente -> cliente.possuiVeiculo(placa))
@@ -204,24 +218,27 @@ public class Estacionamento implements IDataToText {
     }
 
     /**
-     * Contrata um serviço adicional para um veículo que está usando uma vaga no estacionamento.
+     * Contrata um serviço adicional para um veículo estacionado.
      *
      * @param placa   A placa do veículo.
      * @param servico O serviço a ser contratado.
-     * @return `true` se o serviço foi contratado com sucesso, `false` caso contrário.
+     * @return True se o serviço foi contratado com sucesso, false caso contrário.
      */
-    public boolean contratarServico(String placa, Servico servico) {
+    public String contratarServico(String placa, Servico servico) {
         Veiculo veiculo = encontrarVeiculo(placa);
-        if (veiculo != null) {
-            UsoDeVaga uso = veiculoUsoMap.get(veiculo);
-            if (uso != null) {
-                uso.contratarServico(servico);
-                return true;
-            }
-        }
-        return false;
-    }
 
+        if (veiculo == null) {
+            return "Veículo não encontrado.";
+        }
+
+        UsoDeVaga uso = veiculoUsoMap.get(veiculo);
+
+        if (uso == null) {
+            return "Veículo não está atualmente em uso de uma vaga.";
+        }
+        return servico +" contratado com sucesso para o veículo com placa " + placa + ".";
+    }
+    
     @Override
     public String dataToText() {
         StringBuilder data = new StringBuilder();
@@ -229,16 +246,15 @@ public class Estacionamento implements IDataToText {
         data.append("Quantidade de Fileiras: ").append(quantFileiras).append("\n");
         data.append("Vagas por Fileira: ").append(vagasPorFileira).append("\n\n");
     
-        // Informações sobre os clientes
         data.append("Clientes:\n");
         for (Cliente cliente : clientes) {
-            data.append("Nome: ").append(cliente.getNome()).append(", ID: ").append(cliente.getId()).append("\n");
+            data.append("Nome: ").append(cliente.getNome()).append(", ID: ").append(cliente.getId()).append(", Modalidade: ").append(cliente.getModalidade()).append("\n");
     
             data.append("Veículos do Cliente:\n");
             List<Veiculo> veiculos = cliente.getVeiculos();
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
-                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(cliente.arrecadadoPorVeiculo(veiculo.getPlaca())).append("\n").append("0");
+                    data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(veiculo.getCusto()).append("0").append("\n");
                 }
             }
     
@@ -252,6 +268,7 @@ public class Estacionamento implements IDataToText {
     
         return data.toString();
     }
+    
 
     /**
      * Obtém um relatório consolidado do valor total arrecadado pelo cliente, incluindo detalhes
@@ -263,10 +280,8 @@ public class Estacionamento implements IDataToText {
         Cliente cliente = encontrarCliente(idCli);
         StringBuilder relatorio = new StringBuilder();
 
-        // Adiciona informações sobre o cliente
         relatorio.append(String.format("Relatório de Arrecadação para o Cliente %s (ID: %s)\n", cliente.getNome(), cliente.getId()));
 
-        // Adiciona detalhes para cada veículo do cliente
         for (Veiculo veiculo : cliente.getVeiculos()) {
             if (veiculo != null) {
                 relatorio.append(String.format("Veículo com placa %s:\n", veiculo.getPlaca()));
@@ -274,13 +289,55 @@ public class Estacionamento implements IDataToText {
             }
         }
 
-        // Adiciona o valor total arrecadado pelo cliente
         double valorTotalArrecadado = cliente.arrecadadoTotal();
         relatorio.append(String.format("\nValor total arrecadado pelo cliente: R$ %.2f\n", valorTotalArrecadado));
 
         return relatorio.toString();
     }
-    
+
+    /**
+     * Calcula a arrecadação média dos clientes horistas neste mês usando Stream.
+     *
+     * @param mes O mês para o qual se deseja calcular a arrecadação média.
+     * @return A arrecadação média dos clientes horistas neste mês.
+     */
+    public double calcularArrecadacaoMediaHoristas(int mes) {
+        return clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.HORISTA)
+                .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * Calcula a média de usos mensais para clientes mensalistas.
+     *
+     * @return A média de usos mensais para clientes mensalistas.
+     */
+    public double calcularMediaUsosMensalistas() {
+        return clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
+                .mapToInt(Cliente::totalDeUsos)
+                .average()
+                .orElse(0.0);
+    }
+
+    /**
+     * Calcula a arrecadação total do estacionamento, incluindo todas as modalidades de clientes.
+     *
+     * @return A arrecadação total do estacionamento.
+     */
+    public double arrecadacaoTotalEstacionamento() {
+        return clientes.stream()
+                .flatMap(cliente -> cliente.getVeiculos().stream())
+                .mapToDouble(Veiculo::totalArrecadado)
+                .sum() +
+                clientes.stream()
+                        .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
+                        .mapToDouble(Cliente::arrecadadoTotal)
+                        .sum();
+    }
+
     /**
      * Obtém o nome do estacionamento.
      *
@@ -317,4 +374,12 @@ public class Estacionamento implements IDataToText {
         return clientes;
     }
 
+    /**
+     * Obtém o número de fileiras do estacionamento.
+     *
+     * @return O número de fileiras
+     */
+    public int getNumFileiras() {
+        return this.quantFileiras;
+    }
 }

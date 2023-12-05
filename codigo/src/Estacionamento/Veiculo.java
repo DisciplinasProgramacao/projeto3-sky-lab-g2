@@ -11,6 +11,8 @@ public class Veiculo {
     private List<UsoDeVaga> usos;
     private Vaga vaga;
     private Cliente cliente;
+    private double custo;
+    private List<Servico> servicosContratados;
 
     /**
      * Construtor que cria um novo veículo com a placa especificada.
@@ -20,12 +22,23 @@ public class Veiculo {
     public Veiculo(String placa) {
         this.placa = placa;
         this.usos = new ArrayList<>();
+        this.custo = 0.0;
     }
 
+    /**
+     * Obtém o cliente associado ao veículo.
+     *
+     * @return O cliente associado ao veículo.
+     */
     public Cliente getCliente() {
         return cliente;
     }
 
+    /**
+     * Define o cliente associado ao veículo.
+     *
+     * @param cliente O novo cliente associado ao veículo.
+     */
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
@@ -61,6 +74,11 @@ public class Veiculo {
         this.vaga = vaga;
     }
 
+    /**
+     * Obtém a vaga atualmente associada ao veículo.
+     *
+     * @return A vaga atualmente associada ao veículo.
+     */
     public Vaga getVaga() {
         return this.vaga;
     }
@@ -79,30 +97,55 @@ public class Veiculo {
     }
 
     /**
+     * Adiciona um serviço contratado durante o estacionamento do veículo.
+     *
+     * @param servico O serviço contratado.
+     */
+    public void adicionarServicoContratado(Servico servico) {
+        if (servicosContratados == null) {
+            servicosContratados = new ArrayList<>();
+        }
+        servicosContratados.add(servico);
+    }
+
+    /**
+     * Obtém a lista de serviços contratados durante o estacionamento do veículo.
+     *
+     * @return A lista de serviços contratados.
+     */
+    public List<Servico> getServicosContratados() {
+        return servicosContratados;
+    }
+
+    /**
      * Registra a saída do veículo de uma vaga na data de saída especificada e calcula o valor a ser pago.
      *
      * @param saida A data de saída do veículo da vaga.
      * @return O valor a ser pago pelo uso da vaga.
      */
     public double sair(LocalDateTime saida) {
-        double vPagar = 0.0;
+        double valorPagar = 0.0;
         UsoDeVaga ultimoUso = getUltimoUso();
 
         if (ultimoUso != null && ultimoUso.getVaga().equals(vaga)) {
-            vPagar = ultimoUso.sair(saida);
+            valorPagar = ultimoUso.sair(saida);
             vaga = null; // Define a vaga como nula após a saída
         }
 
-        return vPagar;
+        setCusto(valorPagar);
+        return valorPagar;
     }
 
     /**
-     * Calcula o valor total arrecadado com o uso das vagas por este veículo.
+     * Calcula o valor total arrecadado com o uso das vagas e serviços por este veículo.
      *
      * @return O valor total arrecadado.
      */
     public double totalArrecadado() {
-        return usos.stream().mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida())).sum();
+        double custoVagas = usos.stream().mapToDouble(u -> u.calcularCusto(this.cliente)).sum();
+        double custoServicos = servicosContratados.stream().mapToDouble(Servico::getValor).sum();
+        this.custo = custoVagas + custoServicos;
+        return this.custo;
     }
 
     /**
@@ -114,7 +157,7 @@ public class Veiculo {
     public double arrecadadoNoMes(int mes) {
         return usos.stream()
                 .filter(u -> u.getEntrada().getMonthValue() == mes)
-                .mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida()))
+                .mapToDouble(u -> u.calcularCusto(this.cliente))
                 .sum();
     }
 
@@ -127,8 +170,31 @@ public class Veiculo {
         return usos.size();
     }
 
+    /**
+     * Define a vaga associada ao veículo.
+     *
+     * @param vagaDisponivel A nova vaga associada ao veículo.
+     */
     public void setVaga(Vaga vagaDisponivel) {
         this.vaga = vagaDisponivel;
+    }
+
+    /**
+     * Define o custo total associado ao veículo.
+     *
+     * @param custo O novo custo total associado ao veículo.
+     */
+    public void setCusto(double custo) {
+        this.custo = custo;
+    }
+
+    /**
+     * Obtém o custo total associado ao veículo.
+     *
+     * @return O custo total associado ao veículo.
+     */
+    public double getCusto() {
+        return this.custo;
     }
 
 }
