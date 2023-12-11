@@ -76,10 +76,10 @@ public class UsoDeVaga {
      * @param saida A data e hora de saída da vaga.
      * @return O valor a ser pago pelo uso da vaga.
      */
-public double sair(LocalDateTime saida) {
-    this.saida = saida;
-    return calcularCusto(this.cliente);
-}
+    public double sair(LocalDateTime saida) {
+        this.saida = saida;
+        return calcularCusto(this.cliente);
+    }
 
     /**
      * Calcula o custo total para o uso de uma vaga de estacionamento considerando o tipo de cliente.
@@ -94,17 +94,21 @@ public double sair(LocalDateTime saida) {
             if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.HORISTA)) {
                 CalculadorCustoHorista custo = new CalculadorCustoHorista();
                 valorPago = custo.calcularCusto(this.entrada, this.saida);
+
                 return valorPago;
             } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.DE_TURNO)) {
-                CalculadorCustoTurnista custo = new CalculadorCustoTurnista();
+                CalculadorCustoTurnista custo = new CalculadorCustoTurnista(cliente);
                 valorPago = custo.calcularCusto(this.entrada, this.saida);
+
                 return valorPago;
             } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.MENSALISTA)) {
                 CalculadorCustoMensalista custo = new CalculadorCustoMensalista();
                 valorPago = custo.calcularCusto(this.entrada, this.saida);
+
                 return valorPago;
             }
         }
         return valorPago;
-    }    
+    }
+
 }

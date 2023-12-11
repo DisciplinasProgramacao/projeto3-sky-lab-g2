@@ -12,8 +12,6 @@ public class Estacionamento implements IDataToText {
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
-    
-    private Map<Veiculo, UsoDeVaga> veiculoUsoMap;
 
     /**
      * Construtor que cria uma instância de estacionamento com o nome e configurações especificados.
@@ -28,7 +26,6 @@ public class Estacionamento implements IDataToText {
         this.vagasPorFileira = vagasPorFila;
         this.clientes = new ArrayList<>();
         this.vagas = new ArrayList<>();
-        this.veiculoUsoMap = new HashMap<>();
         gerarVagas();
     }
 
@@ -89,8 +86,6 @@ public class Estacionamento implements IDataToText {
     public void estacionar(Veiculo veiculo, Vaga vaga, LocalDateTime entrada)
             throws VagaOcupadaException, VeiculoNaoExisteException {
         veiculo.estacionar(vaga, entrada);
-        UsoDeVaga uso = new UsoDeVaga(vaga);
-        veiculoUsoMap.put(veiculo, uso);
     }
 
     /**
@@ -101,7 +96,13 @@ public class Estacionamento implements IDataToText {
      * @return O valor a ser pago pelo uso da vaga.
      */
     public double sair(Veiculo veiculo, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
-        return veiculo.sair(saida);
+        double custo = 0.0;
+        if (veiculo.getServicoContratado() != null) {
+            CalculadorCustoServico calculoServico = new CalculadorCustoServico(); 
+            custo = calculoServico.adicionarCustoServico(veiculo.getServicoContratado()); 
+            return veiculo.sair(saida) + custo;
+        }
+        return veiculo.sair(saida) + custo;
     }
 
     /**
@@ -231,12 +232,8 @@ public class Estacionamento implements IDataToText {
             return "Veículo não encontrado.";
         }
 
-        UsoDeVaga uso = veiculoUsoMap.get(veiculo);
-
-        if (uso == null) {
-            return "Veículo não está atualmente em uso de uma vaga.";
-        }
-        return servico +" contratado com sucesso para o veículo com placa " + placa + ".";
+        veiculo.adicionarServicoContratado(servico);
+        return servico.getDescricao()+" contratado com sucesso, no valor de "+servico.getValor()+"0";
     }
     
     @Override

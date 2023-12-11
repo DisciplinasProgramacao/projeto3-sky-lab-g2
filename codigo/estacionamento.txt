@@ -118,6 +118,7 @@ ID da Vaga: V5, Disponível: Desocupada
 ID da Vaga: V6, Disponível: Desocupada
 ID da Vaga: V7, Disponível: Desocupada
 ID da Vaga: V8, Disponível: Desocupada
+
 Nome do Estacionamento: Estacionamento Teste
 Quantidade de Fileiras: 2
 Vagas por Fileira: 3
@@ -134,4 +135,19 @@ ID da Vaga: V3, Disponível: Desocupada
 ID da Vaga: V4, Disponível: Desocupada
 ID da Vaga: V5, Disponível: Desocupada
 ID da Vaga: V6, Disponível: Desocupada
+
+Nome do Estacionamento: Estac
+Quantidade de Fileiras: 2
+Vagas por Fileira: 2
+
+Clientes:
+Nome: 1, ID: 1, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: 1, custando: R$87.00
+
+Vagas:
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
 

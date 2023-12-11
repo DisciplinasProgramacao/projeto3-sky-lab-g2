@@ -2,7 +2,11 @@ import java.time.LocalDateTime;
 
 public class CalculadorCustoTurnista implements ICalculadorCusto {
 
-    Cliente cliente;
+    private Cliente cliente;
+
+    public CalculadorCustoTurnista(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
     /**
      * Calcula o custo para clientes de turno, levando em consideração o turno escolhido.

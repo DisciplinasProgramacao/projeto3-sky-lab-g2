@@ -1,13 +1,21 @@
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Duration;
 
 public class CalculadorCustoHorista implements ICalculadorCusto {
     private static final double FRACAO_USO = 0.25;
     private static final double VALOR_FRACAO = 4.0;
     private static final double VALOR_MAXIMO = 50.0;
 
-    private double custoBase;
+    private double custoBase = 0.0;
 
+    /**
+     * Calcula o custo do estacionamento com base nos horários de entrada e saída.
+     * O custo é de R$4 a cada 15 minutos, com um limite máximo de R$50.
+     *
+     * @param entrada O LocalDateTime de entrada.
+     * @param saida   O LocalDateTime de saída.
+     * @return O custo total do estacionamento.
+     */
     @Override
     public double calcularCusto(LocalDateTime entrada, LocalDateTime saida) {
         if (entrada == null || saida == null) {
@@ -25,13 +33,6 @@ public class CalculadorCustoHorista implements ICalculadorCusto {
             custoBase = Math.min(valorExcedente, VALOR_MAXIMO);
         }
 
-        return custoBase;
-    }
-
-    public double adicionarCustoServico(Servico servico) {
-        if (servico != null) {
-            return custoBase + servico.getValor();
-        }
         return custoBase;
     }
 }

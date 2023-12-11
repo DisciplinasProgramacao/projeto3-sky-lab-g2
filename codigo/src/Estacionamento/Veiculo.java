@@ -12,7 +12,7 @@ public class Veiculo {
     private Vaga vaga;
     private Cliente cliente;
     private double custo;
-    private List<Servico> servicosContratados;
+    private Servico servicoContratado;
 
     /**
      * Construtor que cria um novo veículo com a placa especificada.
@@ -102,10 +102,7 @@ public class Veiculo {
      * @param servico O serviço contratado.
      */
     public void adicionarServicoContratado(Servico servico) {
-        if (servicosContratados == null) {
-            servicosContratados = new ArrayList<>();
-        }
-        servicosContratados.add(servico);
+        this.servicoContratado = servico; 
     }
 
     /**
@@ -113,8 +110,8 @@ public class Veiculo {
      *
      * @return A lista de serviços contratados.
      */
-    public List<Servico> getServicosContratados() {
-        return servicosContratados;
+    public Servico getServicoContratado() {
+        return servicoContratado;
     }
 
     /**
@@ -129,10 +126,9 @@ public class Veiculo {
 
         if (ultimoUso != null && ultimoUso.getVaga().equals(vaga)) {
             valorPagar = ultimoUso.sair(saida);
-            vaga = null; // Define a vaga como nula após a saída
+            vaga = null;
         }
 
-        setCusto(valorPagar);
         return valorPagar;
     }
 
@@ -143,10 +139,12 @@ public class Veiculo {
      */
     public double totalArrecadado() {
         double custoVagas = usos.stream().mapToDouble(u -> u.calcularCusto(this.cliente)).sum();
-        double custoServicos = servicosContratados.stream().mapToDouble(Servico::getValor).sum();
+        double custoServicos = (servicoContratado != null) ? servicoContratado.getValor() : 0.0;
+        
         this.custo = custoVagas + custoServicos;
         return this.custo;
     }
+    
 
     /**
      * Calcula o valor arrecadado no mês especificado.

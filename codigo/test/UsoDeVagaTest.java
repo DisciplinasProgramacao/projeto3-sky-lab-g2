@@ -54,7 +54,7 @@ public class UsoDeVagaTest {
         veiculo.setCliente(cliente);
         usoDeVaga.usarVaga(veiculo, entrada);
 
-        double valorCusto = usoDeVaga.calcularCusto(veiculo, entrada, saida);
+        double valorCusto = usoDeVaga.calcularCusto(cliente);
 
         assertTrue(valorCusto > 0.0);
     }

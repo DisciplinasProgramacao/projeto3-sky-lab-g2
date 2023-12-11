@@ -155,9 +155,6 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         return vagas;
     }
     
-    
-     
-    
     private String obterValorCampo(String linha, String nomeCampo) {
         int posicaoCampo = linha.indexOf(nomeCampo);
         if (posicaoCampo != -1) {
@@ -212,6 +209,36 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         } catch (IOException e) {
             arqEscrita = null;
             arqLeitura = null;
+        }
+    }
+
+    /**
+     * Atualiza os dados de um objeto Estacionamento no arquivo.
+     *
+     * @param estacionamentoAtualizado O objeto Estacionamento com os dados atualizados.
+     * @throws IOException Se ocorrer um erro de E/S durante a escrita no arquivo.
+     */
+    public void update(Estacionamento estacionamentoAtualizado) throws IOException {
+        // Ler todos os objetos Estacionamento do arquivo
+        Estacionamento[] todosEstacionamentos = getAll();
+
+        // Encontrar o índice do objeto a ser atualizado
+        int indiceAtualizar = -1;
+        for (int i = 0; i < todosEstacionamentos.length; i++) {
+            if (todosEstacionamentos[i].equals(estacionamentoAtualizado)) {
+                indiceAtualizar = i;
+                break;
+            }
+        }
+
+        // Substituir o objeto antigo pelo atualizado no array
+        if (indiceAtualizar != -1) {
+            todosEstacionamentos[indiceAtualizar] = estacionamentoAtualizado;
+
+            // Sobrescrever o arquivo com os dados atualizados
+            fechar();
+            abrirEscrita();
+            addAll(todosEstacionamentos);
         }
     }
 }
