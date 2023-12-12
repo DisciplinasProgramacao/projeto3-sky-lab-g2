@@ -13,6 +13,7 @@ public class ClienteTest {
     @Before
     public void setUp() {
         cliente = new Cliente("João Silva", "123");
+        cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
         veiculo1 = new Veiculo("ABC1234");
         veiculo2 = new Veiculo("XYZ5678");
 
@@ -27,13 +28,15 @@ public class ClienteTest {
         // Simulando usos dos veículos
         LocalDateTime entrada1 = LocalDateTime.of(2023, 4, 1, 8, 0);
         LocalDateTime saida1 = LocalDateTime.of(2023, 4, 1, 10, 0);
+        veiculo1.setCliente(cliente);
         veiculo1.estacionar(vaga1, entrada1);
-        veiculo1.sair(vaga1, saida1);
+        veiculo1.sair(saida1);
 
         LocalDateTime entrada2 = LocalDateTime.of(2023, 4, 2, 8, 0);
         LocalDateTime saida2 = LocalDateTime.of(2023, 4, 2, 10, 0);
+        veiculo2.setCliente(cliente);
         veiculo2.estacionar(vaga2, entrada2);
-        veiculo2.sair(vaga2, saida2);
+        veiculo2.sair(saida2);
     }
 
     @Test
