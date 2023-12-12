@@ -58,7 +58,7 @@ public class ClienteTest {
     @Test
     public void testArrecadadoPorVeiculo() {
         double valorEsperado1 = veiculo1.totalArrecadado();
-        assertEquals(valorEsperado1, cliente.arrecadadoPorVeiculo("ABC1234"), 0.01);
+        assertEquals(valorEsperado1, cliente.arrecadadoPorVeiculo("ABC1235"), 0.01);
 
         double valorEsperado2 = veiculo2.totalArrecadado();
         assertEquals(valorEsperado2, cliente.arrecadadoPorVeiculo("XYZ5678"), 0.01);
