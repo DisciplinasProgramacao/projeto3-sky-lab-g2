@@ -325,15 +325,23 @@ public class Estacionamento implements IDataToText {
      * @return A arrecadação total do estacionamento.
      */
     public double arrecadacaoTotalEstacionamento() {
-        return clientes.stream()
+        double arrecadacaoVeiculos = clientes.stream()
                 .flatMap(cliente -> cliente.getVeiculos().stream())
                 .mapToDouble(Veiculo::totalArrecadado)
-                .sum() +
-                clientes.stream()
-                        .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
-                        .mapToDouble(Cliente::arrecadadoTotal)
-                        .sum();
-    }
+                .sum();
+    
+        double arrecadacaoMensalistas = clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .sum();
+    
+        double custoTurnistas = clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.DE_TURNO)
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .sum();
+    
+        return arrecadacaoVeiculos + arrecadacaoMensalistas + custoTurnistas;
+    }    
 
     /**
      * Obtém o nome do estacionamento.

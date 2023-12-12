@@ -219,26 +219,40 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
      * @throws IOException Se ocorrer um erro de E/S durante a escrita no arquivo.
      */
     public void update(Estacionamento estacionamentoAtualizado) throws IOException {
-        // Ler todos os objetos Estacionamento do arquivo
-        Estacionamento[] todosEstacionamentos = getAll();
-
-        // Encontrar o índice do objeto a ser atualizado
+        List<Estacionamento> todosEstacionamentos = new ArrayList<>(Arrays.asList(getAll()));
+    
         int indiceAtualizar = -1;
-        for (int i = 0; i < todosEstacionamentos.length; i++) {
-            if (todosEstacionamentos[i].equals(estacionamentoAtualizado)) {
+        for (int i = 0; i < todosEstacionamentos.size(); i++) {
+            if (todosEstacionamentos.get(i).equals(estacionamentoAtualizado)) {
                 indiceAtualizar = i;
                 break;
             }
         }
-
-        // Substituir o objeto antigo pelo atualizado no array
+    
         if (indiceAtualizar != -1) {
-            todosEstacionamentos[indiceAtualizar] = estacionamentoAtualizado;
-
-            // Sobrescrever o arquivo com os dados atualizados
+            todosEstacionamentos.set(indiceAtualizar, estacionamentoAtualizado);
+    
             fechar();
             abrirEscrita();
-            addAll(todosEstacionamentos);
+            addAll(todosEstacionamentos.toArray(new Estacionamento[0]));
+        }
+    }
+
+    public void listarEstacionamentosDecrescente() {
+        Estacionamento[] estacionamentos = getAll();
+    
+        if (estacionamentos.length > 0) {
+            // Ordena os estacionamentos com base na arrecadação total em ordem decrescente
+            Arrays.sort(estacionamentos, Comparator.comparingDouble(est -> ((Estacionamento) est).arrecadacaoTotalEstacionamento()));
+    
+            System.out.println("Lista de Estacionamentos (Ordenados por Arrecadação Decrescente):");
+            for (Estacionamento estacionamento : estacionamentos) {
+                System.out.println(estacionamento.dataToText());
+                System.out.println("Arrecadação Total: R$" + estacionamento.arrecadacaoTotalEstacionamento());
+                System.out.println("--------");
+            }
+        } else {
+            System.out.println("Nenhum estacionamento encontrado.");
         }
     }
 }
