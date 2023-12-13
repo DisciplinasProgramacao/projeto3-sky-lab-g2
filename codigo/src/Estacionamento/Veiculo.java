@@ -12,6 +12,7 @@ public class Veiculo {
     private Vaga vaga;
     private Cliente cliente;
     private double custo;
+    private Servico servicoContratado;
 
     /**
      * Construtor que cria um novo veículo com a placa especificada.
@@ -96,6 +97,24 @@ public class Veiculo {
     }
 
     /**
+     * Adiciona um serviço contratado durante o estacionamento do veículo.
+     *
+     * @param servico O serviço contratado.
+     */
+    public void adicionarServicoContratado(Servico servico) {
+        this.servicoContratado = servico; 
+    }
+
+    /**
+     * Obtém a lista de serviços contratados durante o estacionamento do veículo.
+     *
+     * @return A lista de serviços contratados.
+     */
+    public Servico getServicoContratado() {
+        return servicoContratado;
+    }
+
+    /**
      * Registra a saída do veículo de uma vaga na data de saída especificada e calcula o valor a ser pago.
      *
      * @param saida A data de saída do veículo da vaga.
@@ -107,22 +126,25 @@ public class Veiculo {
 
         if (ultimoUso != null && ultimoUso.getVaga().equals(vaga)) {
             valorPagar = ultimoUso.sair(saida);
-            vaga = null; // Define a vaga como nula após a saída
+            vaga = null;
         }
 
-        setCusto(valorPagar);
         return valorPagar;
     }
 
     /**
-     * Calcula o valor total arrecadado com o uso das vagas por este veículo.
+     * Calcula o valor total arrecadado com o uso das vagas e serviços por este veículo.
      *
      * @return O valor total arrecadado.
      */
     public double totalArrecadado() {
-        this.custo = usos.stream().mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida())).sum();
-        return custo;
+        double custoVagas = usos.stream().mapToDouble(u -> u.calcularCusto(this.cliente)).sum();
+        double custoServicos = (servicoContratado != null) ? servicoContratado.getValor() : 0.0;
+        
+        this.custo = custoVagas + custoServicos;
+        return this.custo;
     }
+    
 
     /**
      * Calcula o valor arrecadado no mês especificado.
@@ -133,7 +155,7 @@ public class Veiculo {
     public double arrecadadoNoMes(int mes) {
         return usos.stream()
                 .filter(u -> u.getEntrada().getMonthValue() == mes)
-                .mapToDouble(u -> u.calcularCusto(this, u.getEntrada(), u.getSaida()))
+                .mapToDouble(u -> u.calcularCusto(this.cliente))
                 .sum();
     }
 

@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "codigo/src",
+        "codigo/test",
+        "codigo/src/Exception",
+        "codigo/src/Estacionamento"
+    ]
+}
