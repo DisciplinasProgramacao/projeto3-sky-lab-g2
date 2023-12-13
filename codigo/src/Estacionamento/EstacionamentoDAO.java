@@ -216,8 +216,7 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         Estacionamento[] estacionamentos = getAll();
     
         if (estacionamentos.length > 0) {
-            // Ordena os estacionamentos com base na arrecadação total em ordem decrescente
-            Arrays.sort(estacionamentos, Comparator.comparingDouble(est -> ((Estacionamento) est).arrecadacaoTotalEstacionamento()));
+            Arrays.sort(estacionamentos, Comparator.comparingDouble(est -> ((Estacionamento) est).arrecadacaoTotalEstacionamento()).reversed());
     
             System.out.println("Lista de Estacionamentos (Ordenados por Arrecadação Decrescente):");
             for (Estacionamento estacionamento : estacionamentos) {

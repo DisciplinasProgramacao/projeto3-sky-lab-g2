@@ -231,14 +231,13 @@ public class App {
             }
 
             LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída"));
-            double valorPago = estacionamento.sair(veiculo, horaSaida);
 
             System.out.println("Veículo retirado da vaga " + vaga.getId());
-            System.out.println("Valor a pagar: R$" + valorPago + "0");
+            System.out.println("Valor a pagar: R$" + estacionamento.sair(veiculo, horaSaida) + "0");
 
             vaga.sair();
 
-            return valorPago;
+            return estacionamento.sair(veiculo, horaSaida);
         } catch (UsoDeVagaNaoExisteException e) {
             System.out.println("Erro: Uso de vaga finalizado.");
             
@@ -261,7 +260,6 @@ public class App {
                         if (modalidadeInput.equalsIgnoreCase("T")) {
                     cliente.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
                 
-                    // Adicione aqui a configuração do turno
                     String turnoInput = leitura("Digite o turno desejado (M - Manhã, T - Tarde, N - Noite): ");
                     switch (turnoInput.toUpperCase()) {
                         case "M":

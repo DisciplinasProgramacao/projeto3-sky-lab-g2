@@ -102,10 +102,10 @@ public class Estacionamento implements IDataToText {
         if (veiculo.getServicoContratado() != null) {
             CalculadorCustoServico calculoServico = new CalculadorCustoServico(); 
             custo = calculoServico.adicionarCustoServico(veiculo.getServicoContratado()); 
-            veiculo.setCusto(veiculo.getCusto()+veiculo.sair(saida)+custo);
-            return custo+veiculo.sair(saida);
+            return veiculo.sair(saida) + custo;
         }
-        return veiculo.sair(saida) + custo;
+
+        return veiculo.sair(saida);
     }
 
     private boolean validarMes(int mes) {
@@ -160,7 +160,6 @@ public class Estacionamento implements IDataToText {
         topClientes.forEach(cliente -> result.append(cliente.getNome()).append(": R$ ").append(cliente.arrecadadoNoMes(mes)).append("\n"));
         return result.toString();
     }
-
 
     /**
      * Busca e retorna um cliente com base no ID fornecido.
@@ -338,8 +337,18 @@ public class Estacionamento implements IDataToText {
                 .mapToDouble(Veiculo::getCusto)
                 .sum();
     
-        return arrecadacaoVeiculos;
-    }    
+        double arrecadacaoMensalistas = clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .sum();
+    
+        double custoTurnistas = clientes.stream()
+                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.DE_TURNO)
+                .mapToDouble(Cliente::arrecadadoTotal)
+                .sum();
+    
+        return arrecadacaoVeiculos + arrecadacaoMensalistas + custoTurnistas;
+    }   
 
     /**
      * Obtém o nome do estacionamento.
