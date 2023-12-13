@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Classe que representa um cliente do estacionamento.
@@ -169,29 +168,29 @@ public class Cliente {
         return (veiculo != null) ? veiculo.totalArrecadado() : 0.0;
     }
 
-/**
- * Obtém o valor total arrecadado pelo cliente por todos os veículos.
- *
- * @return O valor total arrecadado pelo cliente.
- */
-public double arrecadadoTotal() {
-    double totalArrecadado = veiculos.stream()
-            .mapToDouble(Veiculo::totalArrecadado)
-            .sum();
+    /**
+     * Obtém o valor total arrecadado pelo cliente por todos os veículos.
+     *
+     * @return O valor total arrecadado pelo cliente.
+     */
+    public double arrecadadoTotal() {
+        double totalArrecadado = veiculos.stream()
+                .mapToDouble(Veiculo::totalArrecadado)
+                .sum();
 
-    switch (modalidade) {
-        case DE_TURNO:
-            totalArrecadado += 200.0;
-            break;
-        case MENSALISTA:
-            totalArrecadado += 500.0;
-            break;
-        default:
-            break;
+        switch (modalidade) {
+            case DE_TURNO:
+                totalArrecadado += 200.0;
+                break;
+            case MENSALISTA:
+                totalArrecadado += 500.0;
+                break;
+            default:
+                break;
+        }
+
+        return totalArrecadado;
     }
-
-    return totalArrecadado;
-}
 
     /**
      * Obtém o valor arrecadado pelo cliente no mês especificado, considerando a modalidade.

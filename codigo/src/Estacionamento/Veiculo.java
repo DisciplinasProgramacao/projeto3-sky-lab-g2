@@ -1,6 +1,5 @@
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
 /**
  * Classe que representa um veículo que pode ser estacionado em uma vaga.
@@ -141,8 +140,8 @@ public class Veiculo {
         double custoVagas = usos.stream().mapToDouble(u -> u.calcularCusto(this.cliente)).sum();
         double custoServicos = (servicoContratado != null) ? servicoContratado.getValor() : 0.0;
         
-        this.custo = custoVagas + custoServicos;
-        return this.custo;
+        custo = custoVagas + custoServicos;
+        return custo;
     }
     
 
@@ -194,5 +193,4 @@ public class Veiculo {
     public double getCusto() {
         return this.custo;
     }
-
 }

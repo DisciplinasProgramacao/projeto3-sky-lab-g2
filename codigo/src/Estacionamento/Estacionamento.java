@@ -1,7 +1,6 @@
 import java.util.*;
-import java.util.stream.Collectors;
-
-import java.time.LocalDateTime;
+import java.util.stream.*;
+import java.time.*;
 /**
  * Classe que representa um estacionamento e suas operações relacionadas a clientes, veículos e vagas.
  */

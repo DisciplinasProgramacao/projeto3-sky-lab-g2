@@ -1,5 +1,6 @@
 import java.io.*;
 import java.time.*;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class App {
@@ -182,33 +183,83 @@ public class App {
      * @throws UsoDeVagaFinalizadoException Se o uso da vaga já estiver finalizado.
      * @throws VeiculoNaoExisteException   Se o veículo não for encontrado.
      */
-    public static double retirarVeiculo(Estacionamento estacionamento) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
-        String placaVeiculo = leitura("Digite a placa do veículo que deseja retirar da vaga");
-    
-        Veiculo veiculo = estacionamento.encontrarVeiculo(placaVeiculo);
-    
-        if (veiculo == null) {
-            System.out.println("Veículo não encontrado no estacionamento.");
-            return 0.0;
+    public static double retirarVeiculo(Estacionamento estacionamento) {
+        try {
+            String placaVeiculo = leitura("Digite a placa do veículo que deseja retirar da vaga");
+
+            Veiculo veiculo = estacionamento.encontrarVeiculo(placaVeiculo);
+
+            if (veiculo == null) {
+                throw new VeiculoNaoExisteException();
+            }
+
+            Vaga vaga = veiculo.getVaga();
+
+            if (vaga == null) {
+                throw new UsoDeVagaNaoExisteException();
+            }
+
+            LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída"));
+            double valorPago = estacionamento.sair(veiculo, horaSaida);
+
+            System.out.println("Veículo retirado da vaga " + vaga.getId());
+            System.out.println("Valor a pagar: R$" + valorPago + "0");
+
+            vaga.sair();
+
+            return valorPago;
+        } catch (UsoDeVagaNaoExisteException e) {
+            System.out.println("Erro: Uso de vaga finalizado.");
+            
+        } catch (VeiculoNaoExisteException e) {
+            System.out.println("Erro: Veículo não encontrado.");
+            
+        } catch (DateTimeParseException e) {
+            System.out.println("Erro: Formato de data e hora inválido.");
+            
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
         }
-    
-        Vaga vaga = veiculo.getVaga();
-    
-        if (vaga == null) {
-            System.out.println("Veículo não está atualmente em uso de uma vaga.");
-            return 0.0;
-        }
-    
-        LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída."));
-        double valorPago = estacionamento.sair(veiculo, horaSaida);
-    
-        System.out.println("Veículo retirado da vaga " + vaga.getId());
-        System.out.println("Valor a pagar: R$" + valorPago + "0");
-    
-        vaga.sair();
-    
-        return valorPago;
+
+        return 0.0; 
     }
+
+    public static String alterarModalidadeCliente(Cliente cliente) {
+                String modalidadeInput = leitura("Digite a modalidade do seu cliente que você deseja alterar: \nT para Turno\nM para mensalista\nH para horista"); 
+                        if (modalidadeInput.equalsIgnoreCase("T")) {
+                    cliente.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+                
+                    // Adicione aqui a configuração do turno
+                    String turnoInput = leitura("Digite o turno desejado (M - Manhã, T - Tarde, N - Noite): ");
+                    switch (turnoInput.toUpperCase()) {
+                        case "M":
+                            cliente.setTurnoEscolhido(Cliente.Turno.MANHA);
+                            break;
+                        case "T":
+                            cliente.setTurnoEscolhido(Cliente.Turno.TARDE);
+                            break;
+                        case "N":
+                            cliente.setTurnoEscolhido(Cliente.Turno.NOITE);
+                            break;
+                        default:
+                            System.out.println("Opção inválida para turno. Será definido como Manhã por padrão.");
+                            cliente.setTurnoEscolhido(Cliente.Turno.MANHA);
+                            break;
+                    }
+                } else if (modalidadeInput.equalsIgnoreCase("M")) {
+                    cliente.setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
+                } else if (modalidadeInput.equalsIgnoreCase("H")) {
+                    cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+                } else {
+                    System.out.println("Opção inválida. A modalidade será definida como HORISTA por padrão.");
+                    cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+                } 
+
+        return "O plano do cliente '" + cliente.getNome() + "' foi alterado para '" + cliente.getModalidade() + "'.";
+
+    }
+
 
     /**
      * Estaciona um veículo no estacionamento, associando-o a uma vaga disponível e registrando o uso da vaga.
@@ -269,15 +320,24 @@ public class App {
     public static void servicoAdicional(Estacionamento estacionamento, Veiculo veiculo) throws FileNotFoundException {
         String nomeArq = "menuServicos.txt";
         int opcaoServico = -1;
-
-            limparTela();
+    
+        limparTela();
+    
+        try {
             opcaoServico = menu(nomeArq);
-            switch(opcaoServico) {
-                case 1 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA)); 
-                case 2 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM)); 
-                case 3 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO)); 
+    
+            switch (opcaoServico) {
+                case 1 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA));
+                case 2 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM));
+                case 3 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO));
+                default -> System.out.println("Nenhum serviço adiicionado.");
             }
-
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida. Por favor, insira um número.");
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -323,37 +383,42 @@ public class App {
                 }
 
                 case 5 -> {
+                    System.out.println(alterarModalidadeCliente(estacionamento.encontrarCliente(leitura("Digite o id do cliente no qual você deseja alterar a modalidade"))));
+                }
+
+                case 6 -> {
                     int mes = Integer.parseInt(leitura("Digite o número do mês desejado"));
                     System.out.println(estacionamento.top5Clientes(mes));
                 }
-                case 6 -> {
+                case 7 -> {
                     System.out.println(estacionamento.formatarClienteEncontrado(leitura("Digite o ID do cliente que deseja buscar")));
                 }
-                case 7 -> {
+                case 8 -> {
                     System.out.println(estacionamento.formatarVeiculoEncontrado(leitura("Digite a placa do veículo que deseja buscar")));
                 }
-                case 8 -> {
+                case 9 -> {
                     System.out.println(estacionamento.valorMedioPorUso());
                 }
-                case 9 -> {
+                case 10 -> {
                     int mes = Integer.parseInt(leitura("Digite o número do mês desejado"));
                     System.out.println(estacionamento.arrecadacaoNoMes(mes));
                 }
-                case 10 -> {
+                case 11 -> {
                     System.out.println(estacionamento.relatorioArrecadacaoCliente(leitura("Digite o ID do cliente no qual você deseja saber a arrecadação total")));
                 }
 
-                case 11 -> {
+                case 12 -> {
                     System.out.println(estacionamento.calcularArrecadacaoMediaHoristas(Integer.parseInt(leitura("Digite o mês desejado"))));
                 }
 
-                case 12 -> {
+                case 13 -> {
                     System.out.println(estacionamento.calcularMediaUsosMensalistas());
                 }
 
-                case 13 -> {
+                case 14 -> {
                     System.out.println(estacionamento.arrecadacaoTotalEstacionamento());
                 }
+
 
                 case 0 -> {
                     break;
@@ -364,33 +429,46 @@ public class App {
         return estacionamento;
     }
 
-    public static Estacionamento menuVeiculo(Estacionamento estacionamento) throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException{
-        if (estacionamento==null)
+    public static Estacionamento menuVeiculo(Estacionamento estacionamento)
+        throws FileNotFoundException, ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException {
+        if (estacionamento == null)
             return null;
 
         String nomeArq = "menuVeiculo.txt";
         int opcao = -1;
 
-        while(opcao!=0){
-            limparTela();
-            opcao = menu(nomeArq);
-            switch(opcao){
-                case 1 -> {                                                           
-                    System.out.println("\nEstacionar veiculo em uma vaga");
-                    estacionarVeiculo(estacionamento);
-                } 
-                case 2-> {
-                    System.out.println("\nRetirar veículo da vaga");
-                    retirarVeiculo(estacionamento);
-                } 
-                case 0 ->{
-                    break;
+        while (opcao != 0) {
+            try {
+                limparTela();
+                opcao = menu(nomeArq);
+
+                switch (opcao) {
+                    case 1 -> {
+                        System.out.println("\nEstacionar veículo em uma vaga");
+                        estacionarVeiculo(estacionamento);
+                    }
+                    case 2 -> {
+                        System.out.println("\nRetirar veículo da vaga");
+                        retirarVeiculo(estacionamento);
+                    }
+                    case 0 -> {
+                        break;
+                    }
+                    default -> System.out.println("Opção inválida. Por favor, selecione uma opção válida.");
                 }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Entrada inválida. Por favor, insira um número.");
+            } catch (Exception e) {
+                System.out.println("Erro inesperado: " + e.getMessage());
+                e.printStackTrace();
             }
+
             pausa();
         }
+
         return estacionamento;
-    }
+        }
 
     public static void main(String[] args) throws ClienteJaExistenteException, ClienteNaoExisteException, VeiculoJaExistenteException, VeiculoNaoExisteException, VagaOcupadaException, UsoDeVagaFinalizadoException, IOException {
 
@@ -430,7 +508,21 @@ public class App {
                             estacionamentoAtual = estacionamento;
                             System.out.println("Estacionamento encontrado:");
                             estacionamentoAtual.dataToText();
-                            
+                
+                            String opcaoAtualizar = leitura("Deseja atualizar este estacionamento? (S para Sim, N para Não)");
+                            if (opcaoAtualizar.equalsIgnoreCase("S")) {
+                                try {
+                                    estacionamentoDAO.abrirEscrita();
+                                    estacionamentoDAO.add(estacionamentoAtual);
+                                    System.out.println("Estacionamento atualizado com sucesso.");
+                                } catch (IOException e) {
+                                    System.out.println("Erro ao atualizar estacionamento: " + e.getMessage());
+                                } finally {
+                                    estacionamentoDAO.fechar();
+                                }
+                            }
+                
+                            // Exibe o menu do estacionamento
                             menuEstacionamento(estacionamentoAtual);
                 
                             break;
@@ -440,6 +532,14 @@ public class App {
                     if (estacionamentoAtual == null) {
                         System.out.println("Estacionamento não encontrado.");
                     }
+                }
+                
+                
+
+                case 3 -> {
+                    estacionamentoDAO.listarEstacionamentosDecrescente();
+                    pausa();
+                    break;
                 }
                 
             }

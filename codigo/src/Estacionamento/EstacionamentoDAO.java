@@ -155,9 +155,6 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         return vagas;
     }
     
-    
-     
-    
     private String obterValorCampo(String linha, String nomeCampo) {
         int posicaoCampo = linha.indexOf(nomeCampo);
         if (posicaoCampo != -1) {
@@ -212,6 +209,24 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         } catch (IOException e) {
             arqEscrita = null;
             arqLeitura = null;
+        }
+    }
+
+    public void listarEstacionamentosDecrescente() {
+        Estacionamento[] estacionamentos = getAll();
+    
+        if (estacionamentos.length > 0) {
+            // Ordena os estacionamentos com base na arrecadação total em ordem decrescente
+            Arrays.sort(estacionamentos, Comparator.comparingDouble(est -> ((Estacionamento) est).arrecadacaoTotalEstacionamento()));
+    
+            System.out.println("Lista de Estacionamentos (Ordenados por Arrecadação Decrescente):");
+            for (Estacionamento estacionamento : estacionamentos) {
+                System.out.println(estacionamento.dataToText());
+                System.out.println("Arrecadação Total: R$" + estacionamento.arrecadacaoTotalEstacionamento());
+                System.out.println("--------");
+            }
+        } else {
+            System.out.println("Nenhum estacionamento encontrado.");
         }
     }
 }

@@ -93,17 +93,17 @@ public class UsoDeVaga {
         if (cliente != null && cliente.getModalidade() != null) {
             if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.HORISTA)) {
                 CalculadorCustoHorista custo = new CalculadorCustoHorista();
-                valorPago = custo.calcularCusto(this.entrada, this.saida);
+                valorPago = custo.calcularCusto(entrada, saida);
 
                 return valorPago;
             } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.DE_TURNO)) {
                 CalculadorCustoTurnista custo = new CalculadorCustoTurnista(cliente);
-                valorPago = custo.calcularCusto(this.entrada, this.saida);
+                valorPago = custo.calcularCusto(entrada, saida);
 
                 return valorPago;
             } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.MENSALISTA)) {
                 CalculadorCustoMensalista custo = new CalculadorCustoMensalista();
-                valorPago = custo.calcularCusto(this.entrada, this.saida);
+                valorPago = custo.calcularCusto(entrada, saida);
 
                 return valorPago;
             }
