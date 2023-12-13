@@ -102,21 +102,19 @@ public class Estacionamento implements IDataToText {
         if (veiculo.getServicoContratado() != null) {
             CalculadorCustoServico calculoServico = new CalculadorCustoServico(); 
             custo = calculoServico.adicionarCustoServico(veiculo.getServicoContratado()); 
-            return veiculo.sair(saida) + custo;
+            veiculo.setCusto(veiculo.getCusto()+veiculo.sair(saida)+custo);
+            return custo+veiculo.sair(saida);
         }
         return veiculo.sair(saida) + custo;
     }
 
-    /**
-     * Calcula o valor total arrecadado pelo estacionamento.
-     *
-     * @return O valor total arrecadado.
-     */
-    public double totalArrecadado() {
-        return clientes.stream()
-                .mapToDouble(Cliente::arrecadadoTotal)
-                .sum();
-    }    
+    private boolean validarMes(int mes) {
+        if (mes >= 1 && mes <= 12) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * Calcula a arrecadação total do estacionamento em um mês específico.
@@ -125,9 +123,13 @@ public class Estacionamento implements IDataToText {
      * @return A arrecadação total no mês especificado.
      */
     public double arrecadacaoNoMes(int mes) {
-        return clientes.stream()
-                .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
-                .sum();
+        if (validarMes(mes)) {
+            return clientes.stream()
+                    .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
+                    .sum();            
+        }   else {
+            throw new IllegalArgumentException("O mês informado é inválido: " + mes);
+        }
     }    
 
     /**
@@ -214,7 +216,7 @@ public class Estacionamento implements IDataToText {
 
         if (veiculoEncontrado != null) {
             return String.format("Veículo encontrado:\nPlaca: %s\nCliente: %s\nValor total arrecadado: R$ %.2f",
-                    veiculoEncontrado.getPlaca(), veiculoEncontrado.getCliente().getNome(), veiculoEncontrado.totalArrecadado());
+                    veiculoEncontrado.getPlaca(), veiculoEncontrado.getCliente().getNome(), veiculoEncontrado.getCusto());
         } else {
             return "Veículo não encontrado.";
         }
@@ -254,7 +256,7 @@ public class Estacionamento implements IDataToText {
             for (Veiculo veiculo : veiculos) {
                 if (veiculo != null) {
                     data.append("Placa: ").append(veiculo.getPlaca()).append(", custando: R$").append(veiculo.getCusto()).append("0").append("\n");
-                }
+                } //+cliente.getValor(cliente.getModalidade()) -> apenas para adicionar nova carga de dados;
             }
     
             data.append("\n");
@@ -301,11 +303,15 @@ public class Estacionamento implements IDataToText {
      * @return A arrecadação média dos clientes horistas neste mês.
      */
     public double calcularArrecadacaoMediaHoristas(int mes) {
-        return clientes.stream()
-                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.HORISTA)
-                .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
-                .average()
-                .orElse(0.0);
+        if (validarMes(mes)) {
+            return clientes.stream()
+                    .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.HORISTA)
+                    .mapToDouble(cliente -> cliente.arrecadadoNoMes(mes))
+                    .average()
+                    .orElse(0.0);            
+        }   else {
+            throw new IllegalArgumentException("O mês informado é inválido: " + mes);
+        }
     }
 
     /**
@@ -329,20 +335,10 @@ public class Estacionamento implements IDataToText {
     public double arrecadacaoTotalEstacionamento() {
         double arrecadacaoVeiculos = clientes.stream()
                 .flatMap(cliente -> cliente.getVeiculos().stream())
-                .mapToDouble(Veiculo::totalArrecadado)
+                .mapToDouble(Veiculo::getCusto)
                 .sum();
     
-        double arrecadacaoMensalistas = clientes.stream()
-                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.MENSALISTA)
-                .mapToDouble(Cliente::arrecadadoTotal)
-                .sum();
-    
-        double custoTurnistas = clientes.stream()
-                .filter(cliente -> cliente.getModalidade() == Cliente.ModalidadeCliente.DE_TURNO)
-                .mapToDouble(Cliente::arrecadadoTotal)
-                .sum();
-    
-        return arrecadacaoVeiculos + arrecadacaoMensalistas + custoTurnistas;
+        return arrecadacaoVeiculos;
     }    
 
     /**

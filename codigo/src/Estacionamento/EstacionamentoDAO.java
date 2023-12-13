@@ -198,7 +198,7 @@ public class EstacionamentoDAO implements DAO<Estacionamento> {
         return dados;
     }
 
-    public void addAll(Estacionamento[] dados) {
+    public void addAll(List<Estacionamento> dados) {
         try {
             fechar();
             abrirEscrita();

@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.List;
 
 public interface DAO <T extends IDataToText> {
 
@@ -6,6 +7,6 @@ public interface DAO <T extends IDataToText> {
 	public T[] getAll() throws IOException;
 
 	public void add(T dado) throws IOException;
-	public void addAll(T[] dado);
+	public void addAll(List<T> dado);
     
 }

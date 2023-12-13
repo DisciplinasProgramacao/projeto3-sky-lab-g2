@@ -140,8 +140,7 @@ public class Veiculo {
         double custoVagas = usos.stream().mapToDouble(u -> u.calcularCusto(this.cliente)).sum();
         double custoServicos = (servicoContratado != null) ? servicoContratado.getValor() : 0.0;
         
-        custo = custoVagas + custoServicos;
-        return custo;
+        return custoVagas + custoServicos;
     }
     
 
@@ -152,10 +151,17 @@ public class Veiculo {
      * @return O valor arrecadado no mês especificado.
      */
     public double arrecadadoNoMes(int mes) {
-        return usos.stream()
+        double arrec = usos.stream()
                 .filter(u -> u.getEntrada().getMonthValue() == mes)
                 .mapToDouble(u -> u.calcularCusto(this.cliente))
                 .sum();
+
+        if (servicoContratado != null) {
+            arrec+=servicoContratado.getValor();
+            return arrec;
+        }   else {
+            return arrec;
+        }
     }
 
     /**

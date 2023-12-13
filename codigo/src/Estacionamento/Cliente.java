@@ -133,6 +133,14 @@ public class Cliente {
         }
     }
 
+    private boolean validarMes(int mes) {
+        if (mes >= 1 && mes <= 12) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Verifica se o cliente possui um veículo com a placa especificada.
      *
@@ -199,9 +207,11 @@ public class Cliente {
      * @return O valor arrecadado pelo cliente no mês especificado.
      */
     public double arrecadadoNoMes(int mes) {
-        double arrecadadoMes = veiculos.stream()
-                .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
-                .sum();
+
+        if (validarMes(mes)) {
+            double arrecadadoMes = veiculos.stream()
+            .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
+            .sum();
 
         switch (modalidade) {
             case HORISTA:
@@ -213,9 +223,12 @@ public class Cliente {
                 break;
         }
 
-        return arrecadadoMes;
+        return arrecadadoMes;   
+        }   else {
+            throw new IllegalArgumentException("O mês informado é inválido: " + mes);
+        }
     }
-
+    
     /**
      * Calcula a arrecadação média dos clientes horistas neste mês usando Stream.
      *
@@ -223,11 +236,15 @@ public class Cliente {
      * @return A arrecadação média dos clientes horistas neste mês.
      */
     public double calcularArrecadacaoMediaHoristas(int mes) {
-        return veiculos.stream()
-                .filter(veiculo -> veiculo.getCliente().getModalidade() == ModalidadeCliente.HORISTA)
-                .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
-                .average()
-                .orElse(0.0);
+        if (validarMes(mes)) {
+            return veiculos.stream()
+                    .filter(veiculo -> veiculo.getCliente().getModalidade() == ModalidadeCliente.HORISTA)
+                    .mapToDouble(veiculo -> veiculo.arrecadadoNoMes(mes))
+                    .average()
+                    .orElse(0.0);            
+        }   else {
+            throw new IllegalArgumentException("O mês informado é inválido: " + mes);
+        }
     }
 
     /**
@@ -241,5 +258,16 @@ public class Cliente {
                 .mapToInt(Veiculo::totalDeUsos)
                 .average()
                 .orElse(0.0);
+    }
+
+    public double getValor(ModalidadeCliente modalidade) {
+        if (modalidade == ModalidadeCliente.DE_TURNO) {
+            return 200.0;
+        } else if (modalidade == ModalidadeCliente.MENSALISTA) {
+            return 500.0;
+        } else {
+            return 0.0;
+        }
+        
     }
 }
