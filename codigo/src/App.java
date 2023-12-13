@@ -188,7 +188,6 @@ public class App {
                                     estacionamento.addVeiculo(veiculos[i], cliente.getId());
                                     veiculos[i].setCliente(cliente);
                                 } catch (VeiculoJaExistenteException e) {
-                                    // Este bloco não deve ser atingido, pois já verificamos a duplicação acima
                                     e.printStackTrace();
                                 }
                             }
