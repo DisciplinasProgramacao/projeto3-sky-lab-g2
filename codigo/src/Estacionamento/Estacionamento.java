@@ -8,6 +8,7 @@ public class Estacionamento implements IDataToText {
 
     private String nome;
     private List<Cliente> clientes;
+    private List<Veiculo> veiculos;
     private List<Vaga> vagas;
     private int quantFileiras;
     private int vagasPorFileira;
@@ -24,6 +25,7 @@ public class Estacionamento implements IDataToText {
         this.quantFileiras = fileiras;
         this.vagasPorFileira = vagasPorFila;
         this.clientes = new ArrayList<>();
+        this.veiculos = new ArrayList<>();
         this.vagas = new ArrayList<>();
         gerarVagas();
     }
@@ -41,6 +43,7 @@ public class Estacionamento implements IDataToText {
                 throw new VeiculoJaExistenteException();
             } else {
                 cliente.addVeiculo(veiculo);
+                veiculos.add(veiculo);
             }
         } else {
             throw new ClienteNaoExisteException();
@@ -376,6 +379,15 @@ public class Estacionamento implements IDataToText {
      */
     public List<Cliente> getClientes() {
         return clientes;
+    }
+
+    /**
+     * Obtém a lista de clientes do estacionamento.
+     *
+     * @return A lista de clientes.
+     */
+    public List<Veiculo> getVeiculos() {
+        return veiculos;
     }
 
     /**
