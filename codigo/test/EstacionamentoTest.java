@@ -39,5 +39,5 @@ public class EstacionamentoTest {
         estacionamento.addVeiculo(veiculo, "ClienteInexistente");
     }
 
-    // Aqui você pode adicionar mais testes para cobrir outros aspectos da classe Estacionamento
+
 }
