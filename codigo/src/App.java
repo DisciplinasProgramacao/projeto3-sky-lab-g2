@@ -37,26 +37,40 @@ public class App {
 
     /**
      * Método para montagem de menu. Lê as opções de um arquivo e as numera automaticamente a partir de 1.
+     *
      * @param nomeArquivo Nome do arquivo texto com as opções (uma por linha)
      * @return Opção do usuário (int)
-     * @throws FileNotFoundException em caso de arquivo não encontrado.
      */
-    public static int menu(String nomeArquivo) throws FileNotFoundException {
-        limparTela();
-        File arqMenu = new File(nomeArquivo);
-        Scanner leitor = new Scanner(arqMenu, "UTF-8");
-        System.out.println(leitor.nextLine());
-        System.out.println("==========================");
-        int contador = 1;
-        while(leitor.hasNextLine()){
-            System.out.println(contador + " - " + leitor.nextLine());
-            contador++;
+    public static int menu(String nomeArquivo) {
+        try {
+            limparTela();
+            File arqMenu = new File(nomeArquivo);
+
+            // Verifique se o arquivo existe antes de tentar lê-lo
+            if (!arqMenu.exists()) {
+                throw new FileNotFoundException("Arquivo não encontrado: " + nomeArquivo);
+            }
+
+            Scanner leitor = new Scanner(arqMenu, "UTF-8");
+            System.out.println(leitor.nextLine());
+            System.out.println("==========================");
+            int contador = 1;
+            while (leitor.hasNextLine()) {
+                System.out.println(contador + " - " + leitor.nextLine());
+                contador++;
+            }
+            System.out.println("0 - Sair");
+            System.out.print("\nSua opção: ");
+            int opcao = Integer.parseInt(teclado.nextLine());
+            leitor.close();
+            return opcao;
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro ao ler o arquivo: " + e.getMessage());
+            return 0; // Ou outro valor padrão, indicando uma opção inválida
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
+            return 0; // Ou outro valor padrão, indicando uma opção inválida
         }
-        System.out.println("0 - Sair");
-        System.out.print("\nSua opção: ");
-        int opcao = Integer.parseInt(teclado.nextLine());
-        leitor.close();
-        return opcao;
     }
 
     /**
@@ -138,41 +152,58 @@ public class App {
     /**
      * Encapsula a ação de acrescentar Clientes ao estacionamento. Interage com o usuário para saber quantos ingredientes
      * e, depois, para informar o sucesso ou não da modificação. Se a comida for nula, não permite interação.
-     * @param comida A comida a ser modificada.
-     * @throws ClienteNaoExisteException
-     * @throws VeiculoJaExistenteException
+     * @param estacionamento O estacionamento onde o veículo será cadastrado.
+     * @throws ClienteNaoExisteException Se o cliente não for encontrado.
+     * @throws VeiculoJaExistenteException Se o veículo já existir no estacionamento.
      */
-    public static void acrescentarVeiculo(Estacionamento estacionamento) throws ClienteNaoExisteException, VeiculoJaExistenteException{
-
-        if(estacionamento==null){
-            System.out.println("Crie um estacionamento primeiro.");
-        } else {
-            Cliente cliente = estacionamento.encontrarCliente(leitura("Digite o id do cliente dono do(s) veículo(s) a ser cadastrado"));
-
-            if (cliente != null) {
-                int quantos = Integer.parseInt(leitura("Quantidade de veículos para cadastrar"));
-                Veiculo[] veiculos = new Veiculo[quantos]; 
-
-                    for(int i=0; i<quantos; i++) {
-                    veiculos[i] = new Veiculo(leitura("Digite a placa do veículo"));
-                    try {
-                        estacionamento.addVeiculo(veiculos[i], cliente.getId());
-                        veiculos[i].setCliente(cliente);
-
-                    } catch (VeiculoJaExistenteException e) {
-                        System.out.println("Este veículo já existe, deseja adicionar outro? Responda S/N."); 
-
-                        if (teclado.nextLine().toLowerCase().equals("s")){
-                            veiculos[i] = new Veiculo(leitura("Digite a placa do veículo"));
-                            estacionamento.addVeiculo(veiculos[i], cliente.getId());
-                        } else {
-                            pausa();
-                        }
+    public static void acrescentarVeiculo(Estacionamento estacionamento) {
+        try {
+            if (estacionamento == null) {
+                System.out.println("Crie um estacionamento primeiro.");
+            } else {
+                String idCliente = leitura("Digite o id do cliente dono do(s) veículo(s) a ser cadastrado");
+                Cliente cliente = estacionamento.encontrarCliente(idCliente);
+    
+                if (cliente != null) {
+                    int quantos = Integer.parseInt(leitura("Quantidade de veículos para cadastrar"));
+                    Veiculo[] veiculos = new Veiculo[quantos];
+    
+                    for (int i = 0; i < quantos; i++) {
+                        boolean placaDuplicada;
+                        do {
+                            String placa = leitura("Digite a placa do veículo");
+                            veiculos[i] = new Veiculo(placa);
+                            placaDuplicada = false;
+    
+                            for (Veiculo veiculoExistente : estacionamento.getVeiculos()) {
+                                if (veiculoExistente.getPlaca().equalsIgnoreCase(placa)) {
+                                    System.out.println("Este veículo já existe no estacionamento. Digite uma placa diferente.");
+                                    placaDuplicada = true;
+                                    break;
+                                }
+                            }
+    
+                            if (!placaDuplicada) {
+                                try {
+                                    estacionamento.addVeiculo(veiculos[i], cliente.getId());
+                                    veiculos[i].setCliente(cliente);
+                                } catch (VeiculoJaExistenteException e) {
+                                    // Este bloco não deve ser atingido, pois já verificamos a duplicação acima
+                                    e.printStackTrace();
+                                }
+                            }
+                        } while (placaDuplicada);
                     }
                 }
             }
+        } catch (ClienteNaoExisteException e) {
+            System.out.println("Erro: Cliente não existe.");
+        } catch (Exception e) {
+            System.out.println("Erro inesperado: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+    
 
     /**
      * Retira um veículo do estacionamento e calcula o valor a ser pago.
@@ -303,7 +334,7 @@ public class App {
                     uso.setCliente(veiculo.getCliente());
                     servicoAdicional(estacionamento, veiculo);
                     
-                } catch (VagaOcupadaException | FileNotFoundException e) {
+                } catch (VagaOcupadaException e) {
                     System.out.println("Vaga ocupada. Escolha outra vaga.");
                 }
             }
@@ -317,26 +348,36 @@ public class App {
      * @param veiculo        O veículo ao qual os serviços adicionais serão aplicados.
      * @throws FileNotFoundException Em caso de problema ao ler o arquivo de serviços adicionais.
      */
-    public static void servicoAdicional(Estacionamento estacionamento, Veiculo veiculo) throws FileNotFoundException {
+    public static void servicoAdicional(Estacionamento estacionamento, Veiculo veiculo) {
         String nomeArq = "menuServicos.txt";
         int opcaoServico = -1;
-    
+
         limparTela();
-    
+
         try {
             opcaoServico = menu(nomeArq);
-    
-            switch (opcaoServico) {
-                case 1 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA));
-                case 2 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM));
-                case 3 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO));
-                default -> System.out.println("Nenhum serviço adiicionado.");
+
+            if (opcaoServico == 0) {
+                System.out.println("Nenhum serviço adicionado.");
+            } else {
+                switch (opcaoServico) {
+                    case 1 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.MANOBRISTA));
+                    case 2 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.LAVAGEM));
+                    case 3 -> System.out.println(estacionamento.contratarServico(veiculo.getPlaca(), Servico.POLIMENTO));
+                    default -> System.out.println("Nenhum serviço adicionado.");
+                }
             }
         } catch (InputMismatchException e) {
             System.out.println("Erro: Entrada inválida. Por favor, insira um número.");
         } catch (Exception e) {
-            System.out.println("Erro inesperado: " + e.getMessage());
-            e.printStackTrace();
+            if (e instanceof FileNotFoundException) {
+                System.out.println("Erro: Arquivo não encontrado.");
+            } else if (e.getMessage() != null && e.getMessage().isEmpty()) {
+                System.out.println("Erro: Entrada inválida. Por favor, insira um valor válido.");
+            } else {
+                System.out.println("Erro inesperado: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 
@@ -418,7 +459,6 @@ public class App {
                 case 14 -> {
                     System.out.println(estacionamento.arrecadacaoTotalEstacionamento());
                 }
-
 
                 case 0 -> {
                     break;
