@@ -9,10 +9,6 @@ public class Cliente {
         HORISTA, DE_TURNO, MENSALISTA
     }
 
-    public enum Turno {
-        MANHA, TARDE, NOITE
-    }
-
     private String nome;
     private String id;
     private List<Veiculo> veiculos;

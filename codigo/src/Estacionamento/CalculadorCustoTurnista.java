@@ -33,22 +33,18 @@ public class CalculadorCustoTurnista implements ICalculadorCusto {
      * @param cliente O cliente utilizando a vaga.
      * @return true se estiver dentro do turno, false caso contrário.
      */
-    private boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
+    private static boolean estaDentroDoTurno(LocalDateTime horario, Cliente cliente) {
         int hora = horario.getHour();
 
-        switch (cliente.getModalidade()) {
-            case DE_TURNO:
-                switch (cliente.getTurnoEscolhido()) {
-                    case MANHA:
-                        return hora >= 8 && hora <= 12;
-                    case TARDE:
-                        return hora > 12 && hora <= 18;
-                    case NOITE:
-                        return hora > 18 && hora <= 23;
-                }
-                break;
-            default:
-                break;
+        if (cliente.getModalidade() == Cliente.ModalidadeCliente.DE_TURNO) {
+            switch (cliente.getTurnoEscolhido()) {
+                case MANHA:
+                    return hora >= Turno.MANHA.getInicio() && hora <= Turno.MANHA.getFim();
+                case TARDE:
+                    return hora > Turno.TARDE.getInicio() && hora <= Turno.TARDE.getFim();
+                case NOITE:
+                    return hora > Turno.NOITE.getInicio() && hora <= Turno.NOITE.getFim();
+            }
         }
         return false;
     }

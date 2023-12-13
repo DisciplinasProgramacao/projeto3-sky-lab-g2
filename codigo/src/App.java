@@ -110,17 +110,17 @@ public class App {
                     String turnoInput = leitura("Digite o turno desejado (M - Manhã, T - Tarde, N - Noite): ");
                     switch (turnoInput.toUpperCase()) {
                         case "M":
-                            clientes[i].setTurnoEscolhido(Cliente.Turno.MANHA);
+                            clientes[i].setTurnoEscolhido(Turno.MANHA);
                             break;
                         case "T":
-                            clientes[i].setTurnoEscolhido(Cliente.Turno.TARDE);
+                            clientes[i].setTurnoEscolhido(Turno.TARDE);
                             break;
                         case "N":
-                            clientes[i].setTurnoEscolhido(Cliente.Turno.NOITE);
+                            clientes[i].setTurnoEscolhido(Turno.NOITE);
                             break;
                         default:
                             System.out.println("Opção inválida para turno. Será definido como Manhã por padrão.");
-                            clientes[i].setTurnoEscolhido(Cliente.Turno.MANHA);
+                            clientes[i].setTurnoEscolhido(Turno.MANHA);
                             break;
                     }
                 } else if (modalidadeInput.equalsIgnoreCase("M")) {
@@ -188,6 +188,7 @@ public class App {
                                     estacionamento.addVeiculo(veiculos[i], cliente.getId());
                                     veiculos[i].setCliente(cliente);
                                 } catch (VeiculoJaExistenteException e) {
+                                    
                                     e.printStackTrace();
                                 }
                             }
@@ -262,17 +263,17 @@ public class App {
                     String turnoInput = leitura("Digite o turno desejado (M - Manhã, T - Tarde, N - Noite): ");
                     switch (turnoInput.toUpperCase()) {
                         case "M":
-                            cliente.setTurnoEscolhido(Cliente.Turno.MANHA);
+                            cliente.setTurnoEscolhido(Turno.MANHA);
                             break;
                         case "T":
-                            cliente.setTurnoEscolhido(Cliente.Turno.TARDE);
+                            cliente.setTurnoEscolhido(Turno.TARDE);
                             break;
                         case "N":
-                            cliente.setTurnoEscolhido(Cliente.Turno.NOITE);
+                            cliente.setTurnoEscolhido(Turno.NOITE);
                             break;
                         default:
                             System.out.println("Opção inválida para turno. Será definido como Manhã por padrão.");
-                            cliente.setTurnoEscolhido(Cliente.Turno.MANHA);
+                            cliente.setTurnoEscolhido(Turno.MANHA);
                             break;
                     }
                 } else if (modalidadeInput.equalsIgnoreCase("M")) {

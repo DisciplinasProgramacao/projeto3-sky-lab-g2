@@ -90,7 +90,7 @@ public class Populador {
         
             Cliente cliente5 = new Cliente("Carlos Santos", "ID5");
             cliente5.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
-            cliente5.setTurnoEscolhido(Cliente.Turno.MANHA);
+            cliente5.setTurnoEscolhido(Turno.MANHA);
             estacionamento3.addCliente(cliente5);
         
             List<Vaga> vagasGeradas = estacionamento3.getVagas();
@@ -149,7 +149,7 @@ public class Populador {
 
             Cliente cliente2 = new Cliente("Rodrigo Santos", "ID102");
             cliente2.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
-            cliente2.setTurnoEscolhido(Cliente.Turno.TARDE);
+            cliente2.setTurnoEscolhido(Turno.TARDE);
             estacionamento.addCliente(cliente2);
 
             Veiculo veiculo1 = new Veiculo("ABC987");
@@ -234,12 +234,12 @@ public class Populador {
     
             Cliente cliente5 = new Cliente("Paulo Turno Manhã", "ID5");
             cliente5.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
-            cliente5.setTurnoEscolhido(Cliente.Turno.MANHA);
+            cliente5.setTurnoEscolhido(Turno.MANHA);
             estacionamento.addCliente(cliente5);
     
             Cliente cliente6 = new Cliente("Fernanda Turno Tarde", "ID6");
             cliente6.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
-            cliente6.setTurnoEscolhido(Cliente.Turno.TARDE);
+            cliente6.setTurnoEscolhido(Turno.TARDE);
             estacionamento.addCliente(cliente6);
     
             List<Vaga> vagasGeradas = estacionamento.getVagas();
