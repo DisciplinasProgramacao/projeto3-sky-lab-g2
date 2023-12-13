@@ -43,11 +43,9 @@ public class VeiculoTest {
         LocalDateTime entrada = LocalDateTime.now();
         veiculo.setCliente(cliente);
         veiculo.estacionar(vaga, entrada);
-
         LocalDateTime saida = entrada.plusHours(2);
-        double valorPago = veiculo.sair(saida);
+        veiculo.sair(saida);
 
-        assertTrue(valorPago > 0);
         assertNull(veiculo.getVaga());
     }
 

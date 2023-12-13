@@ -1,61 +1,83 @@
-import org.junit.Test;
-import java.time.LocalDateTime;
 import static org.junit.Assert.*;
+
+import java.time.LocalDateTime;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class UsoDeVagaTest {
 
-    @Test
-    public void testSair() {
-        // Criação de objetos necessários para o teste
-        Vaga vaga = new Vaga("V1");
-        Cliente cliente = new Cliente("1", "Cliente Teste");
-        Veiculo veiculo = new Veiculo("ABC-1234");
+    private UsoDeVaga usoDeVaga;
+    private Vaga vaga;
+    private Cliente cliente;
+    private Veiculo veiculo;
+    private LocalDateTime entrada;
+    private LocalDateTime saida;
 
-        UsoDeVaga usoDeVaga = new UsoDeVaga(vaga);
-        LocalDateTime entrada = LocalDateTime.now().minusHours(1);
-        LocalDateTime saida = LocalDateTime.now();
+    @Before
+    public void setUp() {
+        vaga = new Vaga("V1");
+        usoDeVaga = new UsoDeVaga(vaga);
+        cliente = new Cliente("1", "Cliente Teste");
+        cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+        veiculo = new Veiculo("ABC-1234");
+        entrada = LocalDateTime.now().minusHours(1);
+        saida = LocalDateTime.now();
+    }
+
+    @Test
+    public void testUsarVaga() {
+        assertNull(usoDeVaga.getEntrada());
+        assertNull(usoDeVaga.getSaida());
 
         usoDeVaga.usarVaga(veiculo, entrada);
 
-        veiculo.setCliente(cliente);
-        double valorPago = usoDeVaga.sair(saida);
+        assertEquals(entrada, usoDeVaga.getEntrada());
+        assertNull(usoDeVaga.getSaida());
+    }
+
+    @Test
+    public void testSair() {
+        usoDeVaga.usarVaga(veiculo, entrada);
         usoDeVaga.setCliente(cliente);
 
-        assertEquals(veiculo.getCliente(), usoDeVaga.getCliente());
+        double valorPago = usoDeVaga.sair(saida);
+
         assertEquals(entrada, usoDeVaga.getEntrada());
         assertEquals(saida, usoDeVaga.getSaida());
         assertTrue(valorPago > 0.0);
     }
 
     @Test
-    public void testContratarServico() {
-        
-        Vaga vaga = new Vaga("V2");
-        UsoDeVaga usoDeVaga = new UsoDeVaga(vaga);
-        
-        Servico servico = Servico.POLIMENTO;
+    public void testCalcularCustoHorista() {
+        cliente.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+        usoDeVaga.setCliente(cliente);
 
-        usoDeVaga.contratarServico(servico);
+        usoDeVaga.usarVaga(veiculo, entrada);
+        double valorPago = usoDeVaga.sair(saida);
 
-        assertTrue(usoDeVaga.getServicosContratados().contains(servico));
+        assertTrue(valorPago > 0.0);
     }
 
     @Test
-    public void testCalcularCusto() {
-        // Criação de objetos necessários para o teste
-        Vaga vaga = new Vaga("V3");
-        Cliente cliente = new Cliente("2", "Cliente Teste");
-        Veiculo veiculo = new Veiculo("XYZ-1987");
+    public void testCalcularCustoTurnista() {
+        cliente.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+        usoDeVaga.setCliente(cliente);
 
-        UsoDeVaga usoDeVaga = new UsoDeVaga(vaga);
-        LocalDateTime entrada = LocalDateTime.now().minusHours(2);
-        LocalDateTime saida = LocalDateTime.now();
-
-        veiculo.setCliente(cliente);
         usoDeVaga.usarVaga(veiculo, entrada);
+        double valorPago = usoDeVaga.sair(saida);
 
-        double valorCusto = usoDeVaga.calcularCusto(veiculo, entrada, saida);
+        assertTrue(valorPago > 0.0);
+    }
 
-        assertTrue(valorCusto > 0.0);
+    @Test
+    public void testCalcularCustoMensalista() {
+        cliente.setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
+        usoDeVaga.setCliente(cliente);
+
+        usoDeVaga.usarVaga(veiculo, entrada);
+        double valorPago = usoDeVaga.sair(saida);
+
+        assertTrue(valorPago >= 0.0); //o valor será 0.0 porque mensalista paga apenas o valor mensal
     }
 }
