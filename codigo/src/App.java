@@ -573,13 +573,15 @@ public class App {
                         System.out.println("Estacionamento não encontrado.");
                     }
                 }
-                
-                
 
                 case 3 -> {
                     estacionamentoDAO.listarEstacionamentosDecrescente();
                     pausa();
                     break;
+                }
+
+                case 4 -> {
+                    estacionamentoDAO.addAll(Populador.gerarEstacionamentos());
                 }
                 
             }
