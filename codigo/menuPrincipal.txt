@@ -1,3 +1,4 @@
 Estacionamento
 Criar novo estacionamento.
 Consultar estacionamento já existente.
+Listar todos os estacionamentos
