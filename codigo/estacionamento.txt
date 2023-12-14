@@ -164,3 +164,40 @@ ID da Vaga: V4, Disponível: Desocupada
 ID da Vaga: V5, Disponível: Desocupada
 ID da Vaga: V6, Disponível: Desocupada
 
+Nome do Estacionamento: Estacionamento XYZ
+Quantidade de Fileiras: 3
+Vagas por Fileira: 2
+
+Clientes:
+Nome: João Horista, ID: ID1, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: ABC123, custando: R$50.00
+
+Nome: Maria Horista, ID: ID2, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: ABC124, custando: R$50.00
+
+Nome: Carlos Horista, ID: ID3, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: ABC125, custando: R$50.00
+
+Nome: Ana Mensalista, ID: ID4, Modalidade: MENSALISTA
+Veículos do Cliente:
+Placa: ABC126, custando: R$0.00
+
+Nome: Paulo Turno Manhã, ID: ID5, Modalidade: DE_TURNO
+Veículos do Cliente:
+Placa: ABC127, custando: R$0.00
+
+Nome: Fernanda Turno Tarde, ID: ID6, Modalidade: DE_TURNO
+Veículos do Cliente:
+Placa: ABC128, custando: R$50.00
+
+Vagas:
+ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
+ID da Vaga: V4, Disponível: Desocupada
+ID da Vaga: V5, Disponível: Desocupada
+ID da Vaga: V6, Disponível: Desocupada
+

@@ -90,24 +90,9 @@ public class UsoDeVaga {
      * @return O custo total do uso da vaga.
      */
     public double calcularCusto(Cliente cliente) {
-        if (cliente != null && cliente.getModalidade() != null) {
-            if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.HORISTA)) {
-                CalculadorCustoHorista custo = new CalculadorCustoHorista();
-                valorPago = custo.calcularCusto(entrada, saida);
-
-                return valorPago;
-            } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.DE_TURNO)) {
-                CalculadorCustoTurnista custo = new CalculadorCustoTurnista(cliente);
-                valorPago = custo.calcularCusto(entrada, saida);
-
-                return valorPago;
-            } else if (cliente.getModalidade().equals(Cliente.ModalidadeCliente.MENSALISTA)) {
-                CalculadorCustoMensalista custo = new CalculadorCustoMensalista();
-                valorPago = custo.calcularCusto(entrada, saida);
-
-                return valorPago;
-            }
-        }
+        ICalculadorCusto meuCalculador = null;
+        meuCalculador = cliente.getModalidade().getCalc();
+        valorPago = meuCalculador.calcularCusto(entrada, saida);
         return valorPago;
     }
 
