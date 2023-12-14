@@ -6,7 +6,18 @@ import java.util.*;
 public class Cliente {
 
     public enum ModalidadeCliente {
-        HORISTA, DE_TURNO, MENSALISTA
+        HORISTA(new CalculadorCustoHorista()), 
+        DE_TURNO(new CalculadorCustoTurnista(Turno.MANHA)), 
+        MENSALISTA(new CalculadorCustoMensalista());
+        ICalculadorCusto meuCalc;
+
+        ModalidadeCliente(ICalculadorCusto c){
+            meuCalc = c;
+        }
+        
+        public ICalculadorCusto getCalc(){
+            return this.meuCalc;
+        }
     }
 
     private String nome;
