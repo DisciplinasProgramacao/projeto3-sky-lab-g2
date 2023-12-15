@@ -99,13 +99,25 @@ public class Estacionamento implements IDataToText {
      */
     public double sair(Veiculo veiculo, LocalDateTime saida) throws UsoDeVagaFinalizadoException, VeiculoNaoExisteException {
         double custo = 0.0;
-        if (veiculo.getServicoContratado() != null) {
-            CalculadorCustoServico calculoServico = new CalculadorCustoServico(); 
-            custo = calculoServico.adicionarCustoServico(veiculo.getServicoContratado()); 
-            return veiculo.sair(saida) + custo;
+        
+        try {
+            if (veiculo.getServicoContratado() != null) {
+                CalculadorCustoServico calculoServico = new CalculadorCustoServico(); 
+                custo = calculoServico.adicionarCustoServico(veiculo.getServicoContratado()); 
+                UsoDeVaga uso = veiculo.getUltimoUso(); 
+                Duration duracaoReal = Duration.between(uso.getEntrada(), saida);
+                
+                if (duracaoReal.compareTo(veiculo.getServicoContratado().getTempoMinimo()) < 0) {
+                    throw new DuracaoMinimaNaoAtendidaException();
+                }
+                
+                return veiculo.sair(saida) + custo;
+            }
+    
+            return veiculo.sair(saida);
+        } catch (DuracaoMinimaNaoAtendidaException e) {
+            return 0.0;
         }
-
-        return veiculo.sair(saida);
     }
 
     private boolean validarMes(int mes) {

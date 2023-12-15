@@ -5,8 +5,8 @@
      */
     public enum Servico {
         MANOBRISTA("Manobrista", 5.0, Duration.ZERO),
-        LAVAGEM("Lavagem", 20.0, Duration.ofHours(1)),
-        POLIMENTO("Polimento (inclui lavagem)", 45.0, Duration.ofHours(2));
+        LAVAGEM("Lavagem", 20.0, Duration.ofHours(1)), //duração do serviço correta
+        POLIMENTO("Polimento (inclui lavagem)", 45.0, Duration.ofHours(2)); //duração do serviço correta
 
         private final String descricao;
         private final double valor;

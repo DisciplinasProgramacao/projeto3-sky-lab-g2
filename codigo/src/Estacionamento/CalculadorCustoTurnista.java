@@ -3,13 +3,9 @@ import java.time.LocalDateTime;
 public class CalculadorCustoTurnista implements ICalculadorCusto {
 
     private Cliente cliente;
-    private Turno turno;
+
     public CalculadorCustoTurnista(Cliente cliente) {
         this.cliente = cliente;
-    }
-
-    public CalculadorCustoTurnista(Turno t) {
-        this.turno = t;
     }
 
     /**

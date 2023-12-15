@@ -214,7 +214,7 @@ public class App {
      * @throws UsoDeVagaFinalizadoException Se o uso da vaga já estiver finalizado.
      * @throws VeiculoNaoExisteException   Se o veículo não for encontrado.
      */
-    public static double retirarVeiculo(Estacionamento estacionamento) {
+    public static double retirarVeiculo(Estacionamento estacionamento) throws DuracaoMinimaNaoAtendidaException {
         try {
             String placaVeiculo = leitura("Digite a placa do veículo que deseja retirar da vaga");
 
@@ -231,13 +231,18 @@ public class App {
             }
 
             LocalDateTime horaSaida = LocalDateTime.parse(leitura("Digite o horário de saída"));
+            double valorAPagar = estacionamento.sair(veiculo, horaSaida);
+        
+            
+            if (valorAPagar > 0.0) {
+                System.out.println("Veículo retirado da vaga " + vaga.getId());
+                System.out.println("Valor a pagar: R$" + valorAPagar + "0");
+                vaga.sair();
+                return estacionamento.sair(veiculo, horaSaida);
+            } else {
+                throw new DuracaoMinimaNaoAtendidaException();
+            }
 
-            System.out.println("Veículo retirado da vaga " + vaga.getId());
-            System.out.println("Valor a pagar: R$" + estacionamento.sair(veiculo, horaSaida) + "0");
-
-            vaga.sair();
-
-            return estacionamento.sair(veiculo, horaSaida);
         } catch (UsoDeVagaNaoExisteException e) {
             System.out.println("Erro: Uso de vaga finalizado.");
             
