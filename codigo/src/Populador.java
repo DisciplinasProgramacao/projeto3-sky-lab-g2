@@ -19,13 +19,20 @@ public class Populador {
             estacionamento.addCliente(cliente1);
 
             Cliente cliente2 = new Cliente("Milena Soares", "ID2");
-            cliente2.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+            cliente2.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+            cliente2.setTurnoEscolhido(Turno.MANHA);
             estacionamento.addCliente(cliente2);
+
+            Cliente cliente3 = new Cliente("Lorena Santos", "ID3");
+            cliente3.setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
+            estacionamento.addCliente(cliente3);
 
             Veiculo veiculo1 = new Veiculo("ABC123");
             veiculo1.setCliente(cliente1);
             Veiculo veiculo2 = new Veiculo("DEF456");
             veiculo2.setCliente(cliente2);
+            Veiculo veiculo3 = new Veiculo("XYZ000");
+            veiculo3.setCliente(cliente3);
 
             List<Vaga> vagasGeradas = estacionamento.getVagas();
     
@@ -51,6 +58,7 @@ public class Populador {
 
             cliente1.addVeiculo(veiculo1);
             cliente2.addVeiculo(veiculo2);
+            cliente3.addVeiculo(veiculo3);
 
             estacionamentos.add(estacionamento);
         }
@@ -116,29 +124,6 @@ public class Populador {
         
             estacionamentos.add(estacionamento3);
         }
-        
-        {
-            Estacionamento estacionamento = new Estacionamento("Estacionamento 3", 1, 2);
-        
-            Cliente cliente6 = new Cliente("Ana Silva", "ID6");
-            cliente6.setModalidade(Cliente.ModalidadeCliente.HORISTA);
-            estacionamento.addCliente(cliente6);
-        
-            Veiculo veiculo6 = new Veiculo("JKL456");
-            veiculo6.setCliente(cliente6);
-        
-            List<Vaga> vagasGeradas = estacionamento.getVagas();
-        
-            Vaga vagaDisponivel = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
-        
-            veiculo6.estacionar(vagaDisponivel, LocalDateTime.of(2023, 5, 1, 9, 0, 0));
-            veiculo6.adicionarServicoContratado(Servico.LAVAGEM);
-            veiculo6.setCusto(veiculo6.sair(LocalDateTime.of(2023, 5, 1, 15, 0, 0)));
-        
-            cliente6.addVeiculo(veiculo6);
-        
-            estacionamentos.add(estacionamento);
-        }
 
         {
             Estacionamento estacionamento = new Estacionamento("EstacioPark", 3, 5);
@@ -152,6 +137,13 @@ public class Populador {
             cliente2.setTurnoEscolhido(Turno.TARDE);
             estacionamento.addCliente(cliente2);
 
+            Cliente cliente6 = new Cliente("Ana Silva", "ID6");
+            cliente6.setModalidade(Cliente.ModalidadeCliente.HORISTA);
+            estacionamento.addCliente(cliente6);
+        
+            Veiculo veiculo6 = new Veiculo("JKL456");
+            veiculo6.setCliente(cliente6);
+
             Veiculo veiculo1 = new Veiculo("ABC987");
             veiculo1.setCliente(cliente1);
 
@@ -162,6 +154,7 @@ public class Populador {
 
             Vaga vagaDisponivel1 = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
             Vaga vagaDisponivel2 = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
+            Vaga vagaDisponivel3 = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
 
             veiculo1.estacionar(vagaDisponivel1, LocalDateTime.of(2023, 4, 1, 8, 0, 0));
             veiculo1.adicionarServicoContratado(Servico.LAVAGEM);
@@ -170,6 +163,12 @@ public class Populador {
             veiculo2.estacionar(vagaDisponivel2, LocalDateTime.of(2023, 4, 1, 12, 0, 0));
             veiculo2.adicionarServicoContratado(Servico.MANOBRISTA);
             veiculo2.setCusto(veiculo2.sair(LocalDateTime.of(2023, 4, 1, 14, 0, 0)));
+
+            veiculo6.estacionar(vagaDisponivel3, LocalDateTime.of(2023, 5, 1, 9, 0, 0));
+            veiculo6.adicionarServicoContratado(Servico.LAVAGEM);
+            veiculo6.setCusto(veiculo6.sair(LocalDateTime.of(2023, 5, 1, 15, 0, 0)));
+        
+            cliente6.addVeiculo(veiculo6);
 
             cliente1.addVeiculo(veiculo1);
             cliente2.addVeiculo(veiculo2);
