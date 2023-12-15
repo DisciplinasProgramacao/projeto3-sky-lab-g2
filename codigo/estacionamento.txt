@@ -27,15 +27,25 @@ ID da Vaga: V8, Disponível: Desocupada
 
 Nome do Estacionamento: TestPark
 Quantidade de Fileiras: 1
-Vagas por Fileira: 1
+Vagas por Fileira: 3
 
 Clientes:
 Nome: Paula de Freitas, ID: ID3, Modalidade: HORISTA
 Veículos do Cliente:
 Placa: DEF000, custando: R$54.00
 
+Nome: Mensalista Silva, ID: ID4, Modalidade: MENSALISTA
+Veículos do Cliente:
+Placa: MEN123, custando: R$0.00
+
+Nome: Turno Oliveira, ID: ID5, Modalidade: DE_TURNO
+Veículos do Cliente:
+Placa: TUR456, custando: R$0.00
+
 Vagas:
 ID da Vaga: V1, Disponível: Desocupada
+ID da Vaga: V2, Disponível: Desocupada
+ID da Vaga: V3, Disponível: Desocupada
 
 Nome do Estacionamento: Estacionamento 2
 Quantidade de Fileiras: 3
@@ -79,10 +89,28 @@ Placa: ABC987, custando: R$0.00
 Nome: Rodrigo Santos, ID: ID102, Modalidade: DE_TURNO
 Veículos do Cliente:
 Placa: XYZ456, custando: R$32.00
+Placa: Temp1, custando: R$50.00
+Placa: Temp3, custando: R$0.00
+Placa: Temp5, custando: R$0.00
+Placa: Temp7, custando: R$0.00
+Placa: Temp9, custando: R$4.00
+Placa: Temp11, custando: R$4.00
+Placa: Temp13, custando: R$4.00
+Placa: Temp15, custando: R$50.00
+Placa: Temp17, custando: R$50.00
 
 Nome: Ana Silva, ID: ID6, Modalidade: HORISTA
 Veículos do Cliente:
 Placa: JKL456, custando: R$50.00
+Placa: Temp0, custando: R$50.00
+Placa: Temp2, custando: R$50.00
+Placa: Temp4, custando: R$50.00
+Placa: Temp6, custando: R$50.00
+Placa: Temp8, custando: R$50.00
+Placa: Temp10, custando: R$4.00
+Placa: Temp12, custando: R$4.00
+Placa: Temp14, custando: R$50.00
+Placa: Temp16, custando: R$50.00
 
 Vagas:
 ID da Vaga: V1, Disponível: Desocupada
