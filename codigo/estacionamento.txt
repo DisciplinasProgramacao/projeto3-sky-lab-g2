@@ -7,9 +7,13 @@ Nome: João da Silva, ID: ID1, Modalidade: HORISTA
 Veículos do Cliente:
 Placa: ABC123, custando: R$82.00
 
-Nome: Milena Soares, ID: ID2, Modalidade: HORISTA
+Nome: Milena Soares, ID: ID2, Modalidade: DE_TURNO
 Veículos do Cliente:
-Placa: DEF456, custando: R$32.00
+Placa: DEF456, custando: R$0.00
+
+Nome: Lorena Santos, ID: ID3, Modalidade: MENSALISTA
+Veículos do Cliente:
+Placa: XYZ000, custando: R$0.00
 
 Vagas:
 ID da Vaga: V1, Disponível: Desocupada
@@ -63,19 +67,6 @@ ID da Vaga: V13, Disponível: Desocupada
 ID da Vaga: V14, Disponível: Desocupada
 ID da Vaga: V15, Disponível: Desocupada
 
-Nome do Estacionamento: Estacionamento 3
-Quantidade de Fileiras: 1
-Vagas por Fileira: 2
-
-Clientes:
-Nome: Ana Silva, ID: ID6, Modalidade: HORISTA
-Veículos do Cliente:
-Placa: JKL456, custando: R$50.00
-
-Vagas:
-ID da Vaga: V1, Disponível: Desocupada
-ID da Vaga: V2, Disponível: Desocupada
-
 Nome do Estacionamento: EstacioPark
 Quantidade de Fileiras: 3
 Vagas por Fileira: 5
@@ -88,6 +79,10 @@ Placa: ABC987, custando: R$0.00
 Nome: Rodrigo Santos, ID: ID102, Modalidade: DE_TURNO
 Veículos do Cliente:
 Placa: XYZ456, custando: R$32.00
+
+Nome: Ana Silva, ID: ID6, Modalidade: HORISTA
+Veículos do Cliente:
+Placa: JKL456, custando: R$50.00
 
 Vagas:
 ID da Vaga: V1, Disponível: Desocupada
@@ -118,43 +113,6 @@ Placa: DEF654, custando: R$50.00
 Nome: Rafaela Silva, ID: ID202, Modalidade: MENSALISTA
 Veículos do Cliente:
 Placa: GHI321, custando: R$0.00
-
-Vagas:
-ID da Vaga: V1, Disponível: Desocupada
-ID da Vaga: V2, Disponível: Desocupada
-ID da Vaga: V3, Disponível: Desocupada
-ID da Vaga: V4, Disponível: Desocupada
-ID da Vaga: V5, Disponível: Desocupada
-ID da Vaga: V6, Disponível: Desocupada
-
-Nome do Estacionamento: Estacionamento XYZ
-Quantidade de Fileiras: 3
-Vagas por Fileira: 2
-
-Clientes:
-Nome: João Horista, ID: ID1, Modalidade: HORISTA
-Veículos do Cliente:
-Placa: ABC123, custando: R$50.00
-
-Nome: Maria Horista, ID: ID2, Modalidade: HORISTA
-Veículos do Cliente:
-Placa: ABC124, custando: R$50.00
-
-Nome: Carlos Horista, ID: ID3, Modalidade: HORISTA
-Veículos do Cliente:
-Placa: ABC125, custando: R$50.00
-
-Nome: Ana Mensalista, ID: ID4, Modalidade: MENSALISTA
-Veículos do Cliente:
-Placa: ABC126, custando: R$0.00
-
-Nome: Paulo Turno Manhã, ID: ID5, Modalidade: DE_TURNO
-Veículos do Cliente:
-Placa: ABC127, custando: R$0.00
-
-Nome: Fernanda Turno Tarde, ID: ID6, Modalidade: DE_TURNO
-Veículos do Cliente:
-Placa: ABC128, custando: R$50.00
 
 Vagas:
 ID da Vaga: V1, Disponível: Desocupada
