@@ -64,27 +64,54 @@ public class Populador {
         }
 
         {
-            Estacionamento estacionamento2 = new Estacionamento("TestPark", 1, 1);
-        
+            Estacionamento estacionamento2 = new Estacionamento("TestPark", 1, 3);
+            
             Cliente cliente3 = new Cliente("Paula de Freitas", "ID3");
             cliente3.setModalidade(Cliente.ModalidadeCliente.HORISTA);
             estacionamento2.addCliente(cliente3);
-        
+            
             Veiculo veiculo3 = new Veiculo("DEF000");
             veiculo3.setCliente(cliente3);
-        
+            
             List<Vaga> vagasGeradas = estacionamento2.getVagas();
-        
+            
             Vaga vagaDisponivel = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
-        
+            
             veiculo3.estacionar(vagaDisponivel, LocalDateTime.of(2023, 1, 1, 10, 0, 0));
             veiculo3.setCusto(veiculo3.sair(LocalDateTime.of(2023, 1, 1, 11, 0, 0)));
-
+        
             veiculo3.estacionar(vagaDisponivel, LocalDateTime.of(2023, 1, 1, 8, 0, 0));
             veiculo3.adicionarServicoContratado(Servico.POLIMENTO);
-            veiculo3.setCusto(veiculo3.getCusto()+veiculo3.sair(LocalDateTime.of(2023, 1, 1, 13, 0, 0)));
-        
+            veiculo3.setCusto(veiculo3.getCusto() + veiculo3.sair(LocalDateTime.of(2023, 1, 1, 13, 0, 0)));
+            
             cliente3.addVeiculo(veiculo3);
+        
+            Cliente cliente4 = new Cliente("Mensalista Silva", "ID4");
+            cliente4.setModalidade(Cliente.ModalidadeCliente.MENSALISTA);
+            estacionamento2.addCliente(cliente4);
+            
+            Veiculo veiculo4 = new Veiculo("MEN123");
+            veiculo4.setCliente(cliente4);
+        
+            veiculo4.estacionar(vagaDisponivel, LocalDateTime.of(2023, 1, 1, 14, 0, 0));
+            veiculo4.adicionarServicoContratado(Servico.LAVAGEM);
+            veiculo4.setCusto(veiculo4.getCusto() + veiculo4.sair(LocalDateTime.of(2023, 1, 1, 17, 0, 0)));
+            
+            cliente4.addVeiculo(veiculo4);
+        
+            Cliente cliente5 = new Cliente("Turno Oliveira", "ID5");
+            cliente5.setModalidade(Cliente.ModalidadeCliente.DE_TURNO);
+            cliente5.setTurnoEscolhido(Turno.TARDE);
+            estacionamento2.addCliente(cliente5);
+            
+            Veiculo veiculo5 = new Veiculo("TUR456");
+            veiculo5.setCliente(cliente5);
+        
+            veiculo5.estacionar(vagaDisponivel, LocalDateTime.of(2023, 1, 1, 16, 0, 0));
+            veiculo5.adicionarServicoContratado(Servico.MANOBRISTA);
+            veiculo5.setCusto(veiculo5.getCusto() + veiculo5.sair(LocalDateTime.of(2023, 1, 1, 18, 0, 0)));
+            
+            cliente5.addVeiculo(veiculo5);
         
             estacionamentos.add(estacionamento2);
         }
@@ -169,9 +196,21 @@ public class Populador {
             veiculo6.setCusto(veiculo6.sair(LocalDateTime.of(2023, 5, 1, 15, 0, 0)));
         
             cliente6.addVeiculo(veiculo6);
-
             cliente1.addVeiculo(veiculo1);
             cliente2.addVeiculo(veiculo2);
+
+            for (int i = 0; i < 20; i++) {
+                Cliente clienteTemp = i % 2 == 0 ? cliente6 : cliente2; // Alternando entre cliente6 e cliente2
+                Veiculo veiculoTemp = new Veiculo("Temp" + i);
+                veiculoTemp.setCliente(clienteTemp);
+        
+                Vaga vagaTemp = vagasGeradas.stream().filter(Vaga::disponivel).findFirst().orElse(null);
+                veiculoTemp.estacionar(vagaTemp, LocalDateTime.of(2023, 5, 1, (10 + i) % 24, 0, 0));
+                veiculoTemp.adicionarServicoContratado(Servico.LAVAGEM);
+                veiculoTemp.setCusto(veiculoTemp.getCusto() + veiculoTemp.sair(LocalDateTime.of(2023, 5, 1, (15 + i) % 24, 0, 0)));                
+        
+                clienteTemp.addVeiculo(veiculoTemp);
+            }
 
             estacionamentos.add(estacionamento);
         }
@@ -251,7 +290,7 @@ public class Populador {
     
                 veiculo.estacionar(vagaDisponivel, LocalDateTime.of(2023, 6, 1, 8, 0, 0));
                 veiculo.adicionarServicoContratado(Servico.LAVAGEM);
-                veiculo.setCusto(veiculo.sair(LocalDateTime.of(2023, 6, 1, 18, 0, 0)));
+                veiculo.setCusto(veiculo.getCusto()+veiculo.sair(LocalDateTime.of(2023, 6, 1, 18, 0, 0)));
     
                 estacionamento.getClientes().get(i).addVeiculo(veiculo);
             }
