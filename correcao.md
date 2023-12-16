@@ -2,7 +2,9 @@
 
 - Contribuições e tarefas em aula
 - Tarefas nas aulas ao longo do projeto: 5 pontos;
-
+- 04/10 (Davi, Joao Vitor, Paula, Wanessa)
+- 11/10 (Guilherme, Joao Vitor, Paula)
+- 18/10 (Davi, Guilherme, Joao Vitor, Paula, Wanessa)
 
 - Requisitos : 7/12 pontos;
 - Documentação: 3/3 pontos;
